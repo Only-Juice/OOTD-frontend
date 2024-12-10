@@ -22,7 +22,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleThem
                         <li className="nav-item">
                             <Link className="nav-link" to="/cart"><FontAwesomeIcon icon={faShoppingCart} /> Cart</Link>
                         </li>
-                        {user ? (
+                        {user && user.Username ? (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/user"><UserBadge username={user.Username} /></Link>

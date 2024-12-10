@@ -25,7 +25,6 @@ export interface UserInfo {
 export interface SearchProps {
   setResults: (results: Product[]) => void;
   setError: (error: string|null) => void;
-  setSearchPerformed: (performed: boolean) => void;
 }
 
 export interface SearchResultsProps {
@@ -49,7 +48,6 @@ export interface NavBarProps {
   handleLogout: () => void;
   setResults: (results: Product[]) => void;
   setError: (error: string|null) => void;
-  setSearchPerformed: (performed: boolean) => void;
 }
 
 export interface ProductSliderProps {

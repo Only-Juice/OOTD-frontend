@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchProps } from './types';
 
-const Search: React.FC<SearchProps> = ({ setResults, setError, setSearchPerformed }) => {
+const Search: React.FC<SearchProps> = ({ setResults, setError }) => {
     const [query, setQuery] = useState('');
     const navigate = useNavigate();
 
@@ -28,12 +28,10 @@ const Search: React.FC<SearchProps> = ({ setResults, setError, setSearchPerforme
                 setResults(data);
             }
 
-            setSearchPerformed(true);
             navigate('/search-results');
         } catch (error) {
             setError('搜尋過程中發生錯誤');
             setResults([]);
-            setSearchPerformed(true);
             navigate('/search-results');
         }
     };

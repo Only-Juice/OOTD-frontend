@@ -21,7 +21,6 @@ const App: React.FC = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [searchPerformed, setSearchPerformed] = useState(false);
 
   useEffect(() => {
     fetch('/api/Product/GetAllProducts')
@@ -72,17 +71,20 @@ const App: React.FC = () => {
         if (!response.ok) {
           if (response.status === 401) {
             // Token 過期或無效
-            localStorage.removeItem('token');
-            setUser(null);
-            setUserInfo(null);
+            handleLogout();
           }
           throw new Error('Failed to fetch user info');
         }
         return response.json();
       })
       .then(data => {
-        setUser(data);
-        setUserInfo(data);
+        if (data.Status) {
+          setUser(data);
+          setUserInfo(data);
+        }
+        else {
+          handleLogout();
+        }
       })
       .catch(error => console.error('Error fetching user info:', error));
   };
@@ -122,12 +124,11 @@ const App: React.FC = () => {
           handleLogout={handleLogout}
           setResults={setSearchResults}
           setError={setSearchError}
-          setSearchPerformed={setSearchPerformed}
         />
 
         <Routes>
           <Route path="/" element={<Home products={products} />} />
-          <Route path="/search" element={<Search setResults={setSearchResults} setError={setSearchError} setSearchPerformed={setSearchPerformed} />} />
+          <Route path="/search" element={<Search setResults={setSearchResults} setError={setSearchError} />} />
           <Route path="/search-results" element={<SearchResults searchResults={searchResults} searchError={searchError} />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
