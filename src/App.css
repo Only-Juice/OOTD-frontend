@@ -1,0 +1,146 @@
+/* 基本樣式 */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+nav {
+  background-color: var(--nav-background-color);
+  color: var(--nav-text-color);
+  padding: 1rem;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+}
+
+nav ul li {
+  margin-right: 1rem;
+}
+
+nav ul li a, nav ul li button {
+  color: var(--nav-text-color);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+nav ul li button:hover, nav ul li a:hover {
+  text-decoration: underline;
+}
+
+h1, h2 {
+  color: var(--heading-color);
+}
+
+.container {
+  padding: 2rem;
+}
+
+.product-list {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-list li {
+  background-color: var(--product-background-color);
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  flex: 1 1 calc(33.333% - 2rem);
+  box-sizing: border-box;
+}
+
+.product-list img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.modal-content {
+  background-color: var(--modal-background-color);
+  padding: 2rem;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content label {
+  margin-bottom: 0.5rem;
+}
+
+.modal-content input {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid var(--input-border-color);
+  border-radius: 5px;
+}
+
+.modal-content button {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: var(--button-hover-background-color);
+}
+
+/* 淺色模式 */
+:root {
+  --background-color: #f4f4f4;
+  --text-color: #333;
+  --nav-background-color: #333;
+  --nav-text-color: white;
+  --heading-color: #333;
+  --product-background-color: white;
+  --modal-background-color: white;
+  --input-border-color: #ccc;
+  --button-background-color: #333;
+  --button-text-color: white;
+  --button-hover-background-color: #555;
+}
+
+/* 深色模式 */
+[data-theme="dark"] {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --nav-background-color: #1f1f1f;
+  --nav-text-color: #e0e0e0;
+  --heading-color: #e0e0e0;
+  --product-background-color: #1f1f1f;
+  --modal-background-color: #2c2c2c;
+  --input-border-color: #555;
+  --button-background-color: #444;
+  --button-text-color: #e0e0e0;
+  --button-hover-background-color: #666;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding: 0;
+}
+
+.product-item {
+  flex: 1 1 calc(33.333% - 10px);
+  margin: 5px;
+  box-sizing: border-box;
+}
