@@ -1,52 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SearchProps } from './types';
 
-const Search: React.FC<SearchProps> = ({ setResults, setError }) => {
+const Search: React.FC = () => {
     const [query, setQuery] = useState('');
     const navigate = useNavigate();
 
-    const handleSearch = async (e: React.FormEvent) => {
+    const onSearch = (e: React.FormEvent) => {
         e.preventDefault();
-
-        try {
-            const response = await fetch(`/api/Product/SearchProducts?searchWord=${query}`, {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                },
-                body: '',
-            });
-
-            const data = await response.json();
-
-            if (data.length === 0) {
-                setError('找不到相關結果');
-                setResults([]);
-            } else {
-                setError(null);
-                setResults(data);
-            }
-
-            navigate('/search-results');
-        } catch (error) {
-            setError('搜尋過程中發生錯誤');
-            setResults([]);
-            navigate('/search-results');
-        }
+        navigate(`/search?q=${query}`)
     };
 
     return (
-        <form onSubmit={handleSearch} className="d-flex w-50">
+        <form onSubmit={onSearch} className="d-flex w-50">
             <input
-                type="search"
+                type="text"
                 className="form-control me-2"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="搜尋產品"
-                aria-label="Search"
             />
-            <button type="submit" className="btn btn-outline-success">搜尋</button>
+            <button type="submit" className="btn btn-primary">搜尋</button>
         </form>
     );
 };

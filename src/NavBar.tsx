@@ -5,47 +5,58 @@ import UserBadge from './UserBadge';
 import { NavBarProps } from './types';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Navbar, Nav, Container, Button, Form } from 'react-bootstrap';
 
-const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleTheme, handleLogout, setResults, setError }) => {
+const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleTheme, handleLogout }) => {
+    const linkStyle = {
+        color: theme === 'dark' ? 'white' : 'black',
+        textDecoration: 'none',
+        padding: '0.5rem',
+        transition: 'background-color 0.3s ease',
+    };
+
+    const linkHoverStyle = {
+        backgroundColor: theme === 'dark' ? '#555' : '#ddd',
+    };
+
     return (
-        <nav className={`navbar navbar-expand-lg d-flex ${theme === 'dark' ? 'bg-gray navbar-dark' : 'bg-white navbar-light'}`} >
-            <div className="container-fluid">
-                <Link className="navbar-brand" to="/">Oh Online Tea Delivery</Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <div className="container-fluid">
-                        <Search setResults={setResults} setError={setError} />
-                    </div>
-                    <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/cart"><FontAwesomeIcon icon={faShoppingCart} /> Cart</Link>
-                        </li>
+        <Navbar bg={theme === 'dark' ? 'dark' : 'light'} variant={theme === 'dark' ? 'dark' : 'light'} expand="lg">
+            <Container fluid>
+                <Navbar.Brand as={Link} to="/" style={linkStyle}>Oh Online Tea Delivery</Navbar.Brand>
+                <Navbar.Toggle aria-controls="navbarNav" />
+                <Navbar.Collapse id="navbarNav">
+                    <Container fluid>
+                        <Search />
+                    </Container>
+                    <Nav className="ms-auto d-flex align-items-center">
+                        <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
+                            <FontAwesomeIcon icon={faShoppingCart} /> Cart
+                        </Nav.Link>
                         {user && user.Username ? (
                             <>
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/user"><UserBadge username={user.Username} /></Link>
-                                </li>
-                                <li className="nav-item">
-                                    <button className="btn btn-link nav-link" onClick={handleLogout}>Logout</button>
-                                </li>
+                                <Nav.Link as={Link} to="/user" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
+                                    <UserBadge username={user.Username} />
+                                </Nav.Link>
+                                <Button variant="link" className="nav-link d-flex align-items-center" onClick={handleLogout} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
+                                    Logout
+                                </Button>
                             </>
                         ) : (
-                            <li className="nav-item">
-                                <button className="btn btn-link nav-link" onClick={() => setIsModalOpen(true)}>Login</button>
-                            </li>
+                            <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => setIsModalOpen(true)} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
+                                Login
+                            </Button>
                         )}
-                        <li className="nav-item">
-                            <div className="form-check form-switch d-flex align-items-center">
-                                <input className="form-check-input" type="checkbox" id="themeSwitch" onChange={toggleTheme} />
-                                <label className="form-check-label nav-link ms-2" htmlFor="themeSwitch">Toggle Theme</label>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav >
+                        <Form.Check
+                            type="switch"
+                            id="themeSwitch"
+                            label="Theme"
+                            onChange={toggleTheme}
+                            style={{ color: theme === 'dark' ? 'white' : 'black' }}
+                        />
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
     );
 };
 

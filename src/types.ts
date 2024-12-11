@@ -22,11 +22,6 @@ export interface UserInfo {
   HaveStore: boolean;
 }
 
-export interface SearchProps {
-  setResults: (results: Product[]) => void;
-  setError: (error: string|null) => void;
-}
-
 export interface SearchResultsProps {
   searchResults: Product[]
   searchError: string|null;
@@ -42,8 +37,6 @@ export interface NavBarProps {
   setIsModalOpen: (isOpen: boolean) => void;
   toggleTheme: () => void;
   handleLogout: () => void;
-  setResults: (results: Product[]) => void;
-  setError: (error: string|null) => void;
 }
 
 export interface ProductSliderProps {
@@ -60,4 +53,14 @@ export interface UserInfo {
   Address: string;
   IsAdministrator: boolean;
   HaveStore: boolean;
+}
+
+export interface LoginProps {
+  isModalOpen: boolean;
+  setIsModalOpen: (isOpen: boolean) => void;
+  email: string;
+  setEmail: (email: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
+  fetchUserInfo: (token: string) => void;
 }
