@@ -14,7 +14,7 @@ const UserPage: React.FC<{ userInfo: UserInfo | null }> = ({ userInfo }) => (
                 <p>Have Store: {userInfo.HaveStore ? 'Yes' : 'No'}</p>
             </div>
         ) : (
-            <p>Loading...</p>
+            <p>Unable to get User Data</p>
         )}
     </div>
 );

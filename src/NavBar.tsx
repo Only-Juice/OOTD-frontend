@@ -6,7 +6,7 @@ import { NavBarProps } from './types';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleTheme, handleLogout, setResults, setError, setSearchPerformed }) => {
+const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleTheme, handleLogout, setResults, setError }) => {
     return (
         <nav className={`navbar navbar-expand-lg d-flex ${theme === 'dark' ? 'bg-gray navbar-dark' : 'bg-white navbar-light'}`} >
             <div className="container-fluid">
@@ -16,7 +16,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleThem
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <div className="container-fluid">
-                        <Search setResults={setResults} setError={setError} setSearchPerformed={setSearchPerformed} />
+                        <Search setResults={setResults} setError={setError} />
                     </div>
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
                         <li className="nav-item">

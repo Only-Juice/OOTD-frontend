@@ -78,13 +78,8 @@ const App: React.FC = () => {
         return response.json();
       })
       .then(data => {
-        if (data.Status) {
-          setUser(data);
-          setUserInfo(data);
-        }
-        else {
-          handleLogout();
-        }
+        setUser(data);
+        setUserInfo(data);
       })
       .catch(error => console.error('Error fetching user info:', error));
   };
@@ -128,10 +123,10 @@ const App: React.FC = () => {
 
         <Routes>
           <Route path="/" element={<Home products={products} />} />
-          <Route path="/search" element={<Search setResults={setSearchResults} setError={setSearchError} />} />
+          {/* <Route path="/search" element={<Search setResults={setSearchResults} setError={setSearchError} />} /> */}
           <Route path="/search-results" element={<SearchResults searchResults={searchResults} searchError={searchError} />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
+          {/* <Route path="/login" element={<Login />} /> */}
           <Route path="/user" element={<UserPage userInfo={userInfo} />} />
         </Routes>
 

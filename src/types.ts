@@ -28,11 +28,7 @@ export interface SearchProps {
 }
 
 export interface SearchResultsProps {
-  searchResults: Array<{
-    ID: string; Name: string; Description: string; Price: number;
-    Quantity: number;
-    Images: string[];
-  }>;
+  searchResults: Product[]
   searchError: string|null;
 }
 
