@@ -1,0 +1,14 @@
+/* index.css */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: white; /* 默認背景顏色 */
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .spinner-container {
+      background-color: black; /* 暗色模式背景顏色 */
+    }
+  }

@@ -1,11 +1,13 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './Home';
-import Cart from './Cart';
-import Login from './Login';
-import UserPage from './UserPage';
-import NavBar from './NavBar';
-import SearchResults from './SearchResults';
+const Home = React.lazy(() => import('./Home'));
+const Cart = React.lazy(() => import('./Cart'));
+const Login = React.lazy(() => import('./Login'));
+const UserPage = React.lazy(() => import('./UserPage'));
+const NavBar = React.lazy(() => import('./NavBar'));
+const SearchResults = React.lazy(() => import('./SearchResults'));
+const ProductResult = React.lazy(() => import('./ProductResult'));
 import './App.css';
 import { Product, User, UserInfo } from './types';
 
@@ -93,6 +95,7 @@ const App: React.FC = () => {
         <Route path="/search" element={<SearchResults />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/user" element={<UserPage userInfo={userInfo} />} />
+        <Route path="/product/:id" element={<ProductResult />} />
         <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
       </Routes>
 

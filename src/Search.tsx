@@ -19,7 +19,7 @@ const Search: React.FC = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="搜尋產品"
             />
-            <button type="submit" className="btn btn-primary">搜尋</button>
+            <button type="submit" className="d-none d-lg-block btn btn-primary">搜尋</button>
         </form>
     );
 };

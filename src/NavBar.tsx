@@ -22,12 +22,13 @@ const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleThem
     return (
         <Navbar bg={theme === 'dark' ? 'dark' : 'light'} variant={theme === 'dark' ? 'dark' : 'light'} expand="lg">
             <Container fluid>
-                <Navbar.Brand as={Link} to="/" style={linkStyle}>Oh Online Tea Delivery</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/" style={linkStyle} className="d-flex align-items-center">
+                    <span className="d-none d-lg-block">Oh Online Tea Delivery</span>
+                    <span className="d-lg-none">OOTD</span>
+                </Navbar.Brand>
+                <Search />
                 <Navbar.Toggle aria-controls="navbarNav" />
                 <Navbar.Collapse id="navbarNav">
-                    <Container fluid>
-                        <Search />
-                    </Container>
                     <Nav className="ms-auto d-flex align-items-center">
                         <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
                             <FontAwesomeIcon icon={faShoppingCart} /> Cart

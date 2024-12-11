@@ -1,7 +1,8 @@
 import React from 'react';
 import ProductSlider from './ProductSlider';
 import { HomeProps } from './types';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
+import ProductCard from './ProductCard';
 
 const Home: React.FC<HomeProps> = ({ products }) => {
     return (
@@ -13,23 +14,8 @@ const Home: React.FC<HomeProps> = ({ products }) => {
 
             <Row>
                 {products.map(product => (
-                    <Col key={product.ID} md={4} className="mb-4">
-                        <Card className="h-100">
-                            <Card.Body>
-                                <Card.Title>{product.Name}</Card.Title>
-                                <Card.Text>{product.Description.split('\n').map((line, index) => (
-                                    <React.Fragment key={index}>
-                                        {line}
-                                        <br />
-                                    </React.Fragment>
-                                ))}</Card.Text>
-                                <Card.Text>Price: {product.Price}</Card.Text>
-                                <Card.Text>Quantity: {product.Quantity}</Card.Text>
-                                {product.Images.map((image, index) => (
-                                    <Card.Img key={index} src={image} alt={product.Name} className="img-fluid mb-2" />
-                                ))}
-                            </Card.Body>
-                        </Card>
+                    <Col key={product.ID} md={4} className='mb-4'>
+                        <ProductCard key={product.ID} product={product} />
                     </Col>
                 ))}
             </Row>
