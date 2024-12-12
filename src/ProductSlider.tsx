@@ -3,6 +3,8 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { ProductSliderProps } from './types';
+import { Container } from 'react-bootstrap';
+import ProductCard from './ProductCard';
 
 const settings = {
     dots: true,
@@ -16,21 +18,13 @@ const settings = {
 
 const ProductSlider: React.FC<ProductSliderProps> = ({ products }) => {
     return (
-        <div className="container mt-4">
+        <Container>
             <Slider {...settings}>
                 {products.map(product => (
-                    <div key={product.ID}>
-                        <h2>{product.Name}</h2>
-                        <p>{product.Description}</p>
-                        <p>Price: {product.Price}</p>
-                        <p>Quantity: {product.Quantity}</p>
-                        {product.Images.map((image, index) => (
-                            <img key={index} src={image} alt={product.Name} width="200" />
-                        ))}
-                    </div>
+                    <ProductCard key={product.ID} product={product} />
                 ))}
             </Slider>
-        </div>
+        </Container>
     );
 };
 
