@@ -1,12 +1,13 @@
-import React ,{ useState, useEffect }from 'react';
+import React, { useState, useEffect } from 'react';
+
 const Cart: React.FC = () => {
     const [Product, setcatchProduct] = useState([]);
-    const [error,seterror] = useState(false);
+    const [error, seterror] = useState(false);
 
     const token = localStorage.getItem('token');
     const fetchUserInfo = (token: string) => {
 
-        fetch('/api/Product/GetCartProducts',{
+        fetch('/api/Product/GetCartProducts', {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -24,36 +25,36 @@ const Cart: React.FC = () => {
                 seterror(true);  // 處理錯誤
             });
     };
-    if(token == null){
-        return(
-            <h1 style={{fontSize: '90px',textAlign: 'center',marginTop:'90px'}}>你他媽的應該要先登入</h1>
+    if (token == null) {
+        return (
+            <h1 style={{ fontSize: '90px', textAlign: 'center', marginTop: '90px' }}>你他媽的應該要先登入</h1>
         )
     }
     fetchUserInfo(token);
 
 
-    if(Product.length !== 0){
-        return(
+    if (Product.length !== 0) {
+        return (
             <div>
-                <h1 style={{fontSize: '100px'}}>Cart Information</h1>
-                <div style={{marginLeft: '100px'}}>
-                    <label style={{fontSize: '36px', display: 'flex'}}>
-                        <input type="checkbox" style={{transform: 'scale(3)', marginRight: '20px'}}/> 全選
+                <h1 style={{ fontSize: '100px' }}>Cart Information</h1>
+                <div style={{ marginLeft: '100px' }}>
+                    <label style={{ fontSize: '36px', display: 'flex' }}>
+                        <input type="checkbox" style={{ transform: 'scale(3)', marginRight: '20px' }} /> 全選
                     </label>
                 </div>
-                <h1 style={{fontSize: '100px',textAlign: 'center'}}> 商品載入中 </h1>
+                <h1 style={{ fontSize: '100px', textAlign: 'center' }}> 商品載入中 </h1>
                 <br></br>
-                <div style={{marginLeft: '100px'}}>
-                    <button style={{transform: 'scale(1.5)'}}>購買</button>
-                    <button style={{marginLeft: '100px', transform: 'scale(1.5)'}}>刪除</button>
+                <div style={{ marginLeft: '100px' }}>
+                    <button style={{ transform: 'scale(1.5)' }}>購買</button>
+                    <button style={{ marginLeft: '100px', transform: 'scale(1.5)' }}>刪除</button>
                 </div>
             </div>
         );
     }
-    else{
+    else {
         return (
             <div>
-                <h1 style={{fontSize: '90px',textAlign: 'center',marginTop:'90px'}}> 你他媽的應該要先買東西再來點那該死的購物車 </h1>
+                <h1 style={{ fontSize: '90px', textAlign: 'center', marginTop: '90px' }}> 你他媽的應該要先買東西再來點那該死的購物車 </h1>
             </div>
         )
     }

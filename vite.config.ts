@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:9000',
+        target: 'https://ootd-api.ruien.me',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
       },

@@ -2,7 +2,7 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { ProductSliderProps } from './types';
+import { ProductSliderProps } from '../types';
 import { Container } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 

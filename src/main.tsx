@@ -1,4 +1,4 @@
-import './index.css';
+import './styles/index.css';
 import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Spinner } from 'react-bootstrap';

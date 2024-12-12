@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Row, Col, Form, Container, Spinner } from 'react-bootstrap';
-import { Product } from './types';
+import { Product } from '../types';
 import ProductCard from './ProductCard';
 
 const SearchResults: React.FC = () => {
