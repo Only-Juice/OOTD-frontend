@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Row, Col, Form, Spinner } from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 import { Product } from '../types';
 import ProductCard from './ProductCard';
 import { useQuery } from '@tanstack/react-query';
+import Loading from './Loading';
 
 const SearchResults: React.FC = () => {
     const [searchResults, setSearchResults] = useState<Product[]>([]);
@@ -55,10 +56,7 @@ const SearchResults: React.FC = () => {
     return (
         <>
             {isPending && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spinner animation="border" />
-                    <span className="ml-2">載入中</span>
-                </div>
+                <Loading />
             )}
             {!isPending && error && <p style={{ color: 'red' }}>{error.message}</p>}
             {!isPending && searchResults.length === 0 && !error && <p>找不到相關結果</p>}

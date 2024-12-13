@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Row, Col, ListGroup, Accordion, Spinner, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import Loading from './Loading';
 
 interface OrderDetail {
     ID: number;
@@ -81,10 +82,7 @@ const UserOrders: React.FC = () => {
     return (
         <>
             {isPending && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spinner animation="border" />
-                    <span className="ml-2">載入中</span>
-                </div>
+                <Loading />
             )}
             {error && <p style={{ color: 'red' }}>{error.message}</p>}
 

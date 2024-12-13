@@ -1,9 +1,10 @@
 import React from 'react';
 import ProductSlider from './ProductSlider';
-import { Row, Col, Spinner } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 import { useQuery } from '@tanstack/react-query';
 import { Product } from '../types';
+import Loading from './Loading';
 
 const Home: React.FC = () => {
     const { isPending, error, data } = useQuery({
@@ -19,10 +20,7 @@ const Home: React.FC = () => {
     return (
         <>
             {isPending && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spinner animation="border" />
-                    <span className="ml-2">載入中</span>
-                </div>
+                <Loading />
             )}
             {!isPending && error && <p style={{ color: 'red' }}>{error.message}</p>}
             {!isPending && <>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Spinner } from 'react-bootstrap';
 import ProductContainer from './ProductContainer';
 import { useQuery } from '@tanstack/react-query';
+import Loading from './Loading';
 
 const ProductResult: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -20,10 +20,7 @@ const ProductResult: React.FC = () => {
     return (
         <>
             {isPending && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spinner animation="border" />
-                    <span className="ml-2">載入中</span>
-                </div>
+                <Loading />
             )}
             {!isPending && error && <p style={{ color: 'red' }}>{error.message}</p>}
             {!isPending && !error && !data && <p>找不到相關結果</p>}
