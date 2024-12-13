@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 const Home = React.lazy(() => import('./components/Home'));
 const Cart = React.lazy(() => import('./components/Cart'));
 const Login = React.lazy(() => import('./components/Login'));
@@ -9,15 +9,15 @@ const NavBar = React.lazy(() => import('./components/NavBar'));
 const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const ProductResult = React.lazy(() => import('./components/ProductResult'));
 import './styles/App.css';
-import { Product, User, UserInfo } from './types';
+import { User, UserInfo } from './types';
 import { Container } from 'react-bootstrap';
 
 const App: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean | undefined>(undefined);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState<User | null>(null);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null | undefined>(undefined);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
 
@@ -70,6 +70,7 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    if (isModalOpen === undefined) return;
     if (isModalOpen) {
       handleLogout();
     }
@@ -92,6 +93,8 @@ const App: React.FC = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/user" element={<UserPage userInfo={userInfo} fetchUserInfo={fetchUserInfo} setIsModalOpen={setIsModalOpen} />} />
           <Route path="/product/:id" element={<ProductResult />} />
+          <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
+          <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
           <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
         </Routes>
       </Container>

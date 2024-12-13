@@ -53,7 +53,7 @@ export interface UserInfo {
 }
 
 export interface LoginProps {
-  isModalOpen: boolean;
+  isModalOpen: boolean|undefined;
   setIsModalOpen: (isOpen: boolean) => void;
   email: string;
   setEmail: (email: string) => void;

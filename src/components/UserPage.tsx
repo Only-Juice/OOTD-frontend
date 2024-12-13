@@ -7,7 +7,7 @@ import UserOrders from './UserOrders'; // Assuming you have this component
 // import UserSettings from './UserSettings'; // Assuming you have this component
 
 interface UserPageProps {
-    userInfo: UserInfo | null;
+    userInfo: UserInfo | null | undefined;
     fetchUserInfo: (token: string) => void;
     setIsModalOpen: (isOpen: boolean) => void;
 }
@@ -23,10 +23,13 @@ const UserPage: React.FC<UserPageProps> = ({ userInfo, fetchUserInfo, setIsModal
     useEffect(() => {
         if (token) {
             fetchUserInfo(token);
+        } else {
+            setIsModalOpen(true);
         }
     }, []);
 
     useEffect(() => {
+        if (userInfo === undefined) return;
         if (!userInfo) {
             setToken(null);
             setIsModalOpen(true);

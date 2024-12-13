@@ -2,7 +2,7 @@ import React from "react";
 import { UserInfo } from "../types";
 import { Row, Col, Card } from "react-bootstrap";
 
-const UserProfile: React.FC<{ userInfo: UserInfo | null }> = ({ userInfo }) => (
+const UserProfile: React.FC<{ userInfo: UserInfo | null | undefined }> = ({ userInfo }) => (
     <Row>
         <Col md="auto">
             {userInfo ? (
