@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
-import { LoginProps } from './types';
+import { LoginProps } from '../types';
 
 const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, email, setEmail, password, setPassword, fetchUserInfo }) => {
     const handleLogin = () => {
@@ -18,14 +18,10 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, email, setEm
                 return response.json();
             })
             .then(data => {
-                if (data.Status) {
-                    console.log('Login successful:', data);
-                    localStorage.setItem('token', data.Message);
-                    setIsModalOpen(false);
-                    fetchUserInfo(data.Message);
-                } else {
-                    throw new Error('Login failed');
-                }
+                console.log('Login successful:', data);
+                localStorage.setItem('token', data);
+                setIsModalOpen(false);
+                fetchUserInfo(data);
             })
             .catch(error => console.error('Error logging in:', error));
     };
@@ -45,10 +41,16 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, email, setEm
                         <Form.Label>Password:</Form.Label>
                         <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </Form.Group>
-                    <Button className='mb-3' variant="primary" type="submit">Login</Button>
-                    <Button variant="secondary" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                    <Button className='mb-3' variant="success" type="submit">Login</Button>
                 </Form>
             </Modal.Body>
+            <Modal.Footer>
+                <Button className="me-auto" variant="danger" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                <div className="ms-auto text-end">
+                    <p>Not a member? <a href="#">Sign Up</a></p>
+                    <p>Forgot <a href="#">Password?</a></p>
+                </div>
+            </Modal.Footer>
         </Modal>
     );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Search from './Search';
 import UserBadge from './UserBadge';
-import { NavBarProps } from './types';
+import { NavBarProps } from '../types';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, Container, Button, Form } from 'react-bootstrap';

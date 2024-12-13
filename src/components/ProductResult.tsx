@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Container, Spinner } from 'react-bootstrap';
-import { Product } from './types';
-import { Carousel } from 'react-bootstrap';
+import { Button, Container, Spinner, Carousel } from 'react-bootstrap';
+import { Product } from '../types';
 
 const ProductResult: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);

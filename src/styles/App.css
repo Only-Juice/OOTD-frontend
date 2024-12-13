@@ -93,14 +93,14 @@ h1, h2 {
   padding: 0.5rem;
   border: none;
   border-radius: 5px;
-  background-color: var(--button-background-color);
-  color: var(--button-text-color);
+  /* background-color: var(--button-background-color); */
+  /* color: var(--button-text-color); */
   cursor: pointer;
 }
-
+/* 
 .modal-content button:hover {
   background-color: var(--button-hover-background-color);
-}
+} */
 
 /* 淺色模式 */
 :root {

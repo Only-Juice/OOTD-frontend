@@ -1,6 +1,5 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { UserBadgeProps } from './types';
+import { UserBadgeProps } from '../types';
 import { Badge } from 'react-bootstrap';
 
 const UserBadge: React.FC<UserBadgeProps> = ({ username }) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserInfo } from './types';
+import { UserInfo } from '../types';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 
 const UserPage: React.FC<{ userInfo: UserInfo | null }> = ({ userInfo }) => (

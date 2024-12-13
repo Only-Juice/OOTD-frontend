@@ -1,6 +1,6 @@
 import React from 'react';
 import ProductSlider from './ProductSlider';
-import { HomeProps } from './types';
+import { HomeProps } from '../types';
 import { Container, Row, Col } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 

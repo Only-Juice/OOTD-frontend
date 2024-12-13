@@ -1,15 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-const Home = React.lazy(() => import('./Home'));
-const Cart = React.lazy(() => import('./Cart'));
-const Login = React.lazy(() => import('./Login'));
-const UserPage = React.lazy(() => import('./UserPage'));
-const NavBar = React.lazy(() => import('./NavBar'));
-const SearchResults = React.lazy(() => import('./SearchResults'));
-const ProductResult = React.lazy(() => import('./ProductResult'));
-import './App.css';
+const Home = React.lazy(() => import('./components/Home'));
+const Cart = React.lazy(() => import('./components/Cart'));
+const Login = React.lazy(() => import('./components/Login'));
+const UserPage = React.lazy(() => import('./components/UserPage'));
+const NavBar = React.lazy(() => import('./components/NavBar'));
+const SearchResults = React.lazy(() => import('./components/SearchResults'));
+const ProductResult = React.lazy(() => import('./components/ProductResult'));
+import './styles/App.css';
 import { Product, User, UserInfo } from './types';
+import Order from './components/Order';
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -96,6 +97,7 @@ const App: React.FC = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/user" element={<UserPage userInfo={userInfo} />} />
         <Route path="/product/:id" element={<ProductResult />} />
+        <Route path="/order" element={<Order userInfo={userInfo} setIsModalOpen={setIsModalOpen} />} />
         <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
       </Routes>
 
