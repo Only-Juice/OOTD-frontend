@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { Spinner } from 'react-bootstrap';
 const App = lazy(() => import('./App.tsx'));
 
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Suspense fallback={
@@ -12,5 +13,5 @@ createRoot(document.getElementById('root')!).render(
       </div>}>
       <App />
     </Suspense>
-  </StrictMode>,
+  </StrictMode >,
 )
