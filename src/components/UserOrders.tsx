@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, ListGroup, Accordion, Spinner, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { UserInfo } from '../types';
 
 interface OrderDetail {
     ID: number;
@@ -19,16 +18,10 @@ interface Order {
     Details: OrderDetail[];
 }
 
-interface OrderProps {
-    userInfo: UserInfo | null;
-    setIsModalOpen: (isOpen: boolean) => void;
-}
-
-const UserOrders: React.FC<OrderProps> = ({ userInfo, setIsModalOpen }) => {
+const UserOrders: React.FC<{ token: string | null }> = ({ token }) => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const token = localStorage.getItem('token');
 
     const GetUserOrders = async () => {
         fetch('/api/Order/GetUserOrders', {
@@ -46,28 +39,19 @@ const UserOrders: React.FC<OrderProps> = ({ userInfo, setIsModalOpen }) => {
             })
             .then(data => setOrders(data))
             .catch(() => {
-                setIsModalOpen(true);
                 setLoading(false);
                 setError('Please log in to view your orders');
             });
     }
 
-
     useEffect(() => {
-        setLoading(true);
+        setLoading(token ? true : false);
         if (token) {
             GetUserOrders();
         } else {
-            setIsModalOpen(true);
-            setLoading(false);
-            setError('Please log in to view your orders');
+            setOrders([]);
         }
-    }, []);
-
-    useEffect(() => {
-        GetUserOrders();
-    }, [userInfo]);
-
+    }, [token]);
 
     const calculateTotalQuantity = (details: OrderDetail[]) => {
         return details.reduce((total, detail) => total + detail.Quantity, 0);
@@ -83,7 +67,6 @@ const UserOrders: React.FC<OrderProps> = ({ userInfo, setIsModalOpen }) => {
             '貨件送達',
             '取件完成'
         ];
-
 
         return (
             <div className="d-flex justify-content-between align-items-center flex-column">
@@ -111,12 +94,12 @@ const UserOrders: React.FC<OrderProps> = ({ userInfo, setIsModalOpen }) => {
             {loading && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <Spinner animation="border" />
-                    <span className="ml-2">正在搜尋</span>
+                    <span className="ml-2">載入中</span>
                 </div>
             )}
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            {!loading && !error &&
+            {orders.length != 0 &&
                 <>
                     <h2>My Orders</h2>
                     {orders.map(order => (

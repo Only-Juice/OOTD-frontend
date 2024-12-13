@@ -42,7 +42,7 @@ const ProductResult: React.FC = () => {
             {loading && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <Spinner animation="border" />
-                    <span className="ml-2">正在搜尋</span>
+                    <span className="ml-2">載入中</span>
                 </div>
             )}
             {!loading && searchError && <p style={{ color: 'red' }}>{searchError}</p>}

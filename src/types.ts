@@ -27,9 +27,6 @@ export interface SearchResultsProps {
   searchError: string|null;
 }
 
-export interface HomeProps {
-  products: Product[];
-}
 
 export interface NavBarProps {
   user: {Username: string}|null;

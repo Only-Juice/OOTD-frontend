@@ -13,7 +13,6 @@ import { Product, User, UserInfo } from './types';
 import { Container } from 'react-bootstrap';
 
 const App: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,17 +20,7 @@ const App: React.FC = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  useEffect(() => {
-    fetch('/api/Product/GetAllProducts')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => setProducts(data))
-      .catch(error => console.error('Error fetching products:', error));
-  }, []);
+
 
   const fetchUserInfo = (token: string) => {
     fetch('/api/User/Get', {
@@ -98,10 +87,10 @@ const App: React.FC = () => {
 
       <Container>
         <Routes>
-          <Route path="/" element={<Home products={products} />} />
+          <Route path="/" element={<Home />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/user" element={<UserPage userInfo={userInfo} setIsModalOpen={setIsModalOpen} />} />
+          <Route path="/user" element={<UserPage userInfo={userInfo} fetchUserInfo={fetchUserInfo} setIsModalOpen={setIsModalOpen} />} />
           <Route path="/product/:id" element={<ProductResult />} />
           <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
         </Routes>
