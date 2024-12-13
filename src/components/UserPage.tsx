@@ -1,38 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Row, Col, Nav } from 'react-bootstrap';
 import { UserInfo } from '../types';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import UserProfile from './UserProfile';
+import UserOrders from './UserOrders'; // Assuming you have this component
+// import UserSettings from './UserSettings'; // Assuming you have this component
 
-const UserPage: React.FC<{ userInfo: UserInfo | null }> = ({ userInfo }) => (
-    <Container>
-        <Row className="justify-content-md-center">
-            <Col md="auto">
-                <h2>User Page</h2>
-                {userInfo ? (
-                    <Card>
-                        <Card.Body>
-                            <Card.Text>
-                                <strong>Username:</strong> {userInfo.Username}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>Email:</strong> {userInfo.Email}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>Address:</strong> {userInfo.Address}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>Administrator:</strong> {userInfo.IsAdministrator ? 'Yes' : 'No'}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>Have Store:</strong> {userInfo.HaveStore ? 'Yes' : 'No'}
-                            </Card.Text>
-                        </Card.Body>
-                    </Card>
-                ) : (
-                    <p>Unable to get User Data</p>
-                )}
-            </Col>
-        </Row>
-    </Container>
-);
+const UserPage: React.FC<{ userInfo: UserInfo | null, setIsModalOpen: (isOpen: boolean) => void }> = ({ userInfo, setIsModalOpen }) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const queryParams = new URLSearchParams(location.search);
+    const initialTab = queryParams.get('tab') || 'profile';
+    const [activeKey, setActiveKey] = useState<string>(initialTab);
+
+    useEffect(() => {
+        navigate(`?tab=${activeKey}`, { replace: true });
+    }, [activeKey, navigate]);
+
+    return (
+        <>
+            <Row>
+                <Col md={2}>
+                    <Nav
+                        className="flex-column"
+                        variant="pills"
+                        activeKey={activeKey}
+                        onSelect={(selectedKey) => setActiveKey(selectedKey || '#profile')}
+                    >
+                        <Nav.Item>
+                            <Nav.Link eventKey="profile">Profile</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="orders">Orders</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="settings">Settings</Nav.Link>
+                        </Nav.Item>
+                    </Nav>
+                </Col>
+                <Col md={10}>
+                    {activeKey === 'profile' && <UserProfile userInfo={userInfo} />}
+                    {activeKey === 'orders' && <UserOrders userInfo={userInfo} setIsModalOpen={setIsModalOpen} />}
+                    {/* {activeKey === '#settings' && <UserSettings userInfo={userInfo} />} */}
+                </Col>
+            </Row>
+        </>
+    );
+};
 
 export default UserPage;

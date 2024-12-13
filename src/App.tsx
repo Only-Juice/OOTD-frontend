@@ -10,7 +10,7 @@ const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const ProductResult = React.lazy(() => import('./components/ProductResult'));
 import './styles/App.css';
 import { Product, User, UserInfo } from './types';
-import Order from './components/Order';
+import { Container } from 'react-bootstrap';
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -80,6 +80,12 @@ const App: React.FC = () => {
     setUserInfo(null);
   };
 
+  useEffect(() => {
+    if (isModalOpen) {
+      handleLogout();
+    }
+  }, [isModalOpen]);
+
   return (
     <Router>
       <NavBar
@@ -90,17 +96,16 @@ const App: React.FC = () => {
         handleLogout={handleLogout}
       />
 
-
-      <Routes>
-        <Route path="/" element={<Home products={products} />} />
-        <Route path="/search" element={<SearchResults />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/user" element={<UserPage userInfo={userInfo} />} />
-        <Route path="/product/:id" element={<ProductResult />} />
-        <Route path="/order" element={<Order userInfo={userInfo} setIsModalOpen={setIsModalOpen} />} />
-        <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
-      </Routes>
-
+      <Container>
+        <Routes>
+          <Route path="/" element={<Home products={products} />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/user" element={<UserPage userInfo={userInfo} setIsModalOpen={setIsModalOpen} />} />
+          <Route path="/product/:id" element={<ProductResult />} />
+          <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
+        </Routes>
+      </Container>
       <Login
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}

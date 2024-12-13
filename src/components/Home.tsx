@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 
 const Home: React.FC<HomeProps> = ({ products }) => {
     return (
-        <Container className="mt-5">
+        <>
             <h1 className="mb-4">Products</h1>
             <div className="shadow mb-4">
                 <ProductSlider products={products} />
@@ -19,7 +19,7 @@ const Home: React.FC<HomeProps> = ({ products }) => {
                     </Col>
                 ))}
             </Row>
-        </Container>
+        </ >
     );
 };
 

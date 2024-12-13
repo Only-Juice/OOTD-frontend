@@ -66,7 +66,7 @@ const SearchResults: React.FC = () => {
     };
 
     return (
-        <Container>
+        <>
             {loading && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <Spinner animation="border" />
@@ -103,7 +103,7 @@ const SearchResults: React.FC = () => {
                     </Row>
                 </>
             )}
-        </Container>
+        </>
     );
 };
 

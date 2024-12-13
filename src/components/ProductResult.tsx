@@ -38,7 +38,7 @@ const ProductResult: React.FC = () => {
     }, [id]);
 
     return (
-        <Container>
+        <>
             {loading && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <Spinner animation="border" />
@@ -95,7 +95,7 @@ const ProductResult: React.FC = () => {
                 </div>
             )
             }
-        </Container >
+        </>
     );
 };
 
