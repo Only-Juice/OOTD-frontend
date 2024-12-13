@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {} from 'antd';
 const Home = React.lazy(() => import('./components/Home'));
 const Cart = React.lazy(() => import('./components/Cart'));
 const Login = React.lazy(() => import('./components/Login'));
