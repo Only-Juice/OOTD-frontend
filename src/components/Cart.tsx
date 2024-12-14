@@ -63,12 +63,14 @@ const CartTable:TableColumnsType<ProductInCart> = [
         key: "totalPrice",
         render: (text, record, _) => {
             return record["Quantity"] * record["Price"];
-        }
+        },
+        defaultSortOrder: null,
+        sorter: (a,b) => a.Quantity * a.Price - b.Quantity * b.Price,
     }
 ];
 const Cart: React.FC = () => {
     /* Get Cart Info */
-    const [Product, setcatchProduct] = useState<ProductInCart>([]);
+    const [Product, setcatchProduct] = useState<ProductInCart[]>([]);
     const [hasProduct,sethasProduct] = useState(false);
     const [error, seterror] = useState(false);
     const token = localStorage.getItem('token');
@@ -131,23 +133,33 @@ const Cart: React.FC = () => {
         ) : (
             hasProduct?(
                 <div className="container">
+                    <ul>
+                        {selectkey.map((key, index) => (
+                            <li key={index}>{key}</li>
+                        ))}
+                    </ul>
+                    <ul>
+                        {Product.map((key, index) => (
+                            <li key={index}>{key.ID} {key.key}</li>
+                        ))}
+                    </ul>
                     <h1>Cart Information</h1>
                     <Table<ProductInCart>
-                        rowSelection= {rowSelection}
+                        rowSelection={rowSelection}
                         dataSource={Product}
                         columns={CartTable}
                         footer={() => (
                             <div style={{textAlign: 'right'}}>
-                                {checkboxclick? `Selected ${selectkey.length} items` : 'None of Item choose'}
+                                {checkboxclick ? `Selected ${selectkey.length} items` : 'None of Item choose'}
                                 <Button
-                                    style={{width:'100px',height:'60px',marginRight:'32px'}}
+                                    style={{width: '100px', height: '60px', marginRight: '32px'}}
                                     type="primary"
                                     onClick={ClickBuy}
                                 >
                                     購買
                                 </Button>
                                 <Button
-                                    style={{width:'100px',height:'60px'}}
+                                    style={{width: '100px', height: '60px'}}
                                     type="primary"
                                     onClick={() => console.log('Second Button clicked')}
                                     disabled={!checkboxclick}
@@ -161,7 +173,7 @@ const Cart: React.FC = () => {
                     <br></br>
 
                 </div>
-            ): (
+            ) : (
                 <div className="container">
                     <h1 style={{
                         fontSize: '90px',
