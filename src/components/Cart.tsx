@@ -1,16 +1,13 @@
 import React, { useState,useEffect } from 'react';
-import {Table,Flex,Layout} from 'antd';
-import { Divider, Radio } from 'antd';
+import {Table,Flex,Layout,Button} from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import {Button, Nav} from "react-bootstrap";
-import {Link} from "react-router-dom";
-import UserBadge from "./UserBadge.tsx";
+import {Typography} from 'antd';
 const { Content } = Layout;
 
-/* type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection']; */
+type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 /*handle API object*/
 interface ProductInCart {
-    key: React.key;
+    key: React.Key;
     ID: number;
     Name: string;
     Images: string[];
@@ -35,7 +32,7 @@ const layoutStyle = {
     maxWidth: 'calc(80% - 8px)',
 };
 /*Handle Shopping Cart Table*/
-const CartTable:ColumnsType<ProductInCart> = [
+const CartTable:TableColumnsType<ProductInCart> = [
     {
         title: "圖片",
         dataIndex: "Images",
@@ -100,8 +97,8 @@ const Cart: React.FC = () => {
                 seterror(true);  // 處理錯誤
             });
     };
-    /* Checkbox Modify*/
-    const [selectkey,setselectkey] = useState<React.key[]>([]);
+    /* Table Modify*/
+    const [selectkey,setselectkey] = useState<React.Key[]>([]);
     const SelectChange =  (newSelectedRowKeys: React.Key[]) => {
         setselectkey(newSelectedRowKeys);
     }
@@ -112,6 +109,14 @@ const Cart: React.FC = () => {
     useEffect(() => {
         fetchUserInfo(token);
     }, []);
+    /*Buy and Delete*/
+    const ClickBuy = () =>{
+        setcatchProduct([]);
+    }
+    const ClickDelete = () =>{
+        setcatchProduct([]);
+    }
+    const checkboxclick = selectkey.length > 0;
     return (
         token == null ? (
             <div className="container">
@@ -126,18 +131,35 @@ const Cart: React.FC = () => {
         ) : (
             hasProduct?(
                 <div className="container">
-                    <h1 style={{fontSize: '100px'}}>Cart Information</h1>
+                    <h1>Cart Information</h1>
                     <Table<ProductInCart>
-                        rowSelection={{SelectChange}}
+                        rowSelection= {rowSelection}
                         dataSource={Product}
                         columns={CartTable}
+                        footer={() => (
+                            <div style={{textAlign: 'right'}}>
+                                {checkboxclick? `Selected ${selectkey.length} items` : 'None of Item choose'}
+                                <Button
+                                    style={{width:'100px',height:'60px',marginRight:'32px'}}
+                                    type="primary"
+                                    onClick={ClickBuy}
+                                >
+                                    購買
+                                </Button>
+                                <Button
+                                    style={{width:'100px',height:'60px'}}
+                                    type="primary"
+                                    onClick={() => console.log('Second Button clicked')}
+                                    disabled={!checkboxclick}
+                                >
+                                    刪除
+                                </Button>
+                            </div>
+                        )}
                     >
                     </Table>
                     <br></br>
-                    <div style={{marginLeft: '100px'}}>
-                        <button style={{transform: 'scale(1.5)'}}>購買</button>
-                        <button style={{marginLeft: '100px', transform: 'scale(1.5)'}}>刪除</button>
-                    </div>
+
                 </div>
             ): (
                 <div className="container">
