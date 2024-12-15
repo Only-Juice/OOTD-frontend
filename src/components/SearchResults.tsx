@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Row, Col, Form } from 'react-bootstrap';
-import { Product } from '../types';
+import { SearchProduct } from '../types';
 import ProductCard from './ProductCard';
 import { useQuery } from '@tanstack/react-query';
 import Loading from './Loading';
+import PageButton from './PageButton';
 
 const SearchResults: React.FC = () => {
-    const [searchResults, setSearchResults] = useState<Product[]>([]);
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'default'>('default');
-    const [sortField, setSortField] = useState<'Price' | 'Quantity' | 'default'>('default');
+    const [searchResults, setSearchResults] = useState<SearchProduct | null>();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchWord = queryParams.get('q');
+    const page = parseInt(queryParams.get('page') || '1', 10);
+    const sortOrder = queryParams.get('sortOrder') || true;
+    const sortField = queryParams.get('sortField') || 'Default';
+    const navigate = useNavigate();
 
     const { isPending, error, data } = useQuery({
-        queryKey: [`SearchProducts_${searchWord}`],
+        queryKey: [`SearchProducts_${searchWord}_${page}_${sortField}_${sortOrder}`],
         queryFn: () => {
-            setSearchResults([]);
+            setSearchResults(null);
             if (!searchWord) return Promise.resolve(null);
-            return fetch(`/api/Product/SearchProducts?searchWord=${searchWord}`, {
+            return fetch(`/api/Product/SearchProducts?keyword=${searchWord}&page=${page}&pageLimitNumber=30&orderField=${sortField}&isASC=${sortOrder}`, {
                 method: 'POST',
             }).then((res) => {
                 if (!res.ok) {
@@ -36,31 +39,14 @@ const SearchResults: React.FC = () => {
         }
     }, [data]);
 
-    const handleSort = (field: 'Price' | 'Quantity' | 'default', order: 'asc' | 'desc' | 'default') => {
-        if (field === 'default' && order === 'default') {
-            setSearchResults(data);
-        } else {
-            const sortedResults = [...searchResults].sort((a, b) => {
-                if (order === 'asc') {
-                    return (a[field as 'Price' | 'Quantity'] as number) - (b[field as 'Price' | 'Quantity'] as number);
-                } else {
-                    return (b[field as 'Price' | 'Quantity'] as number) - (a[field as 'Price' | 'Quantity'] as number);
-                }
-            });
-            setSearchResults(sortedResults);
-        }
-        setSortOrder(order);
-        setSortField(field);
-    };
-
     return (
         <>
             {isPending && (
                 <Loading />
             )}
             {!isPending && error && <p style={{ color: 'red' }}>{error.message}</p>}
-            {!isPending && searchResults.length === 0 && !error && <p>找不到相關結果</p>}
-            {!isPending && searchResults.length > 0 && (
+            {!isPending && searchResults && searchResults.Products.length === 0 && !error && <p>找不到相關結果</p>}
+            {!isPending && searchResults && searchResults.Products.length > 0 && (
                 <>
                     <Form.Group controlId="sortSelect" className='mb-4'>
                         <Form.Label>Sort by</Form.Label>
@@ -68,8 +54,7 @@ const SearchResults: React.FC = () => {
                             as="select"
                             value={`${sortField}-${sortOrder}`}
                             onChange={(e) => {
-                                const [field, order] = e.target.value.split('-') as ['Price' | 'Quantity' | 'default', 'asc' | 'desc' | 'default'];
-                                handleSort(field, order);
+                                navigate(`?q=${searchWord}&page=${page}&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
                             }}
                         >
                             <option value="default-default">Default</option>
@@ -80,12 +65,13 @@ const SearchResults: React.FC = () => {
                         </Form.Control>
                     </Form.Group>
                     <Row>
-                        {searchResults.map(product => (
+                        {searchResults.Products.map(product => (
                             <Col key={product.ID} md={4} className='mb-4'>
                                 <ProductCard key={product.ID} product={product} />
                             </Col>
                         ))}
                     </Row>
+                    <PageButton />
                 </>
             )}
         </>

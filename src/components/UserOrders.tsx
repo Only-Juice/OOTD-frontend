@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Row, Col, ListGroup, Accordion, Spinner, ProgressBar } from 'react-bootstrap';
+import { Row, Col, ListGroup, Accordion, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Loading from './Loading';
@@ -109,9 +109,9 @@ const UserOrders: React.FC = () => {
                                                     <Col md={2}>
                                                         <Link to={`/product/${detail.ID}`}>
                                                             {detail.Images.length > 0 ? (
-                                                                <img src={detail.Images[0]} alt={detail.Name} style={{ width: '200px', height: '200px' }} />
+                                                                <img src={detail.Images[0]} alt={detail.Name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                             ) : (
-                                                                <div style={{ width: '200px', height: '200px' }}></div>
+                                                                <div style={{ width: '100%', height: '100%' }}></div>
                                                             )}
                                                         </Link>
                                                     </Col>

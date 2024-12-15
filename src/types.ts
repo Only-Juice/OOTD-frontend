@@ -1,4 +1,9 @@
 // src/types.ts
+
+export interface SearchProduct {
+  PageCount: number;
+  Products: Product[];
+}
 export interface Product {
   ID: number;
   Name: string;
