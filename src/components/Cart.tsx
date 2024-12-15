@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import {Table,Flex,Layout,Button} from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import {Typography} from 'antd';
+import {Link, useNavigate} from 'react-router-dom';
 const { Content } = Layout;
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
@@ -130,6 +130,7 @@ const Cart: React.FC = () => {
             const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
             setcatchProduct(lastproduct);
             setbuyload(false);
+            useNavigate('/cartresult');
             setselectkey([]);
         }, 1000);
     }
@@ -184,14 +185,16 @@ const Cart: React.FC = () => {
                         footer={() => (
                             <div style={{textAlign: 'right',display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
                                 <h3 style={{marginRight:'32px'}}>總價：{total_price}</h3>
-                                <Button
-                                    style={{width: '100px', height: '60px'}}
-                                    type="primary"
-                                    onClick={ClickBuy}
-                                    loading={buyload}
-                                >
-                                    購買
-                                </Button>
+                                <Link to={'/cartresult'}>
+                                    <Button
+                                        style={{width: '100px', height: '60px'}}
+                                        type="primary"
+                                        onClick={ClickBuy}
+                                        loading={buyload}
+                                    >
+                                        購買
+                                    </Button>
+                                </Link>
                             </div>
                         )}
                     >

@@ -8,6 +8,7 @@ const UserPage = React.lazy(() => import('./components/UserPage'));
 const NavBar = React.lazy(() => import('./components/NavBar'));
 const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const ProductResult = React.lazy(() => import('./components/ProductResult'));
+const CartResult = React.lazy(() => import('./components/CartResult'));
 import './styles/App.css';
 import { User, UserInfo } from './types';
 import { Container } from 'react-bootstrap';
@@ -96,6 +97,7 @@ const App: React.FC = () => {
           <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
           <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
           <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
+          <Route path="/cartresult" element={<CartResult />}/>
         </Routes>
       </Container>
       <Login
