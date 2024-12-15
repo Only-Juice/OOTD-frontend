@@ -71,7 +71,7 @@ const SearchResults: React.FC = () => {
                             </Col>
                         ))}
                     </Row>
-                    <PageButton />
+                    <PageButton PageCount={searchResults.PageCount} />
                 </>
             )}
         </>

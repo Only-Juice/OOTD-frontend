@@ -31,7 +31,7 @@ const Home: React.FC = () => {
             {!isLoading && error && <p style={{ color: 'red' }}>{error.message}</p>}
             {!isLoading && <>
                 {data && <>
-                    <h1 className="mb-4">Products</h1>
+                    {page !== 1 && <h1 className="mb-4">全站商品</h1>}
                     {page === 1 &&
                         <div className="shadow mb-4">
                             <ProductSlider products={data.Products} />
@@ -45,10 +45,10 @@ const Home: React.FC = () => {
                         ))}
                     </Row>
                 </>}
-                {!data && <p>Server Offline</p>}
+                {!data && <img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />}
+                <PageButton PageCount={data.PageCount} />
             </>
             }
-            <PageButton />
         </>
     );
 };

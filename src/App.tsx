@@ -69,7 +69,7 @@ const App: React.FC = () => {
             <Route path="/PVC/:id" element={<ProductPVCResult />} />
             <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
-            <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
+            <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
           </Routes>
         </Container>
         <Login
