@@ -24,7 +24,6 @@ const contentStyle: React.CSSProperties = {
     backgroundColor: '#f4f4f4',
     fontSize: '4vw',
 };
-
 const layoutStyle = {
     borderRadius: 16,
     overflow: 'hidden',
@@ -68,6 +67,14 @@ const CartTable:TableColumnsType<ProductInCart> = [
         sorter: (a,b) => a.Quantity * a.Price - b.Quantity * b.Price,
     }
 ];
+function calculatecartPrice(data:{Price:number;Quantity:number;key:React.Key}[],key:React.Key[]):number{
+    return data.reduce((total, product) => {
+        if (key.includes(product.key)) {
+            return total + product.Price * product.Quantity;
+        }
+        return total;
+    }, 0);
+}
 const Cart: React.FC = () => {
     /* Get Cart Info */
     const [Product, setcatchProduct] = useState<ProductInCart[]>([]);
@@ -75,7 +82,6 @@ const Cart: React.FC = () => {
     const [error, seterror] = useState(false);
     const token = localStorage.getItem('token');
     const fetchUserInfo = (token: string) => {
-
         fetch('/api/Product/GetCartProducts', {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -101,6 +107,9 @@ const Cart: React.FC = () => {
     };
     /* Table Modify*/
     const [selectkey,setselectkey] = useState<React.Key[]>([]);
+    const [buyload,setbuyload] = useState(false);
+    const [deleteload,setdeleteload] = useState(false);
+    const total_price = calculatecartPrice(Product,selectkey);
     const SelectChange =  (newSelectedRowKeys: React.Key[]) => {
         setselectkey(newSelectedRowKeys);
     }
@@ -111,14 +120,29 @@ const Cart: React.FC = () => {
     useEffect(() => {
         fetchUserInfo(token);
     }, []);
+    const checkboxclick = selectkey.length > 0;
     /*Buy and Delete*/
     const ClickBuy = () =>{
-        setcatchProduct([]);
+        /* Need fetch post into database.*/
+        const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
+        setbuyload(true);
+        setTimeout(() => {
+            const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
+            setcatchProduct(lastproduct);
+            setbuyload(false);
+            setselectkey([]);
+        }, 1000);
     }
     const ClickDelete = () =>{
-        setcatchProduct([]);
+        const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
+        setdeleteload(true);
+        setTimeout(() => {
+            setcatchProduct(lastproduct);
+            setdeleteload(false);
+            setselectkey([]);
+        }, 1000);
+        /* Need fetch post into database.*/
     }
-    const checkboxclick = selectkey.length > 0;
     return (
         token == null ? (
             <div className="container">
@@ -133,36 +157,20 @@ const Cart: React.FC = () => {
         ) : (
             hasProduct?(
                 <div className="container">
-                    <ul>
-                        {selectkey.map((key, index) => (
-                            <li key={index}>{key}</li>
-                        ))}
-                    </ul>
-                    <ul>
-                        {Product.map((key, index) => (
-                            <li key={index}>{key.ID} {key.key}</li>
-                        ))}
-                    </ul>
                     <h1>Cart Information</h1>
+                    <hr></hr>
                     <Table<ProductInCart>
                         rowSelection={rowSelection}
                         dataSource={Product}
                         columns={CartTable}
                         footer={() => (
                             <div style={{textAlign: 'right'}}>
-                                {checkboxclick ? `Selected ${selectkey.length} items` : 'None of Item choose'}
-                                <Button
-                                    style={{width: '100px', height: '60px', marginRight: '32px'}}
-                                    type="primary"
-                                    onClick={ClickBuy}
-                                >
-                                    購買
-                                </Button>
                                 <Button
                                     style={{width: '100px', height: '60px'}}
                                     type="primary"
-                                    onClick={() => console.log('Second Button clicked')}
+                                    onClick={ClickDelete}
                                     disabled={!checkboxclick}
+                                    loading={deleteload}
                                 >
                                     刪除
                                 </Button>
@@ -170,8 +178,25 @@ const Cart: React.FC = () => {
                         )}
                     >
                     </Table>
-                    <br></br>
+                    <h1>Coupon Information</h1>
+                    <hr></hr>
+                    <Table
+                        footer={() => (
+                            <div style={{textAlign: 'right',display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                                <h3 style={{marginRight:'32px'}}>總價：{total_price}</h3>
+                                <Button
+                                    style={{width: '100px', height: '60px'}}
+                                    type="primary"
+                                    onClick={ClickBuy}
+                                    loading={buyload}
+                                >
+                                    購買
+                                </Button>
+                            </div>
+                        )}
+                    >
 
+                    </Table>
                 </div>
             ) : (
                 <div className="container">
