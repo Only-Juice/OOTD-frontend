@@ -1,38 +1,66 @@
-import React from "react";
-import { UserInfo } from "../types";
+import React, { useEffect } from "react";
 import { Row, Col, Card } from "react-bootstrap";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "./Loading";
 
-const UserProfile: React.FC<{ userInfo: UserInfo | null | undefined }> = ({ userInfo }) => (
-    <Row>
-        <Col md="auto">
-            {userInfo ? (
-                <>
-                    <h2>用戶頁面</h2>
-                    <Card>
-                        <Card.Body>
-                            <Card.Text>
-                                <strong>用戶名稱:</strong> {userInfo.Username}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>電子郵件:</strong> {userInfo.Email}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>地址:</strong> {userInfo.Address}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>管理員權限:</strong> {userInfo.IsAdministrator ? 'Yes' : 'No'}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>擁有商店:</strong> {userInfo.HaveStore ? 'Yes' : 'No'}
-                            </Card.Text>
-                        </Card.Body>
-                    </Card>
-                </>
-            ) : (
-                <></>
-            )}
-        </Col>
-    </Row>
-);
+const UserProfile: React.FC = () => {
+    const { isPending, data, refetch } = useQuery({
+        queryKey: [`UserInfo`],
+        queryFn: () => {
+            if (!localStorage.getItem('token')) return null;
+            return fetch('/api/User/Get', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            }).then((res) => {
+                if (!res.ok) {
+                    localStorage.removeItem('token');
+                    return null;
+                }
+                return res.json();
+            })
+        },
+    });
+
+    useEffect(() => {
+        refetch();
+    }, [localStorage.getItem('token')]);
+
+    return <>
+        {isPending && (
+            <Loading />
+        )}
+        <Row>
+            <Col md="auto">
+                {data ? (
+                    <>
+                        <h2>用戶資訊</h2>
+                        <Card>
+                            <Card.Body>
+                                <Card.Text>
+                                    <strong>用戶名稱:</strong> {data.Username}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>電子郵件:</strong> {data.Email}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>地址:</strong> {data.Address}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>管理員權限:</strong> {data.IsAdministrator ? 'Yes' : 'No'}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>擁有商店:</strong> {data.HaveStore ? 'Yes' : 'No'}
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </>
+                ) : (
+                    <></>
+                )}
+            </Col>
+        </Row>;
+    </>
+};
 
 export default UserProfile;

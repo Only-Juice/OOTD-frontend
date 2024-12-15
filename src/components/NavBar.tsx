@@ -1,13 +1,40 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Search from './Search';
 import UserBadge from './UserBadge';
 import { NavBarProps } from '../types';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, Container, Button, Form } from 'react-bootstrap';
+import { useQuery } from '@tanstack/react-query';
 
-const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleTheme, handleLogout }) => {
+const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout }) => {
+    const navigate = useNavigate();
+    const { data, refetch } = useQuery({
+        queryKey: [`UserInfo`],
+        queryFn: () => {
+            if (!localStorage.getItem('token')) return null;
+            return fetch('/api/User/Get', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            }).then((res) => {
+                if (!res.ok) {
+                    setIsModalOpen(true);
+                    return null;
+                }
+                return res.json();
+            })
+        },
+    });
+
+    useEffect(() => {
+        console.log('Refetching user info');
+        refetch();
+    }, [localStorage.getItem('token')]);
+
+
+
     const linkStyle = {
         color: theme === 'dark' ? 'white' : 'black',
         textDecoration: 'none',
@@ -33,12 +60,12 @@ const NavBar: React.FC<NavBarProps> = ({ user, theme, setIsModalOpen, toggleThem
                         <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
                             <FontAwesomeIcon icon={faShoppingCart} /> Cart
                         </Nav.Link>
-                        {user && user.Username ? (
+                        {data && data.Username ? (
                             <>
                                 <Nav.Link as={Link} to="/user" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
-                                    <UserBadge username={user.Username} />
+                                    <UserBadge username={data.Username} />
                                 </Nav.Link>
-                                <Button variant="link" className="nav-link d-flex align-items-center" onClick={handleLogout} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
+                                <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => { handleLogout(); refetch(); navigate("/"); }} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
                                     Logout
                                 </Button>
                             </>

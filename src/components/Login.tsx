@@ -1,31 +1,63 @@
 import React, { useState } from 'react';
-import { Modal, Form, Button, Alert } from 'react-bootstrap';
+import { Modal, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { LoginProps } from '../types';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, email, setEmail, password, setPassword, fetchUserInfo }) => {
+const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
     const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const { refetch } = useQuery({
+        queryKey: [`UserInfo`],
+        queryFn: () => {
+            if (!localStorage.getItem('token')) return null;
+            return fetch('/api/User/Get', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            }).then((res) => {
+                if (!res.ok) {
+                    setIsModalOpen(true);
+                    return null;
+                }
+                setIsModalOpen(false);
+                setIsLoading(false);
+                return res.json();
+            })
+        },
+    });
 
-    const handleLogin = () => {
-        fetch('/api/User/Login', {
+    const mutation = useMutation({
+        mutationFn: () => fetch('/api/User/Login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ Email: email, Password: password }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    setError('登入失敗');
-                }
-                return response.json();
-            })
-            .then(data => {
+        }).then((res) => {
+            if (!res.ok) {
+                setError('登入失敗');
+                return null;
+            }
+            return res.json();
+        }),
+        onSuccess: (data) => {
+            if (data) {
                 console.log('Login successful:', data);
                 localStorage.setItem('token', data);
-                setIsModalOpen(false);
-                fetchUserInfo(data);
-            })
-            .catch(() => setError('登入失敗'));
+                refetch();
+            }
+        },
+        onError: () => {
+            setError('登入失敗');
+        }
+    });
+
+    const handleLogin = () => {
+        setError(null);
+        setIsLoading(true);
+        mutation.mutate();
     };
 
     return (
@@ -43,7 +75,9 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, email, setEm
                         <Form.Label>密碼:</Form.Label>
                         <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </Form.Group>
-                    <Button className='mb-3' variant="success" type="submit">登入</Button>
+                    <Button className='mb-3' variant="success" type="submit" disabled={isLoading}>
+                        {isLoading ? <Spinner animation="border" size="sm" /> : '登入'}
+                    </Button>
                     {error && <Alert variant="danger">{error}</Alert>}
                 </Form>
             </Modal.Body>
