@@ -13,6 +13,7 @@ import { Container } from 'react-bootstrap';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import GoToTop from './components/GoToTOP';
+import ProductPVCResult from './components/ProductPVCResult';
 
 
 const App: React.FC = () => {
@@ -64,6 +65,8 @@ const App: React.FC = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/user" element={<UserPage setIsModalOpen={setIsModalOpen} />} />
             <Route path="/product/:id" element={<ProductResult />} />
+            <Route path="/products/:id" element={<Navigate to="/product/:id" />} />
+            <Route path="/PVC/:id" element={<ProductPVCResult />} />
             <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />

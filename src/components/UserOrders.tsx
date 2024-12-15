@@ -5,18 +5,19 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from './Loading';
 
 interface OrderDetail {
-    ID: number;
+    PVCID: number;
     Name: string;
-    Images: string[];
     Price: number;
     Quantity: number;
+    Images: string[];
 }
 
 interface Order {
-    ID: number;
+    OrderID: number;
     CreateAt: string;
     Status: string;
     Amount: number;
+    Discount: number;
     Details: OrderDetail[];
 }
 
@@ -90,12 +91,13 @@ const UserOrders: React.FC = () => {
                 <>
                     <h2>我的訂單</h2>
                     {data.map((order: Order) => (
-                        <Accordion className='mb-2' key={order.ID}>
-                            <Accordion.Item eventKey={`${order.ID}`}>
+                        <Accordion className='mb-2' key={order.OrderID}>
+                            <Accordion.Item eventKey={`${order.OrderID}`}>
                                 <Accordion.Header>
                                     <div>
-                                        <strong>訂單編號:</strong> {order.ID} <br />
+                                        <strong>訂單編號:</strong> {order.OrderID} <br />
                                         <strong>訂單日期:</strong> {new Date(order.CreateAt).toLocaleString()} <br />
+                                        <strong>折扣:</strong> {order.Discount === 1 ? '無折扣' : `${order.Discount * 10}折`} <br />
                                         <strong>狀態:</strong> {order.Status} <br />
                                         {getStatusTimeline(order.Status)}
                                         <strong>總金額:</strong> NT${order.Amount}
@@ -104,10 +106,10 @@ const UserOrders: React.FC = () => {
                                 <Accordion.Body>
                                     <ListGroup variant="flush">
                                         {order.Details.map(detail => (
-                                            <ListGroup.Item key={detail.ID}>
+                                            <ListGroup.Item key={detail.PVCID}>
                                                 <Row>
                                                     <Col md={2}>
-                                                        <Link to={`/product/${detail.ID}`}>
+                                                        <Link to={`/PVC/${detail.PVCID}`}>
                                                             {detail.Images.length > 0 ? (
                                                                 <img src={detail.Images[0]} alt={detail.Name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                             ) : (
@@ -116,7 +118,7 @@ const UserOrders: React.FC = () => {
                                                         </Link>
                                                     </Col>
                                                     <Col md={6}>
-                                                        <Link to={`/product/${detail.ID}`}>
+                                                        <Link to={`/PVC/${detail.PVCID}`}>
                                                             <h5>{detail.Name}</h5>
                                                         </Link>
                                                     </Col>
