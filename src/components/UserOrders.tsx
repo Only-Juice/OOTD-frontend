@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, ListGroup, Accordion, Spinner } from 'react-bootstrap';
+import { Row, Col, ListGroup, Accordion, Spinner, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { UserInfo } from '../types';
 
 interface OrderDetail {
     ID: number;
@@ -19,16 +18,10 @@ interface Order {
     Details: OrderDetail[];
 }
 
-interface OrderProps {
-    userInfo: UserInfo | null;
-    setIsModalOpen: (isOpen: boolean) => void;
-}
-
-const Order: React.FC<OrderProps> = ({ userInfo, setIsModalOpen }) => {
+const UserOrders: React.FC<{ token: string | null }> = ({ token }) => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const token = localStorage.getItem('token');
 
     const GetUserOrders = async () => {
         fetch('/api/Order/GetUserOrders', {
@@ -46,54 +39,78 @@ const Order: React.FC<OrderProps> = ({ userInfo, setIsModalOpen }) => {
             })
             .then(data => setOrders(data))
             .catch(() => {
-                setIsModalOpen(true);
                 setLoading(false);
                 setError('Please log in to view your orders');
             });
     }
 
-
     useEffect(() => {
-        setLoading(true);
+        setLoading(token ? true : false);
         if (token) {
             GetUserOrders();
         } else {
-            setIsModalOpen(true);
-            setLoading(false);
-            setError('Please log in to view your orders');
+            setOrders([]);
         }
-    }, []);
-
-    useEffect(() => {
-        GetUserOrders();
-    }, [userInfo]);
-
+    }, [token]);
 
     const calculateTotalQuantity = (details: OrderDetail[]) => {
         return details.reduce((total, detail) => total + detail.Quantity, 0);
     };
 
+    const getStatusTimeline = (status: string) => {
+        const statuses = [
+            '未審查',
+            '不通過',
+            '已通過',
+            '配送中',
+            '轉運作業中',
+            '貨件送達',
+            '取件完成'
+        ];
+
+        return (
+            <div className="d-flex justify-content-between align-items-center flex-column">
+                <ProgressBar
+                    now={statuses.indexOf(status) * 100 / (statuses.length - 1)}
+                    variant='primary'
+                    style={{ width: '100%', margin: '0 auto' }}
+                >
+                </ProgressBar>
+                <div className="d-flex justify-content-between align-items-center w-100 mt-2">
+                    {statuses.map((s, index) => (
+                        <div key={index}>
+                            <div className={`d-flex align-items-center justify-content-center p-2 ${status === s ? 'bg-primary text-white' : 'bg-light'}`}>
+                                {s}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div >
+        );
+    };
+
     return (
-        <Container>
+        <>
             {loading && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <Spinner animation="border" />
-                    <span className="ml-2">正在搜尋</span>
+                    <span className="ml-2">載入中</span>
                 </div>
             )}
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            {!loading && !error &&
+            {orders.length != 0 &&
                 <>
                     <h2>My Orders</h2>
                     {orders.map(order => (
-                        <Accordion className='mb-2'>
-                            <Accordion.Item eventKey="0">
+                        <Accordion className='mb-2' key={order.ID}>
+                            <Accordion.Item eventKey={`${order.ID}`}>
                                 <Accordion.Header>
                                     <div>
                                         <strong>訂單編號:</strong> {order.ID} <br />
                                         <strong>訂單日期:</strong> {new Date(order.CreateAt).toLocaleString()} <br />
                                         <strong>狀態:</strong> {order.Status} <br />
+                                        {getStatusTimeline(order.Status)}
                                         <strong>總金額:</strong> NT${order.Amount}
                                     </div>
                                 </Accordion.Header>
@@ -145,8 +162,8 @@ const Order: React.FC<OrderProps> = ({ userInfo, setIsModalOpen }) => {
                     }
                 </>
             }
-        </Container>
+        </>
     );
 };
 
-export default Order;
+export default UserOrders;

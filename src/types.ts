@@ -27,9 +27,6 @@ export interface SearchResultsProps {
   searchError: string|null;
 }
 
-export interface HomeProps {
-  products: Product[];
-}
 
 export interface NavBarProps {
   user: {Username: string}|null;
@@ -56,7 +53,7 @@ export interface UserInfo {
 }
 
 export interface LoginProps {
-  isModalOpen: boolean;
+  isModalOpen: boolean|undefined;
   setIsModalOpen: (isOpen: boolean) => void;
   email: string;
   setEmail: (email: string) => void;
