@@ -27,8 +27,8 @@ const contentStyle: React.CSSProperties = {
 const layoutStyle = {
     borderRadius: 16,
     overflow: 'hidden',
-    width: 'calc(80% - 8px)',
-    maxWidth: 'calc(80% - 8px)',
+    width: 'calc(90% - 8px)',
+    maxWidth: 'calc(90% - 8px)',
 };
 /*Handle Shopping Cart Table*/
 const CartTable:TableColumnsType<ProductInCart> = [

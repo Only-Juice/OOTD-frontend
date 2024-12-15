@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import {} from 'antd';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 const Home = React.lazy(() => import('./components/Home'));
 const Cart = React.lazy(() => import('./components/Cart'));
 const Login = React.lazy(() => import('./components/Login'));
@@ -10,29 +9,18 @@ const NavBar = React.lazy(() => import('./components/NavBar'));
 const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const ProductResult = React.lazy(() => import('./components/ProductResult'));
 import './styles/App.css';
-import { Product, User, UserInfo } from './types';
-import Order from './components/Order';
+import { User, UserInfo } from './types';
+import { Container } from 'react-bootstrap';
 
 const App: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean | undefined>(undefined);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState<User | null>(null);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null | undefined>(undefined);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  useEffect(() => {
-    fetch('/api/Product/GetAllProducts')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => setProducts(data))
-      .catch(error => console.error('Error fetching products:', error));
-  }, []);
+
 
   const fetchUserInfo = (token: string) => {
     fetch('/api/User/Get', {
@@ -81,6 +69,13 @@ const App: React.FC = () => {
     setUserInfo(null);
   };
 
+  useEffect(() => {
+    if (isModalOpen === undefined) return;
+    if (isModalOpen) {
+      handleLogout();
+    }
+  }, [isModalOpen]);
+
   return (
     <Router>
       <NavBar
@@ -91,17 +86,18 @@ const App: React.FC = () => {
         handleLogout={handleLogout}
       />
 
-
-      <Routes>
-        <Route path="/" element={<Home products={products} />} />
-        <Route path="/search" element={<SearchResults />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/user" element={<UserPage userInfo={userInfo} />} />
-        <Route path="/product/:id" element={<ProductResult />} />
-        <Route path="/order" element={<Order userInfo={userInfo} setIsModalOpen={setIsModalOpen} />} />
-        <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
-      </Routes>
-
+      <Container>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/user" element={<UserPage userInfo={userInfo} fetchUserInfo={fetchUserInfo} setIsModalOpen={setIsModalOpen} />} />
+          <Route path="/product/:id" element={<ProductResult />} />
+          <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
+          <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
+          <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" />} />
+        </Routes>
+      </Container>
       <Login
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
