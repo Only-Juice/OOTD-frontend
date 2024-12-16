@@ -61,7 +61,7 @@ const UserProfile: React.FC = () => {
                     <></>
                 )}
             </Col>
-        </Row>;
+        </Row>
     </>
 };
 
