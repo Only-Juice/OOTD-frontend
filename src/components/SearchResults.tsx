@@ -17,7 +17,7 @@ const SearchResults: React.FC = () => {
     const sortField = queryParams.get('sortField') || 'Default';
     const navigate = useNavigate();
 
-    const { isPending, error, data } = useQuery({
+    const { isLoading, error, data } = useQuery({
         queryKey: [`SearchProducts_${searchWord}_${page}_${sortField}_${sortOrder}`],
         queryFn: () => {
             setSearchResults(null);
@@ -41,12 +41,12 @@ const SearchResults: React.FC = () => {
 
     return (
         <>
-            {isPending && (
+            {isLoading && (
                 <Loading />
             )}
-            {!isPending && error && <p style={{ color: 'red' }}>{error.message}</p>}
-            {!isPending && searchResults && searchResults.Products.length === 0 && !error && <p>找不到相關結果</p>}
-            {!isPending && searchResults && searchResults.Products.length > 0 && (
+            {!isLoading && error && <p style={{ color: 'red' }}>{error.message}</p>}
+            {!isLoading && !searchResults && !error && <p>找不到相關結果</p>}
+            {!isLoading && searchResults && searchResults.Products.length > 0 && (
                 <>
                     <Form.Group controlId="sortSelect" className='mb-4'>
                         <Form.Label>Sort by</Form.Label>
@@ -57,11 +57,12 @@ const SearchResults: React.FC = () => {
                                 navigate(`?q=${searchWord}&page=${page}&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
                             }}
                         >
-                            <option value="default-default">Default</option>
-                            <option value="Price-asc">Price (Ascending)</option>
-                            <option value="Price-desc">Price (Descending)</option>
-                            <option value="Quantity-asc">Quantity (Ascending)</option>
-                            <option value="Quantity-desc">Quantity (Descending)</option>
+                            <option value="Default-true">Default (Ascending)</option>
+                            <option value="Default-false">Default (Descending)</option>
+                            <option value="Price-true">Price (Ascending)</option>
+                            <option value="Price-false">Price (Descending)</option>
+                            <option value="Quantity-true">Quantity (Ascending)</option>
+                            <option value="Quantity-false">Quantity (Descending)</option>
                         </Form.Control>
                     </Form.Group>
                     <Row>
