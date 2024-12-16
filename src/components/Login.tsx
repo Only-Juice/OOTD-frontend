@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Modal, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { LoginProps } from '../types';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Swal from 'sweetalert2';
 
 const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
     const navigate = useNavigate();
@@ -10,6 +11,18 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+
     const { refetch } = useQuery({
         queryKey: [`UserInfo`],
         queryFn: () => {
@@ -23,8 +36,16 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
                     setIsModalOpen(true);
                     return null;
                 }
+                {
+                    isModalOpen &&
+                    Toast.fire({
+                        icon: "success",
+                        title: "登入成功"
+                    });
+                }
                 setIsModalOpen(false);
                 setIsLoading(false);
+
                 return res.json();
             })
         },
