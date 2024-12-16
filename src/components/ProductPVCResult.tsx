@@ -4,11 +4,11 @@ import ProductContainer from './ProductContainer';
 import { useQuery } from '@tanstack/react-query';
 import Loading from './Loading';
 
-const ProductResult: React.FC = () => {
+const ProductPVCResult: React.FC = () => {
     const { id } = useParams<{ id: string }>();
 
     const { isPending, error, data } = useQuery({
-        queryKey: [`GetProduct_${id}`], queryFn: () => fetch(`/api/Product/GetProduct?id=${id}`).then((res) => {
+        queryKey: [`GetProdcutByPVCID_${id}`], queryFn: () => fetch(`/api/Product/GetProdcutByPVCID?PVCID=${id}`).then((res) => {
             if (!res.ok) {
                 return null;
             }
@@ -32,4 +32,4 @@ const ProductResult: React.FC = () => {
     );
 };
 
-export default ProductResult;
+export default ProductPVCResult;

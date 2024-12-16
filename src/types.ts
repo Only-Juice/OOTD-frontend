@@ -1,4 +1,9 @@
 // src/types.ts
+
+export interface SearchProduct {
+  PageCount: number;
+  Products: Product[];
+}
 export interface Product {
   ID: number;
   Name: string;
@@ -29,7 +34,6 @@ export interface SearchResultsProps {
 
 
 export interface NavBarProps {
-  user: {Username: string}|null;
   theme: 'light'|'dark';
   setIsModalOpen: (isOpen: boolean) => void;
   toggleTheme: () => void;
@@ -55,9 +59,4 @@ export interface UserInfo {
 export interface LoginProps {
   isModalOpen: boolean|undefined;
   setIsModalOpen: (isOpen: boolean) => void;
-  email: string;
-  setEmail: (email: string) => void;
-  password: string;
-  setPassword: (password: string) => void;
-  fetchUserInfo: (token: string) => void;
 }

@@ -1,57 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { Row, Col, ListGroup, Accordion, Spinner, ProgressBar } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { Row, Col, ListGroup, Accordion, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import Loading from './Loading';
 
 interface OrderDetail {
-    ID: number;
+    PVCID: number;
     Name: string;
-    Images: string[];
     Price: number;
     Quantity: number;
+    Images: string[];
 }
 
 interface Order {
-    ID: number;
+    OrderID: number;
     CreateAt: string;
     Status: string;
     Amount: number;
+    Discount: number;
     Details: OrderDetail[];
 }
 
-const UserOrders: React.FC<{ token: string | null }> = ({ token }) => {
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const GetUserOrders = async () => {
-        fetch('/api/Order/GetUserOrders', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+const UserOrders: React.FC = () => {
+    const { isPending, error, data, refetch } = useQuery({
+        queryKey: [`UserOrders`],
+        queryFn: () => {
+            if (!localStorage.getItem('token')) return null;
+            return fetch('/api/Order/GetUserOrders', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            }).then((res) => {
+                if (!res.ok) {
+                    localStorage.removeItem('token');
+                    return null;
                 }
-                setLoading(false);
-                setError(null);
-                return response.json();
+                return res.json();
             })
-            .then(data => setOrders(data))
-            .catch(() => {
-                setLoading(false);
-                setError('Please log in to view your orders');
-            });
-    }
+        },
+    });
 
     useEffect(() => {
-        setLoading(token ? true : false);
-        if (token) {
-            GetUserOrders();
-        } else {
-            setOrders([]);
-        }
-    }, [token]);
+        refetch();
+    }, [localStorage.getItem('token')]);
 
     const calculateTotalQuantity = (details: OrderDetail[]) => {
         return details.reduce((total, detail) => total + detail.Quantity, 0);
@@ -91,24 +82,22 @@ const UserOrders: React.FC<{ token: string | null }> = ({ token }) => {
 
     return (
         <>
-            {loading && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spinner animation="border" />
-                    <span className="ml-2">載入中</span>
-                </div>
+            {isPending && (
+                <Loading />
             )}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p style={{ color: 'red' }}>{error.message}</p>}
 
-            {orders.length != 0 &&
+            {data &&
                 <>
-                    <h2>My Orders</h2>
-                    {orders.map(order => (
-                        <Accordion className='mb-2' key={order.ID}>
-                            <Accordion.Item eventKey={`${order.ID}`}>
+                    <h2>我的訂單</h2>
+                    {data.map((order: Order) => (
+                        <Accordion className='mb-2' key={order.OrderID}>
+                            <Accordion.Item eventKey={`${order.OrderID}`}>
                                 <Accordion.Header>
                                     <div>
-                                        <strong>訂單編號:</strong> {order.ID} <br />
+                                        <strong>訂單編號:</strong> {order.OrderID} <br />
                                         <strong>訂單日期:</strong> {new Date(order.CreateAt).toLocaleString()} <br />
+                                        <strong>折扣:</strong> {order.Discount === 1 ? '無折扣' : `${order.Discount * 10}折`} <br />
                                         <strong>狀態:</strong> {order.Status} <br />
                                         {getStatusTimeline(order.Status)}
                                         <strong>總金額:</strong> NT${order.Amount}
@@ -117,19 +106,19 @@ const UserOrders: React.FC<{ token: string | null }> = ({ token }) => {
                                 <Accordion.Body>
                                     <ListGroup variant="flush">
                                         {order.Details.map(detail => (
-                                            <ListGroup.Item key={detail.ID}>
+                                            <ListGroup.Item key={detail.PVCID}>
                                                 <Row>
                                                     <Col md={2}>
-                                                        <Link to={`/product/${detail.ID}`}>
+                                                        <Link to={`/PVC/${detail.PVCID}`}>
                                                             {detail.Images.length > 0 ? (
-                                                                <img src={detail.Images[0]} alt={detail.Name} style={{ width: '200px', height: '200px' }} />
+                                                                <img src={detail.Images[0]} alt={detail.Name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                             ) : (
-                                                                <div style={{ width: '200px', height: '200px' }}></div>
+                                                                <div style={{ width: '100%', height: '100%' }}></div>
                                                             )}
                                                         </Link>
                                                     </Col>
                                                     <Col md={6}>
-                                                        <Link to={`/product/${detail.ID}`}>
+                                                        <Link to={`/PVC/${detail.PVCID}`}>
                                                             <h5>{detail.Name}</h5>
                                                         </Link>
                                                     </Col>
