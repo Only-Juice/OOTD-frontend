@@ -35,9 +35,9 @@ nav ul li button:hover, nav ul li a:hover {
   text-decoration: underline;
 }
 
-h1, h2 {
+/* h1, h2 {
   color: var(--heading-color);
-}
+} */
 
 .container {
   padding: 2rem;

@@ -20,7 +20,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ products }) => {
     return (
         <Container>
             <Slider {...settings}>
-                {products.map(product => (
+                {Array.isArray(products) && products.slice(0, 5).map(product => (
                     <ProductCard key={product.ID} product={product} />
                 ))}
             </Slider>

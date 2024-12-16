@@ -1,52 +1,52 @@
 import React from 'react';
 import ProductSlider from './ProductSlider';
-import { Row, Col, Spinner } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import ProductCard from './ProductCard';
+import { useQuery } from '@tanstack/react-query';
 import { Product } from '../types';
-import { useState, useEffect } from 'react';
+import Loading from './Loading';
+import PageButton from './PageButton';
+import { useLocation } from 'react-router-dom';
 
 const Home: React.FC = () => {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [products, setProducts] = useState<Product[]>([]);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const page = parseInt(queryParams.get('page') || '1', 10);
 
+    const { isLoading, error, data } = useQuery({
+        queryKey: [`GetAllProducts_${page}`], queryFn: () => fetch(`/api/Product/GetAllProducts?page=${page}&pageLimitNumber=15`).then((res) => {
+            if (!res.ok) {
+                return null;
+            }
+            return res.json();
+        })
+    },
+    );
 
-    useEffect(() => {
-        setLoading(true);
-
-        fetch('/api/Product/GetAllProducts')
-            .then(response => {
-                if (!response.ok) {
-                    setError('搜尋過程中發生錯誤');
-                }
-                setLoading(false);
-                return response.json();
-            })
-            .then(data => setProducts(data))
-            .catch(() => setError(`搜尋過程中發生錯誤`));
-    }, []);
     return (
         <>
-            {loading && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spinner animation="border" />
-                    <span className="ml-2">載入中</span>
-                </div>
+            {isLoading && (
+                <Loading />
             )}
-            {!loading && error && <p style={{ color: 'red' }}>{error}</p>}
-            {!loading && <>
-                <h1 className="mb-4">Products</h1>
-                <div className="shadow mb-4">
-                    <ProductSlider products={products} />
-                </div>
-
-                <Row>
-                    {products.map(product => (
-                        <Col key={product.ID} md={4} className='mb-4'>
-                            <ProductCard key={product.ID} product={product} />
-                        </Col>
-                    ))}
-                </Row>
+            {!isLoading && error && <p style={{ color: 'red' }}>{error.message}</p>}
+            {!isLoading && <>
+                {data && <>
+                    {page !== 1 && <h1 className="mb-4">全站商品</h1>}
+                    {page === 1 &&
+                        <div className="shadow mb-4">
+                            <ProductSlider products={data.Products} />
+                        </div>
+                    }
+                    <Row>
+                        {Array.isArray(data.Products) && data.Products.map((product: Product) => (
+                            <Col key={product.ID} md={4} className='mb-4'>
+                                <ProductCard key={product.ID} product={product} />
+                            </Col>
+                        ))}
+                    </Row>
+                </>}
+                {!data && <img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />}
+                <PageButton PageCount={data.PageCount} />
             </>
             }
         </>

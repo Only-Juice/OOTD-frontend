@@ -1,81 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Row, Col, Form, Container, Spinner } from 'react-bootstrap';
-import { Product } from '../types';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Row, Col, Form } from 'react-bootstrap';
+import { SearchProduct } from '../types';
 import ProductCard from './ProductCard';
+import { useQuery } from '@tanstack/react-query';
+import Loading from './Loading';
+import PageButton from './PageButton';
 
 const SearchResults: React.FC = () => {
-    const [searchResults, setSearchResults] = useState<Product[]>([]);
-    const [originalResults, setOriginalResults] = useState<Product[]>([]);
-    const [searchError, setSearchError] = useState<string | null>(null);
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'default'>('default');
-    const [sortField, setSortField] = useState<'Price' | 'Quantity' | 'default'>('default');
-    const [loading, setLoading] = useState<boolean>(false);
+    const [searchResults, setSearchResults] = useState<SearchProduct | null>();
     const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const searchWord = queryParams.get('q');
+    const page = parseInt(queryParams.get('page') || '1', 10);
+    const sortOrder = queryParams.get('sortOrder') || true;
+    const sortField = queryParams.get('sortField') || 'Default';
+    const navigate = useNavigate();
+
+    const { isLoading, error, data } = useQuery({
+        queryKey: [`SearchProducts_${searchWord}_${page}_${sortField}_${sortOrder}`],
+        queryFn: () => {
+            setSearchResults(null);
+            if (!searchWord) return Promise.resolve(null);
+            return fetch(`/api/Product/SearchProducts?keyword=${searchWord}&page=${page}&pageLimitNumber=30&orderField=${sortField}&isASC=${sortOrder}`, {
+                method: 'POST',
+            }).then((res) => {
+                if (!res.ok) {
+                    return null;
+                }
+                return res.json();
+            })
+        },
+    });
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        const searchWord = queryParams.get('q');
-
-        if (searchWord) {
-            setLoading(true);
-            fetch(`/api/Product/SearchProducts?searchWord=${searchWord}`, {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                },
-                body: '',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    setLoading(false);
-                    if (data.length === 0) {
-                        setSearchError('找不到相關結果');
-                        setSearchResults([]);
-                        setOriginalResults([]);
-                    } else {
-                        setSearchError(null);
-                        setSearchResults(data);
-                        setOriginalResults(data);
-                    }
-                })
-                .catch(() => {
-                    setLoading(false);
-                    setSearchError('搜尋過程中發生錯誤');
-                    setSearchResults([]);
-                    setOriginalResults([]);
-                });
+        if (data) {
+            setSearchResults(data);
         }
-    }, [location.search]);
-
-    const handleSort = (field: 'Price' | 'Quantity' | 'default', order: 'asc' | 'desc' | 'default') => {
-        if (field === 'default' && order === 'default') {
-            setSearchResults(originalResults);
-        } else {
-            const sortedResults = [...searchResults].sort((a, b) => {
-                if (order === 'asc') {
-                    return (a[field as 'Price' | 'Quantity'] as number) - (b[field as 'Price' | 'Quantity'] as number);
-                } else {
-                    return (b[field as 'Price' | 'Quantity'] as number) - (a[field as 'Price' | 'Quantity'] as number);
-                }
-            });
-            setSearchResults(sortedResults);
-        }
-        setSortOrder(order);
-        setSortField(field);
-    };
+    }, [data]);
 
     return (
         <>
-            {loading && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spinner animation="border" />
-                    <span className="ml-2">載入中</span>
-                </div>
+            {isLoading && (
+                <Loading />
             )}
-            {!loading && searchError && <p style={{ color: 'red' }}>{searchError}</p>}
-            {!loading && searchResults.length === 0 && !searchError && <p>找不到相關結果</p>}
-            {!loading && searchResults.length > 0 && (
+            {!isLoading && error && <p style={{ color: 'red' }}>{error.message}</p>}
+            {!isLoading && !searchResults && !error && <p>找不到相關結果</p>}
+            {!isLoading && searchResults && searchResults.Products.length > 0 && (
                 <>
                     <Form.Group controlId="sortSelect" className='mb-4'>
                         <Form.Label>Sort by</Form.Label>
@@ -83,24 +54,25 @@ const SearchResults: React.FC = () => {
                             as="select"
                             value={`${sortField}-${sortOrder}`}
                             onChange={(e) => {
-                                const [field, order] = e.target.value.split('-') as ['Price' | 'Quantity' | 'default', 'asc' | 'desc' | 'default'];
-                                handleSort(field, order);
+                                navigate(`?q=${searchWord}&page=${page}&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
                             }}
                         >
-                            <option value="default-default">Default</option>
-                            <option value="Price-asc">Price (Ascending)</option>
-                            <option value="Price-desc">Price (Descending)</option>
-                            <option value="Quantity-asc">Quantity (Ascending)</option>
-                            <option value="Quantity-desc">Quantity (Descending)</option>
+                            <option value="Default-true">Default (Ascending)</option>
+                            <option value="Default-false">Default (Descending)</option>
+                            <option value="Price-true">Price (Ascending)</option>
+                            <option value="Price-false">Price (Descending)</option>
+                            <option value="Quantity-true">Quantity (Ascending)</option>
+                            <option value="Quantity-false">Quantity (Descending)</option>
                         </Form.Control>
                     </Form.Group>
                     <Row>
-                        {searchResults.map(product => (
+                        {searchResults.Products.map(product => (
                             <Col key={product.ID} md={4} className='mb-4'>
                                 <ProductCard key={product.ID} product={product} />
                             </Col>
                         ))}
                     </Row>
+                    <PageButton PageCount={searchResults.PageCount} />
                 </>
             )}
         </>
