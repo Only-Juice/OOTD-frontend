@@ -2,8 +2,21 @@ import React, { useState, useEffect } from "react";
 import { Card, Form, Button, Spinner } from "react-bootstrap";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Loading from "./Loading";
+import Swal from 'sweetalert2';
+
 
 const UserProfile: React.FC = () => {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
     const { isLoading, data, refetch } = useQuery({
         queryKey: [`UserInfo`],
         queryFn: () => {
@@ -55,6 +68,10 @@ const UserProfile: React.FC = () => {
             return null;
         }),
         onSuccess: () => {
+            Toast.fire({
+                icon: "success",
+                title: "修改個人檔案成功"
+            });
             setIsEditing(false);
             refetch();
             setIsModify(false);
