@@ -8,6 +8,7 @@ import UserBadge from './UserBadge';
 import { useQuery } from '@tanstack/react-query';
 import Loading from './Loading';
 import { FaPen } from "react-icons/fa";
+import ChangePassword from './ChangePassword';
 
 
 interface UserPageProps {
@@ -20,6 +21,7 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
     const queryParams = new URLSearchParams(location.search);
     const initialTab = queryParams.get('tab') || 'profile';
     const [activeKey, setActiveKey] = useState<string>(initialTab);
+    const changePassword = queryParams.get('changePassword')
 
     const { isPending, data, refetch } = useQuery({
         queryKey: [`UserInfo`],
@@ -48,8 +50,18 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
     }, [localStorage.getItem('token')]);
 
     useEffect(() => {
-        navigate(`?tab=${activeKey}`, { replace: true });
-    }, [activeKey, navigate]);
+        const newQueryParams = new URLSearchParams(queryParams.toString());
+        newQueryParams.set('tab', activeKey);
+        navigate(`?${newQueryParams.toString()}`, { replace: true });
+    }, []);
+
+    const changeActiveKey = (key: string) => {
+        const newQueryParams = new URLSearchParams(queryParams.toString());
+        newQueryParams.delete('changePassword');
+        newQueryParams.set('tab', key);
+        navigate(`?${newQueryParams.toString()}`, { replace: true });
+        setActiveKey(key);
+    }
 
     return (
         <>
@@ -62,7 +74,7 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
                             className="flex-column"
                             variant="pills"
                             activeKey={activeKey}
-                            onSelect={(selectedKey) => setActiveKey(selectedKey || '#profile')}
+                            onSelect={(selectedKey) => changeActiveKey(selectedKey || '#profile')}
                         >
                             <div className='mb-2'>
                                 {data && data.Username && <>
@@ -85,8 +97,9 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
                         </Nav>
                     </Col>
                     <Col md={10}>
-                        {activeKey === 'profile' && <UserProfile />}
+                        {!changePassword && activeKey === 'profile' && <UserProfile />}
                         {activeKey === 'orders' && <UserOrders />}
+                        {changePassword && <ChangePassword />}
                         {/* {activeKey === '#settings' && <UserSettings userInfo={userInfo} />} */}
                     </Col>
                 </Row>}

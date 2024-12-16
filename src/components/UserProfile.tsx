@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, Form, Button, Spinner } from "react-bootstrap";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Loading from "./Loading";
@@ -6,6 +7,7 @@ import Swal from 'sweetalert2';
 
 
 const UserProfile: React.FC = () => {
+    const navigate = useNavigate();
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -95,6 +97,10 @@ const UserProfile: React.FC = () => {
         mutation.mutate(formData);
     };
 
+    const changePassword = () => {
+        navigate('/user?tab=profile&changePassword=true');
+    }
+
     return (
         <>
             {isLoading && (
@@ -140,7 +146,7 @@ const UserProfile: React.FC = () => {
                                             disabled={!isEditing}
                                         />
                                     </Form.Group>
-                                    <Button variant="warning" onClick={() => alert('修改密碼功能尚未實作')}>
+                                    <Button variant="warning" onClick={() => changePassword()}>
                                         修改密碼
                                     </Button>
                                     <div className="text-end">
