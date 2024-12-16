@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Row, Col, Card } from "react-bootstrap";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "./Loading";
+import UserBadge from "./UserBadge";
 
 const UserProfile: React.FC = () => {
     const { isPending, data, refetch } = useQuery({
@@ -36,22 +37,23 @@ const UserProfile: React.FC = () => {
                     <>
                         <h2>用戶資訊</h2>
                         <Card>
+                            <UserBadge username={data.Username} />
                             <Card.Body>
-                                <Card.Text>
-                                    <strong>用戶名稱:</strong> {data.Username}
-                                </Card.Text>
                                 <Card.Text>
                                     <strong>電子郵件:</strong> {data.Email}
                                 </Card.Text>
                                 <Card.Text>
-                                    <strong>地址:</strong> {data.Address}
+                                    <strong>用戶名稱:</strong> {data.Username}
                                 </Card.Text>
                                 <Card.Text>
+                                    <strong>地址:</strong> {data.Address}
+                                </Card.Text>
+                                {/* <Card.Text>
                                     <strong>管理員權限:</strong> {data.IsAdministrator ? 'Yes' : 'No'}
                                 </Card.Text>
                                 <Card.Text>
                                     <strong>擁有商店:</strong> {data.HaveStore ? 'Yes' : 'No'}
-                                </Card.Text>
+                                </Card.Text> */}
                             </Card.Body>
                         </Card>
                     </>

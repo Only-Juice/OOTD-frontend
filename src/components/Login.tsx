@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Modal, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { LoginProps } from '../types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
+    const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
@@ -84,7 +86,7 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
             <Modal.Footer>
                 <Button className="me-auto btn-lg w-25" variant="danger" onClick={() => setIsModalOpen(false)}>返回</Button>
                 <div className="ms-auto text-end">
-                    <p>還不是會員? <a href="#">註冊</a></p>
+                    <p>還不是會員? <a href="#" onClick={() => { setIsModalOpen(false); navigate('/register'); }}>註冊</a></p>
                     <p>忘記 <a href="#">密碼?</a></p>
                 </div>
             </Modal.Footer>
