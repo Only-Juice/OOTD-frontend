@@ -109,61 +109,59 @@ const UserProfile: React.FC = () => {
             {data ? (
                 <>
                     <Card>
-                        <Card.Body>
-                            <div className="m-3">
-                                <h1>我的檔案</h1>
-                                <h4>管理你的檔案以保護你的帳戶</h4>
-                                <hr />
-                                <Form onSubmit={handleSave}>
-                                    <Form.Group className="mb-3" controlId="Username">
-                                        <Form.Label>使用者帳號</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="使用者帳號"
-                                            value={formData.Username}
-                                            onChange={handleChange}
-                                            disabled={!isEditing}
-                                        />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="Email">
-                                        <Form.Label>電子郵件</Form.Label>
-                                        <Form.Control
-                                            type="email"
-                                            placeholder="電子郵件"
-                                            value={formData.Email.replace(/(.{3}).*@/, '$1***@')}
-                                            onChange={handleChange}
-                                            disabled={true}
-                                        />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="Address">
-                                        <Form.Label>地址</Form.Label>
-                                        <Form.Control
-                                            as="textarea"
-                                            rows={3}
-                                            placeholder="地址"
-                                            value={formData.Address}
-                                            onChange={handleChange}
-                                            disabled={!isEditing}
-                                        />
-                                    </Form.Group>
-                                    <Button variant="warning" onClick={() => changePassword()}>
-                                        修改密碼
-                                    </Button>
-                                    <div className="text-end">
-                                        {
-                                            isEditing ? (
-                                                <Button variant="primary" type="submit" disabled={isModify}>
-                                                    {isModify ? <Spinner animation="border" size="sm" /> : <>儲存</>}
-                                                </Button>
-                                            ) : (
-                                                <Button variant="secondary" onClick={(e) => { e.preventDefault(); setIsEditing(true); }}>
-                                                    變更
-                                                </Button>
-                                            )}
-                                    </div>
-                                </Form>
-                            </div>
-                        </Card.Body>
+                        <div className="m-3">
+                            <h1>我的檔案</h1>
+                            <h4>管理你的檔案以保護你的帳戶</h4>
+                            <hr />
+                            <Form onSubmit={handleSave}>
+                                <Form.Group className="mb-3" controlId="Username">
+                                    <Form.Label>使用者帳號</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="使用者帳號"
+                                        value={formData.Username}
+                                        onChange={handleChange}
+                                        disabled={!isEditing}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="Email">
+                                    <Form.Label>電子郵件</Form.Label>
+                                    <Form.Control
+                                        type="email"
+                                        placeholder="電子郵件"
+                                        value={formData.Email.replace(/(.{3}).*@/, '$1***@')}
+                                        onChange={handleChange}
+                                        disabled={true}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="Address">
+                                    <Form.Label>地址</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        placeholder="地址"
+                                        value={formData.Address}
+                                        onChange={handleChange}
+                                        disabled={!isEditing}
+                                    />
+                                </Form.Group>
+                                <Button variant="warning" onClick={() => changePassword()}>
+                                    修改密碼
+                                </Button>
+                                <div className="text-end">
+                                    {
+                                        isEditing ? (
+                                            <Button variant="primary" type="submit" disabled={isModify}>
+                                                {isModify ? <Spinner animation="border" size="sm" /> : <>儲存</>}
+                                            </Button>
+                                        ) : (
+                                            <Button variant="secondary" onClick={(e) => { e.preventDefault(); setIsEditing(true); }}>
+                                                變更
+                                            </Button>
+                                        )}
+                                </div>
+                            </Form>
+                        </div>
                     </Card>
                 </>
             ) : (

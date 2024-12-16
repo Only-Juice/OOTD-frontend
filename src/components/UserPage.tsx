@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Row, Col, Nav } from 'react-bootstrap';
+import { Row, Col, Nav, Card } from 'react-bootstrap';
 import UserProfile from './UserProfile';
 import UserOrders from './UserOrders'; // Assuming you have this component
 import UserBadge from './UserBadge';
@@ -76,24 +76,28 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
                             activeKey={activeKey}
                             onSelect={(selectedKey) => changeActiveKey(selectedKey || '#profile')}
                         >
-                            <div className='mb-2'>
-                                {data && data.Username && <>
-                                    <UserBadge username={data.Username} />
-                                    <Nav.Link onClick={() => setActiveKey('profile')} className='text-secondary'>
-                                        <FaPen className='me-2' />
-                                        編輯個人簡介
-                                    </Nav.Link>
-                                </>}
-                            </div>
-                            <Nav.Item>
-                                <Nav.Link eventKey="profile">個人檔案</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="orders">我的訂單</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="settings">設定</Nav.Link>
-                            </Nav.Item>
+                            <Card>
+                                <Card className='m-1'>
+                                    <div className='ms-2 mt-2 mb-1'>
+                                        {data && data.Username && <>
+                                            <UserBadge username={data.Username} />
+                                            <Nav.Link onClick={() => setActiveKey('profile')} className='text-secondary'>
+                                                <FaPen className='me-2' />
+                                                編輯個人檔案
+                                            </Nav.Link>
+                                        </>}
+                                    </div>
+                                </Card>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="profile">個人檔案</Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="orders">我的訂單</Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="settings">設定</Nav.Link>
+                                </Nav.Item>
+                            </Card>
                         </Nav>
                     </Col>
                     <Col md={10}>

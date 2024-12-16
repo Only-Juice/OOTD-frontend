@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 
 const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout }) => {
     const navigate = useNavigate();
-    const { isFetching, data, refetch } = useQuery({
+    const { isPending, data, refetch } = useQuery({
         queryKey: [`UserInfo`],
         queryFn: () => {
             if (!localStorage.getItem('token')) return null;
@@ -60,7 +60,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                         <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
                             <FontAwesomeIcon icon={faShoppingCart} /> Cart
                         </Nav.Link>
-                        {!isFetching ? (
+                        {!isPending ? (
                             <>
                                 {data && data.Username ? (
                                     <>
