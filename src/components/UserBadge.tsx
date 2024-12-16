@@ -4,7 +4,7 @@ import { Badge } from 'react-bootstrap';
 
 const UserBadge: React.FC<UserBadgeProps> = ({ username }) => {
     return (
-        <>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
             <Badge
                 pill
                 bg="primary"
@@ -16,7 +16,7 @@ const UserBadge: React.FC<UserBadgeProps> = ({ username }) => {
             <div style={{ whiteSpace: 'nowrap' }}>
                 {username}
             </div>
-        </>
+        </div>
     );
 };
 

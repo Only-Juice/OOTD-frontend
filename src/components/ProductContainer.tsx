@@ -13,7 +13,7 @@ const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) =>
                                 {product.Images.map((image, index) => (
                                     <Carousel.Item key={index}>
                                         <img
-                                            className="d-block"
+                                            className="d-block mx-auto"
                                             loading="lazy"
                                             style={{ objectFit: 'contain', height: '300px' }}
                                             src={image}
