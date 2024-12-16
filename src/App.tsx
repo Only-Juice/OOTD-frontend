@@ -8,6 +8,7 @@ const UserPage = React.lazy(() => import('./components/UserPage'));
 const NavBar = React.lazy(() => import('./components/NavBar'));
 const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const ProductResult = React.lazy(() => import('./components/ProductResult'));
+const RickRoll = React.lazy(() => import('./components/NeverGonnaGiveYouUp.tsx'));
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -15,6 +16,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import GoToTop from './components/GoToTOP';
 import ProductPVCResult from './components/ProductPVCResult';
 import Register from './components/Register';
+import CartResult from "./components/CartResult.tsx";
+import RickROll from "./components/NeverGonnaGiveYouUp.tsx";
 
 
 const App: React.FC = () => {
@@ -65,11 +68,13 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/cartresult" element={<CartResult />} />
             <Route path="/user" element={<UserPage setIsModalOpen={setIsModalOpen} />} />
             <Route path="/product/:id" element={<ProductResult />} />
             <Route path="/products/:id" element={<Navigate to="/product/:id" />} />
             <Route path="/PVC/:id" element={<ProductPVCResult />} />
             <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
+            <Route path="/rickroll" element={<RickROll />} />
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />

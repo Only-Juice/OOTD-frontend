@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import {Table,Flex,Layout,Button} from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import {Typography} from 'antd';
+import {Link,useNavigate} from 'react-router-dom';
 const { Content } = Layout;
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
@@ -14,6 +14,16 @@ interface ProductInCart {
     Price: number;
     Quantity: number;
     Description: string;
+}
+interface Coupon {
+    key: React.Key;
+    CouponID: number,
+    Name: string,
+    Description: string,
+    Discount: number,
+    StartDate: string,
+    EndDate: string,
+    Quantity: number
 }
 /*handle layout*/
 const contentStyle: React.CSSProperties = {
@@ -67,6 +77,22 @@ const CartTable:TableColumnsType<ProductInCart> = [
         sorter: (a,b) => a.Quantity * a.Price - b.Quantity * b.Price,
     }
 ];
+
+const CouponTable:TableColumnsType<Coupon> = [
+    {
+        title: "名稱",
+        dataIndex: "Name",
+    },
+    {
+        title: "敘述",
+        dataIndex: "Description",
+    },
+    {
+        title: "折扣(折)",
+        dataIndex: "Discount",
+        sorter: (a,b) => a.Discount - b.Discount,
+    }
+];
 function calculatecartPrice(data:{Price:number;Quantity:number;key:React.Key}[],key:React.Key[]):number{
     return data.reduce((total, product) => {
         if (key.includes(product.key)) {
@@ -75,7 +101,18 @@ function calculatecartPrice(data:{Price:number;Quantity:number;key:React.Key}[],
         return total;
     }, 0);
 }
+export const calculateDiscountedTotal = (coupons, selectCouponkey, total) => {
+    const selectedCoupon = coupons.find(coupon => coupon.key === selectCouponkey);
+
+    if (!selectedCoupon) {
+        return total;
+    }
+
+    return Math.floor(total * selectedCoupon.Discount);
+
+};
 const Cart: React.FC = () => {
+    const navigate = useNavigate();
     /* Get Cart Info */
     const [Product, setcatchProduct] = useState<ProductInCart[]>([]);
     const [hasProduct,sethasProduct] = useState(false);
@@ -105,13 +142,45 @@ const Cart: React.FC = () => {
                 seterror(true);  // 處理錯誤
             });
     };
+    /* Get Coupon Info */
+    const [Coupon,setcatchCoupon] = useState<Coupon[]>([]);
+    const [hasCoupon,sethasCoupon] = useState(false);
+    const [couponerror, setcouponerror] = useState(false);
+    const fetchUserCoupon = (token: string) => {
+        fetch('/api/Coupon/GetUserCoupons', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })  // 替換成您的 API URL
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();  // 解析 JSON 回應
+            })
+            .then(data => {
+                const updatedData = data.map((coupon: any, index: number) => ({
+                    ...coupon,
+                    key: index,  // 使用從0開始的索引作為key
+                }));
+                setcatchCoupon(updatedData);
+                sethasCoupon(true);
+            })
+            .catch(error => {
+                setcouponerror(true);  // 處理錯誤
+            });
+    };
     /* Table Modify*/
     const [selectkey,setselectkey] = useState<React.Key[]>([]);
+    const [selectCouponkey, setCouponkey] = useState<React.Key | null>(null);
     const [buyload,setbuyload] = useState(false);
     const [deleteload,setdeleteload] = useState(false);
-    const total_price = calculatecartPrice(Product,selectkey);
+
     const SelectChange =  (newSelectedRowKeys: React.Key[]) => {
         setselectkey(newSelectedRowKeys);
+    }
+    const SelectCouponChange = (newSelectCouponKey: React.Key[]) => {
+        setCouponkey(newSelectCouponKey);
     }
     const rowSelection: TableRowSelection<ProductInCart> = {
         selectkey,
@@ -120,18 +189,33 @@ const Cart: React.FC = () => {
     useEffect(() => {
         fetchUserInfo(token);
     }, []);
+    useEffect(() => {
+        fetchUserCoupon(token);
+    }, []);
     const checkboxclick = selectkey.length > 0;
     /*Buy and Delete*/
     const ClickBuy = () =>{
-        /* Need fetch post into database.*/
-        const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
+        const selectedProducts = Product.filter(product => selectkey.includes(product.key));  // 選定的商品
+        const selectedCoupon = Coupon.find(coupon => coupon.key === selectCouponkey);  // 選定的優惠券
+        const total = calculateDiscountedTotal(Coupon, selectCouponkey, calculatecartPrice(Product, selectkey));  // 計算總價
+
+        // 顯示 loading 狀態（可選）
         setbuyload(true);
+
+        // 使用 setTimeout 延遲執行導航操作
         setTimeout(() => {
-            const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
-            setcatchProduct(lastproduct);
+            // 在延遲後執行導航操作
+            navigate('/cartresult', {
+                state: {
+                    products: selectedProducts,
+                    coupon: selectedCoupon,
+                    total: total,
+                }
+            });
+
+            // 停止 loading 狀態（可選）
             setbuyload(false);
-            setselectkey([]);
-        }, 1000);
+        }, 1000);  // 設置延遲時間為 1 秒（1000 毫秒）
     }
     const ClickDelete = () =>{
         const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
@@ -143,6 +227,7 @@ const Cart: React.FC = () => {
         }, 1000);
         /* Need fetch post into database.*/
     }
+    const total_price = calculateDiscountedTotal(Coupon,selectCouponkey,calculatecartPrice(Product,selectkey));
     return (
         token == null ? (
             <div className="container">
@@ -180,22 +265,29 @@ const Cart: React.FC = () => {
                     </Table>
                     <h1>Coupon Information</h1>
                     <hr></hr>
-                    <Table
+                    <Table <Coupon>
+                        rowSelection= {{
+                            type:'radio',
+                            onChange: (selectedRowKeys) => {
+                                setCouponkey(selectedRowKeys[0]);  // 設定選中的優惠券key
+                            },
+                        }}
+                        dataSource={Coupon}
+                        columns={CouponTable}
                         footer={() => (
                             <div style={{textAlign: 'right',display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
                                 <h3 style={{marginRight:'32px'}}>總價：{total_price}</h3>
-                                <Button
-                                    style={{width: '100px', height: '60px'}}
-                                    type="primary"
-                                    onClick={ClickBuy}
-                                    loading={buyload}
-                                >
-                                    購買
-                                </Button>
+                                    <Button
+                                        style={{width: '100px', height: '60px',marginRight:'16px'}}
+                                        type="primary"
+                                        onClick={ClickBuy}
+                                        loading={buyload}
+                                    >
+                                        購買
+                                    </Button>
                             </div>
                         )}
                     >
-
                     </Table>
                 </div>
             ) : (
