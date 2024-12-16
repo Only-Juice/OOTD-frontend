@@ -38,10 +38,10 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
                 }
                 {
                     isModalOpen &&
-                    Toast.fire({
-                        icon: "success",
-                        title: "登入成功"
-                    });
+                        Toast.fire({
+                            icon: "success",
+                            title: "登入成功"
+                        });
                 }
                 setIsModalOpen(false);
                 setIsLoading(false);
@@ -73,6 +73,7 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
             }
         },
         onError: () => {
+            setIsLoading(false);
             setError('登入失敗');
         }
     });
