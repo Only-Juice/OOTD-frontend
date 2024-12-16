@@ -45,7 +45,7 @@ const SearchResults: React.FC = () => {
                 <Loading />
             )}
             {!isLoading && error && <p style={{ color: 'red' }}>{error.message}</p>}
-            {!isLoading && searchResults && searchResults.Products.length === 0 && !error && <p>找不到相關結果</p>}
+            {!isLoading && !searchResults && !error && <p>找不到相關結果</p>}
             {!isLoading && searchResults && searchResults.Products.length > 0 && (
                 <>
                     <Form.Group controlId="sortSelect" className='mb-4'>
