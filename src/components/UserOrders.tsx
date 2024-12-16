@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, ListGroup, Accordion, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -22,7 +22,8 @@ interface Order {
 }
 
 const UserOrders: React.FC = () => {
-    const { isPending, error, data, refetch } = useQuery({
+    const [notFound, setNotFound] = useState(false);
+    const { isLoading, error, data, refetch } = useQuery({
         queryKey: [`UserOrders`],
         queryFn: () => {
             if (!localStorage.getItem('token')) return null;
@@ -32,15 +33,23 @@ const UserOrders: React.FC = () => {
                 },
             }).then((res) => {
                 if (!res.ok) {
-                    localStorage.removeItem('token');
-                    return null;
+                    if (res.status === 401) {
+                        localStorage.removeItem('token');
+                        return null;
+                    } else if (res.status === 404) {
+                        setNotFound(true);
+                        return null;
+                    }
+                    throw new Error(res.statusText);
                 }
                 return res.json();
             })
         },
+        retry: false,
     });
 
     useEffect(() => {
+        setNotFound(false);
         refetch();
     }, [localStorage.getItem('token')]);
 
@@ -82,10 +91,17 @@ const UserOrders: React.FC = () => {
 
     return (
         <>
-            {isPending && (
+            {isLoading && (
                 <Loading />
             )}
-            {error && <p style={{ color: 'red' }}>{error.message}</p>}
+            {(error || notFound) &&
+                <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+                    <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
+                        {error && <p style={{ color: 'red' }}>{error.message}</p>}
+                        {notFound && <p>找不到訂單</p>}
+                    </div>
+                </div>
+            }
 
             {data &&
                 <>

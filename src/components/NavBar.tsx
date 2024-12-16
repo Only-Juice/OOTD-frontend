@@ -5,12 +5,12 @@ import UserBadge from './UserBadge';
 import { NavBarProps } from '../types';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Navbar, Nav, Container, Button, Form } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Form, Spinner } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
 
 const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout }) => {
     const navigate = useNavigate();
-    const { data, refetch } = useQuery({
+    const { isFetching, data, refetch } = useQuery({
         queryKey: [`UserInfo`],
         queryFn: () => {
             if (!localStorage.getItem('token')) return null;
@@ -60,20 +60,23 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                         <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
                             <FontAwesomeIcon icon={faShoppingCart} /> Cart
                         </Nav.Link>
-                        {data && data.Username ? (
+                        {!isFetching ? (
                             <>
-                                <Nav.Link as={Link} to="/user" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
-                                    <UserBadge username={data.Username} />
-                                </Nav.Link>
-                                <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => { handleLogout(); refetch(); navigate("/"); }} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
-                                    Logout
-                                </Button>
-                            </>
-                        ) : (
-                            <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => setIsModalOpen(true)} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
-                                Login
-                            </Button>
-                        )}
+                                {data && data.Username ? (
+                                    <>
+                                        <Nav.Link as={Link} to="/user" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
+                                            <UserBadge username={data.Username} />
+                                        </Nav.Link>
+                                        <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => { handleLogout(); refetch(); navigate("/"); }} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
+                                            Logout
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => setIsModalOpen(true)} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
+                                        Login
+                                    </Button>
+                                )}
+                            </>) : <Spinner className='mx-3' animation="border" size="sm" />}
                         <Form.Check
                             type="switch"
                             id="themeSwitch"
