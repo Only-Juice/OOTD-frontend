@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { useLocation, Link } from 'react-router-dom';
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import '../styles/PageButton.css';
 
 interface PageButtonProps {
     PageCount: number;
@@ -59,10 +61,14 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
             <div className="d-flex justify-content-center align-items-center mb-4">
                 {page > 1 ? (
                     <Link to={createPageLink(page - 1)} onClick={scrollToTop}>
-                        <Button variant='outline-primary'>上一頁</Button>
+                        <Button variant='outline-primary' className="rounded-circle page-button">
+                            <FaAngleLeft />
+                        </Button>
                     </Link>
                 ) : (
-                    <Button variant='outline-primary' disabled>上一頁</Button>
+                    <Button variant='outline-primary' className="rounded-circle page-button" disabled>
+                        <FaAngleLeft />
+                    </Button>
                 )}
                 <div className="mx-2 my-0">
                     {getPageNumbers(page, PageCount).map((pageNumber, index) => (
@@ -70,17 +76,21 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
                             <span key={index} className="mx-2">...</span>
                         ) : (
                             <Link key={index} to={createPageLink(Number(pageNumber))} onClick={scrollToTop}>
-                                <Button variant={pageNumber === page ? 'primary' : 'outline-primary'}>{pageNumber}</Button>
+                                <Button variant={pageNumber === page ? 'outline-primary' : ''} className="rounded-circle page-button">{pageNumber}</Button>
                             </Link>
                         )
                     ))}
                 </div>
                 {page < PageCount ? (
                     <Link to={createPageLink(page + 1)} onClick={scrollToTop}>
-                        <Button variant='outline-primary'>下一頁</Button>
+                        <Button variant='outline-primary' className="rounded-circle page-button">
+                            <FaAngleRight />
+                        </Button>
                     </Link>
                 ) : (
-                    <Button variant='outline-primary' disabled>下一頁</Button>
+                    <Button variant='outline-primary' className="rounded-circle page-button" disabled>
+                        <FaAngleRight />
+                    </Button>
                 )}
             </div>
             <div className="d-flex justify-content-center align-items-center">
