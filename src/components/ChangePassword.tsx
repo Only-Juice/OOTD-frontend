@@ -31,7 +31,7 @@ const ChangePassword: React.FC = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
                 body: JSON.stringify({ OldPassword: currentPassword, NewPassword: newPassword }),
             }).then((res) => {

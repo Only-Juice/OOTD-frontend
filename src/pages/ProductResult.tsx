@@ -12,7 +12,7 @@ const ProductResult: React.FC = () => {
             const token = localStorage.getItem('token');
             return fetch(`/api/Product/GetProduct?id=${id}`, {
                 headers: {
-                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             })
                 .then((res) => {

@@ -29,7 +29,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
             if (!token) return null;
             return fetch('/api/User/Get', {
                 headers: {
-                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             }).then((res) => {
                 if (!res.ok) {

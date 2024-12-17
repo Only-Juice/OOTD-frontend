@@ -30,7 +30,7 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
             if (!token) return null;
             return fetch('/api/User/Get', {
                 headers: {
-                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             }).then((res) => {
                 if (!res.ok) {

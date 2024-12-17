@@ -26,7 +26,7 @@ const UserProfile: React.FC = () => {
             if (!token) return null;
             return fetch('/api/User/Get', {
                 headers: {
-                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             }).then((res) => {
                 if (!res.ok) {
@@ -63,7 +63,7 @@ const UserProfile: React.FC = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
                 body: JSON.stringify(newData),
             }).then((res) => {

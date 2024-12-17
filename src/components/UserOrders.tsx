@@ -30,7 +30,7 @@ const UserOrders: React.FC = () => {
             if (!token) return null;
             return fetch('/api/Order/GetUserOrders', {
                 headers: {
-                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             }).then((res) => {
                 if (!res.ok) {
