@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button, Table } from 'antd';
+import { Table,Switch,Radio } from 'antd';
 
 interface ProductInCart {
     key: React.Key;
@@ -73,42 +73,68 @@ const CouponTable: TableColumnsType<Coupon> = [
     {
         title: "折扣(折)",
         dataIndex: "Discount",
-        sorter: (a, b) => a.Discount - b.Discount,
     },
 ];
 
 const CartResult: React.FC = () => {
     const location = useLocation();
-
-
-    const { products, coupon, total } = location.state || {};
+    const [BuyState, setBuyState] = useState<string>();
+    const handleBuyState = (e: RadioChangeEvent) => {
+        setBuyState(e.target.value);
+    }
+    const { products, coupon, origin_price ,total } = location.state || {};
 
     return (
         <div className="container">
-            <h1>購物車資訊</h1>
             <Table<ProductInCart>
                 dataSource={products}
                 columns={CartTable}
                 rowKey="key"
+                title={() => (
+                    <div>
+                        <h3>Product Information</h3>
+                    </div>
+                )}
             />
-
-            <h1>優惠券資訊</h1>
-            <hr />
-            {/* 確保 coupon 是陣列格式 */}
             <Table<Coupon>
                 dataSource={[coupon]}
                 columns={CouponTable}
                 rowKey="key"
-                footer={() => (
-                    <div style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                        <h3 style={{ marginRight: '32px' }}>總價：{total}</h3>
-                        {/* 按鈕或其他操作可以放在這裡 */}
-                        <Button style={{ width: '100px', height: '60px', marginRight: '16px' }} type="primary">
-                            購買
-                        </Button>
+                title={() => (
+                    <div>
+                        <h3>Coupon Information</h3>
                     </div>
                 )}
             />
+            <hr/>
+            <p>{BuyState}</p>
+            <div style={{ textAlign: 'right' }}>
+                <Radio.Group onChange={handleBuyState}>
+                    <Radio.Button value="PayOnGet">貨到付款</Radio.Button>
+                    <Radio.Button value="LinePay">Line Pay</Radio.Button>
+                    <Radio.Button value="CreditCard">信用卡</Radio.Button>
+                </Radio.Group>
+                <h3 style={{display: 'inline-block', width: '100px', textAlign: 'right'}}>
+                    原價：
+                </h3>
+                <h3 style={{display: 'inline-block', width: '100px', textAlign: 'right'}}>
+                    {origin_price}
+                </h3>
+                <br/>
+                <h3 style={{display: 'inline-block', width: '100px', textAlign: 'right'}}>
+                    折扣：
+                </h3>
+                <h3 style={{display: 'inline-block', width: '100px', textAlign: 'right'}}>
+                    {origin_price - total}
+                </h3>
+                <br/>
+                <h3 style={{display: 'inline-block', width: '100px', textAlign: 'right'}}>
+                    總價：
+                </h3>
+                <h3 style={{display: 'inline-block', width: '100px', textAlign: 'right'}}>
+                    {total}
+                </h3>
+            </div>
         </div>
     );
 };
