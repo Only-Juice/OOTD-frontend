@@ -148,7 +148,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
                 </Modal.Body>
             </Modal>
 
-            <Rating productId={product.ID} />
+            {product && <Rating productId={product.ID} />}
         </>
     );
 };
