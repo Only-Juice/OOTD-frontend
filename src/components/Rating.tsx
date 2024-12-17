@@ -137,14 +137,14 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
                                 <Row>
                                     <Col xs={12}>
                                         <Card>
-                                            <Row className='m-3'>
-                                                <Col xs={3} className='text-center'>
+                                            <Row className='m-1 mt-3 mb-3'>
+                                                <Col xs={12} md={6} lg={4} className='text-center'>
                                                     <h1>
                                                         {totalRating.toFixed(1)}/5.0
                                                     </h1>
                                                 </Col>
-                                                <Col xs={10} />
-                                                <Col xs={3} className='text-center'>
+                                                <Col xs={0} md={6} lg={8} />
+                                                <Col xs={12} md={6} lg={4} className='text-center'>
                                                     {renderStars(totalRating, 40)}
                                                 </Col>
                                             </Row>
