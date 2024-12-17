@@ -1,10 +1,51 @@
 import React, { useState } from "react";
-import { Carousel, Button, Modal, Row, Col } from "react-bootstrap";
+import { Carousel, Button, Modal, Row, Col, Spinner } from "react-bootstrap";
 import { Product } from "../types";
+import { useMutation } from "@tanstack/react-query";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+    const [quantity, setQuantity] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
+    const MySwal = withReactContent(Swal);
+
+    const mutation = useMutation({
+        mutationFn: () => {
+            setIsLoading(true);
+            return fetch('/api/Product/AddToCart', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ProductID: product?.ID, Quantity: quantity }),
+            }).then((res) => {
+                setIsLoading(false);
+                if (!res.ok) {
+                    localStorage.removeItem('token');
+                    throw new Error('Please log in to add items to your cart');
+                }
+                return '';
+            })
+        },
+        onSuccess: (data) => {
+            MySwal.fire({
+                title: 'Success',
+                text: 'Added to cart',
+                icon: 'success',
+            });
+        },
+        onError: (error) => {
+            MySwal.fire({
+                title: 'Error',
+                text: error.message,
+                icon: 'error',
+            });
+        }
+    });
 
     const handleImageClick = (index: number) => {
         setSelectedImageIndex(index);
@@ -58,8 +99,11 @@ const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) =>
                                 defaultValue="1"
                                 className="form-control d-inline-block"
                                 style={{ width: '60px', marginRight: '10px' }}
+                                onChange={(e) => setQuantity(parseInt(e.target.value))}
                             />
-                            <Button variant="primary">加入購物車</Button>
+                            <Button className="w-25" variant="primary" onClick={() => mutation.mutate()} disabled={isLoading}>
+                                {isLoading ? <Spinner animation="border" size="sm" /> : '加入購物車'}
+                            </Button>
                         </div>
                     </Col>
                 </Row >
