@@ -16,7 +16,6 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
     const [leftQuantity, setLeftQuantity] = useState(product?.Quantity || 0);
     const [isLoading, setIsLoading] = useState(false);
-    const [soldOut, setSoldOut] = useState(false);
     const MySwal = withReactContent(Swal);
 
     const mutation = useMutation({
@@ -67,8 +66,8 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
 
     useEffect(() => {
         if (leftQuantity <= 0) {
-            setSoldOut(true);
-            setQuantity(0);
+            setQuantity(1);
+            setLeftQuantity(product?.Quantity || 0);
         }
     }, [leftQuantity]);
 
@@ -121,7 +120,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
                                     }
                                 }}
                             />
-                            <Button className="w-25" variant="primary" onClick={() => mutation.mutate()} disabled={soldOut || isLoading}>
+                            <Button className="w-25" variant="primary" onClick={() => mutation.mutate()} disabled={isLoading}>
                                 {isLoading ? <Spinner animation="border" size="sm" /> : '加入購物車'}
                             </Button>
                         </div>
