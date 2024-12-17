@@ -9,7 +9,8 @@ const NavBar = React.lazy(() => import('./components/NavBar'));
 const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const ProductResult = React.lazy(() => import('./components/ProductResult'));
 const C8763= React.lazy(() => import('./components/StarBurstStream'));
-const RickRoll = React.lazy(() => import('./components/NeverGonnaGiveYouUp.tsx'));
+const RickRoll = React.lazy(() => import('./components/NeverGonnaGiveYouUp'));
+const C0 = React.lazy(() => import('./components/YaoDong'));
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -76,6 +77,7 @@ const App: React.FC = () => {
             <Route path="/PVC/:id" element={<ProductPVCResult />} />
             <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
             <Route path="/rickroll" element={<RickROll />} />
+            <Route path="/c0" element={<C0 />} />
             <Route path="/c8763" element={<C8763 />} />
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />

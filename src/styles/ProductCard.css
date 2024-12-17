@@ -1,0 +1,30 @@
+.product-image {
+    height: 300px;
+    width: 100%;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .product-image {
+        height: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-image {
+        height: 150px;
+    }
+}
+
+.image-container {
+    overflow: hidden;
+}
+
+.product-image {
+    transition: transform 0.25s ease-in-out;
+}
+
+.product-image.zoom {
+    object-fit: cover;
+    transform: scale(1.1);
+}

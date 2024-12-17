@@ -1,26 +1,47 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Row, Col } from "react-bootstrap"
+import { FaSearch } from "react-icons/fa";
+import "../styles/Search.css"
+import TopKeyword from './TopKeyword';
 
 const Search: React.FC = () => {
-    const [query, setQuery] = useState('');
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get('q');
+    const [query, setQuery] = useState(searchQuery || '');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setQuery(searchQuery || '');
+    }, [searchQuery]);
 
     const onSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        navigate(`/search?q=${query}`)
+        navigate(`/search?q=${query}`);
     };
 
     return (
-        <form onSubmit={onSearch} className="d-flex w-50">
-            <input
-                type="text"
-                className="form-control me-2"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="搜尋產品"
-            />
-            <button type="submit" className="d-none d-lg-block btn btn-primary">搜尋</button>
-        </form>
+        <Row className='justify-content-center w-100'>
+            <Col lg={6}>
+                <div>
+                    <div className='search-container m-1'>
+                        <form onSubmit={onSearch} className="d-flex">
+                            <FaSearch className='search-icon' />
+                            <input
+                                type="text"
+                                className="form-control search-input"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="搜尋產品"
+                            />
+                            <button className="btn btn-search ms-2 m-1 d-none d-sm-block" type="submit">Search</button>
+                        </form>
+                    </div>
+                    <TopKeyword />
+                </div>
+            </Col>
+        </Row>
     );
 };
 

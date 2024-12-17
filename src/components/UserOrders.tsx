@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, ListGroup, Accordion, ProgressBar } from 'react-bootstrap';
+import { Row, Col, ListGroup, Accordion, ProgressBar, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Loading from './Loading';
@@ -104,68 +104,71 @@ const UserOrders: React.FC = () => {
             }
 
             {data &&
-                <>
-                    <h2>我的訂單</h2>
-                    {data.map((order: Order) => (
-                        <Accordion className='mb-2' key={order.OrderID}>
-                            <Accordion.Item eventKey={`${order.OrderID}`}>
-                                <Accordion.Header>
-                                    <div>
-                                        <strong>訂單編號:</strong> {order.OrderID} <br />
-                                        <strong>訂單日期:</strong> {new Date(order.CreateAt).toLocaleString()} <br />
-                                        <strong>折扣:</strong> {order.Discount === 1 ? '無折扣' : `${order.Discount * 10}折`} <br />
-                                        <strong>狀態:</strong> {order.Status} <br />
-                                        {getStatusTimeline(order.Status)}
-                                        <strong>總金額:</strong> NT${order.Amount}
-                                    </div>
-                                </Accordion.Header>
-                                <Accordion.Body>
-                                    <ListGroup variant="flush">
-                                        {order.Details.map(detail => (
-                                            <ListGroup.Item key={detail.PVCID}>
-                                                <Row>
-                                                    <Col md={2}>
-                                                        <Link to={`/PVC/${detail.PVCID}`}>
-                                                            {detail.Images.length > 0 ? (
-                                                                <img src={detail.Images[0]} alt={detail.Name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                            ) : (
-                                                                <div style={{ width: '100%', height: '100%' }}></div>
-                                                            )}
-                                                        </Link>
-                                                    </Col>
-                                                    <Col md={6}>
-                                                        <Link to={`/PVC/${detail.PVCID}`}>
-                                                            <h5>{detail.Name}</h5>
-                                                        </Link>
-                                                    </Col>
+                <Card>
+                    <div className="m-3">
+                        <h1>我的訂單</h1>
+                        <hr />
+                        {data.map((order: Order) => (
+                            <Accordion className='mb-2' key={order.OrderID}>
+                                <Accordion.Item eventKey={`${order.OrderID}`}>
+                                    <Accordion.Header>
+                                        <div>
+                                            <strong>訂單編號:</strong> {order.OrderID} <br />
+                                            <strong>訂單日期:</strong> {new Date(order.CreateAt).toLocaleString()} <br />
+                                            <strong>折扣:</strong> {order.Discount === 1 ? '無折扣' : `${order.Discount * 10}折`} <br />
+                                            <strong>狀態:</strong> {order.Status} <br />
+                                            {getStatusTimeline(order.Status)}
+                                            <strong>總金額:</strong> NT${order.Amount}
+                                        </div>
+                                    </Accordion.Header>
+                                    <Accordion.Body>
+                                        <ListGroup variant="flush">
+                                            {order.Details.map(detail => (
+                                                <ListGroup.Item key={detail.PVCID}>
+                                                    <Row>
+                                                        <Col md={2}>
+                                                            <Link to={`/PVC/${detail.PVCID}`}>
+                                                                {detail.Images.length > 0 ? (
+                                                                    <img src={detail.Images[0]} alt={detail.Name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                ) : (
+                                                                    <div style={{ width: '100%', height: '100%' }}></div>
+                                                                )}
+                                                            </Link>
+                                                        </Col>
+                                                        <Col md={6}>
+                                                            <Link to={`/PVC/${detail.PVCID}`}>
+                                                                <h5>{detail.Name}</h5>
+                                                            </Link>
+                                                        </Col>
 
+                                                        <Col md={2}>
+                                                            <strong>數量:</strong> {detail.Quantity}
+                                                        </Col>
+                                                        <Col md={2}>
+                                                            <strong>價格:</strong> NT${detail.Price * detail.Quantity}
+                                                        </Col>
+                                                    </Row>
+                                                </ListGroup.Item>
+                                            ))}
+                                            <ListGroup.Item>
+                                                <Row>
+                                                    <Col md={8}></Col>
                                                     <Col md={2}>
-                                                        <strong>數量:</strong> {detail.Quantity}
+                                                        <strong>總數量:</strong> {calculateTotalQuantity(order.Details)}
                                                     </Col>
                                                     <Col md={2}>
-                                                        <strong>價格:</strong> NT${detail.Price * detail.Quantity}
+                                                        <strong>總金額:</strong> NT${order.Amount}
                                                     </Col>
                                                 </Row>
                                             </ListGroup.Item>
-                                        ))}
-                                        <ListGroup.Item>
-                                            <Row>
-                                                <Col md={8}></Col>
-                                                <Col md={2}>
-                                                    <strong>總數量:</strong> {calculateTotalQuantity(order.Details)}
-                                                </Col>
-                                                <Col md={2}>
-                                                    <strong>總金額:</strong> NT${order.Amount}
-                                                </Col>
-                                            </Row>
-                                        </ListGroup.Item>
-                                    </ListGroup>
-                                </Accordion.Body>
-                            </Accordion.Item>
-                        </Accordion>
-                    ))
-                    }
-                </>
+                                        </ListGroup>
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
+                        ))
+                        }
+                    </div>
+                </Card>
             }
         </>
     );
