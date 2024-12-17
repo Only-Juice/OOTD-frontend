@@ -1,11 +1,13 @@
-import React, { useState,useEffect } from 'react';
-import {Table,Flex,Layout,Button} from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Flex, Layout, Button, InputNumber } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import {Link,useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {Carousel} from "react-bootstrap";
 const { Content } = Layout;
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
-/*handle API object*/
+
+/* Handle API object */
 interface ProductInCart {
     key: React.Key;
     ID: number;
@@ -15,17 +17,19 @@ interface ProductInCart {
     Quantity: number;
     Description: string;
 }
+
 interface Coupon {
     key: React.Key;
-    CouponID: number,
-    Name: string,
-    Description: string,
-    Discount: number,
-    StartDate: string,
-    EndDate: string,
-    Quantity: number
+    CouponID: number;
+    Name: string;
+    Description: string;
+    Discount: number;
+    StartDate: string;
+    EndDate: string;
+    Quantity: number;
 }
-/*handle layout*/
+
+/* Handle layout */
 const contentStyle: React.CSSProperties = {
     textAlign: 'center',
     minHeight: 120,
@@ -34,51 +38,75 @@ const contentStyle: React.CSSProperties = {
     backgroundColor: '#f4f4f4',
     fontSize: '4vw',
 };
+
 const layoutStyle = {
     borderRadius: 16,
     overflow: 'hidden',
     width: 'calc(90% - 8px)',
     maxWidth: 'calc(90% - 8px)',
 };
-/*Handle Shopping Cart Table*/
-const CartTable:TableColumnsType<ProductInCart> = [
+
+const handleQuantityChange = (
+    value: number | null,
+    record: ProductInCart,
+    dataSource: ProductInCart[],
+    setDataSource: React.Dispatch<React.SetStateAction<ProductInCart[]>>
+) => {
+    const newData = dataSource.map((item) => {
+        if (item.key === record.key) {
+            return { ...item, Quantity: value || 1 }; // 防止 null
+        }
+        return item;
+    });
+    setDataSource(newData);
+};
+const getColumns = (
+    dataSource: ProductInCart[],
+    setDataSource: React.Dispatch<React.SetStateAction<ProductInCart[]>>
+): TableColumnsType<ProductInCart> => [
     {
-        title: "圖片",
-        dataIndex: "Images",
-        render: (t, r) => <img src={`${r.Images}`} style={{ width: '50px' , height: '50px' }} />
+        title: '圖片',
+        dataIndex: 'Images',
+        render: (t, r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
     },
     {
-        title: "商品名稱",
-        align: "center",
-        dataIndex: "Name",
-        key: "name"
+        title: '商品名稱',
+        align: 'center',
+        dataIndex: 'Name',
+        key: 'name',
     },
     {
-        title: "單價",
-        align: "center",
-        dataIndex: "Price",
-        key: "price"
+        title: '單價',
+        align: 'center',
+        dataIndex: 'Price',
+        key: 'price',
     },
     {
-        title: "數量",
-        align: "center",
-        dataIndex: "Quantity",
-        key: "amount"
+        title: '數量',
+        align: 'center',
+        dataIndex: 'Quantity',
+        key: 'amount',
+        render: (value, record) => (
+            <InputNumber
+                min={1}
+                value={value}
+                onChange={(val) => handleQuantityChange(val, record, dataSource, setDataSource)} // 更新數據
+            />
+        ),
     },
     {
-        title: "總計",
-        align: "center",
+        title: '總計',
+        align: 'center',
         dataIndex: 'totalPrice',
-        key: "totalPrice",
-        render: (text, record, _) => {
-            return record["Quantity"] * record["Price"];
+        key: 'totalPrice',
+        render: (text, record) => {
+            return record.Quantity * record.Price;
         },
-        defaultSortOrder: null,
-        sorter: (a,b) => a.Quantity * a.Price - b.Quantity * b.Price,
-    }
+        sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
+    },
 ];
 
-const CouponTable:TableColumnsType<Coupon> = [
+const CouponTable: TableColumnsType<Coupon> = [
     {
         title: "名稱",
         dataIndex: "Name",
@@ -90,10 +118,11 @@ const CouponTable:TableColumnsType<Coupon> = [
     {
         title: "折扣(折)",
         dataIndex: "Discount",
-        sorter: (a,b) => a.Discount - b.Discount,
+        sorter: (a, b) => a.Discount - b.Discount,
     }
 ];
-function calculatecartPrice(data:{Price:number;Quantity:number;key:React.Key}[],key:React.Key[]):number{
+
+function calculatecartPrice(data: { Price: number; Quantity: number; key: React.Key }[], key: React.Key[]): number {
     return data.reduce((total, product) => {
         if (key.includes(product.key)) {
             return total + product.Price * product.Quantity;
@@ -101,6 +130,7 @@ function calculatecartPrice(data:{Price:number;Quantity:number;key:React.Key}[],
         return total;
     }, 0);
 }
+
 export const calculateDiscountedTotal = (coupons, selectCouponkey, total) => {
     const selectedCoupon = coupons.find(coupon => coupon.key === selectCouponkey);
 
@@ -109,21 +139,23 @@ export const calculateDiscountedTotal = (coupons, selectCouponkey, total) => {
     }
 
     return Math.floor(total * selectedCoupon.Discount);
-
 };
+
 const Cart: React.FC = () => {
     const navigate = useNavigate();
+
     /* Get Cart Info */
     const [Product, setcatchProduct] = useState<ProductInCart[]>([]);
-    const [hasProduct,sethasProduct] = useState(false);
+    const [hasProduct, sethasProduct] = useState(false);
     const [error, seterror] = useState(false);
     const token = localStorage.getItem('token');
+
     const fetchUserInfo = (token: string) => {
         fetch('/api/Product/GetCartProducts', {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
-        })  // 替換成您的 API URL
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -142,16 +174,18 @@ const Cart: React.FC = () => {
                 seterror(true);  // 處理錯誤
             });
     };
+
     /* Get Coupon Info */
-    const [Coupon,setcatchCoupon] = useState<Coupon[]>([]);
-    const [hasCoupon,sethasCoupon] = useState(false);
+    const [Coupon, setcatchCoupon] = useState<Coupon[]>([]);
+    const [hasCoupon, sethasCoupon] = useState(false);
     const [couponerror, setcouponerror] = useState(false);
+
     const fetchUserCoupon = (token: string) => {
         fetch('/api/Coupon/GetUserCoupons', {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
-        })  // 替換成您的 API URL
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -170,31 +204,40 @@ const Cart: React.FC = () => {
                 setcouponerror(true);  // 處理錯誤
             });
     };
-    /* Table Modify*/
-    const [selectkey,setselectkey] = useState<React.Key[]>([]);
-    const [selectCouponkey, setCouponkey] = useState<React.Key | null>(null);
-    const [buyload,setbuyload] = useState(false);
-    const [deleteload,setdeleteload] = useState(false);
 
-    const SelectChange =  (newSelectedRowKeys: React.Key[]) => {
+    /* Table Modify */
+    const [selectkey, setselectkey] = useState<React.Key[]>([]);
+    const [selectCouponkey, setCouponkey] = useState<React.Key | null>(null);
+    const [buyload, setbuyload] = useState(false);
+    const [deleteload, setdeleteload] = useState(false);
+
+    /* Modify Product Table */
+
+    const SelectChange = (newSelectedRowKeys: React.Key[]) => {
         setselectkey(newSelectedRowKeys);
-    }
+    };
+
     const SelectCouponChange = (newSelectCouponKey: React.Key[]) => {
         setCouponkey(newSelectCouponKey);
-    }
+    };
+
     const rowSelection: TableRowSelection<ProductInCart> = {
         selectkey,
         onChange: SelectChange,
     };
+
     useEffect(() => {
         fetchUserInfo(token);
     }, []);
+
     useEffect(() => {
         fetchUserCoupon(token);
     }, []);
+
     const checkboxclick = selectkey.length > 0;
-    /*Buy and Delete*/
-    const ClickBuy = () =>{
+
+    /* Buy and Delete */
+    const ClickBuy = () => {
         const selectedProducts = Product.filter(product => selectkey.includes(product.key));
         const selectedCoupon = Coupon.find(coupon => coupon.key === selectCouponkey);
 
@@ -216,19 +259,22 @@ const Cart: React.FC = () => {
             // 停止 loading 狀態（可選）
             setbuyload(false);
         }, 1000);  // 設置延遲時間為 1 秒（1000 毫秒）
-    }
-    const ClickDelete = () =>{
-        const lastproduct = Product.filter(product=> !selectkey.includes(product.key));
+    };
+
+    const ClickDelete = () => {
+        const lastproduct = Product.filter(product => !selectkey.includes(product.key));
         setdeleteload(true);
         setTimeout(() => {
             setcatchProduct(lastproduct);
             setdeleteload(false);
             setselectkey([]);
         }, 1000);
-        /* Need fetch post into database.*/
-    }
-    const origin_price = calculatecartPrice(Product,selectkey);
-    const total_price = calculateDiscountedTotal(Coupon,selectCouponkey,origin_price);
+        /* Need fetch post into database. */
+    };
+
+    const origin_price = calculatecartPrice(Product, selectkey);
+    const total_price = calculateDiscountedTotal(Coupon, selectCouponkey, origin_price);
+    const CartTable = getColumns(Product, setcatchProduct);
     return (
         token == null ? (
             <div className="container">
@@ -241,10 +287,10 @@ const Cart: React.FC = () => {
                 </Flex>
             </div>
         ) : (
-            hasProduct?(
+            hasProduct ? (
                 <div className="container">
                     <h1>Cart Information</h1>
-                    <hr></hr>
+                    <hr/>
                     <Table<ProductInCart>
                         rowSelection={rowSelection}
                         dataSource={Product}
@@ -252,7 +298,7 @@ const Cart: React.FC = () => {
                         footer={() => (
                             <div style={{textAlign: 'right'}}>
                                 <Button
-                                    style={{width: '100px', height: '60px',backgroundColor:'#16ff44'}}
+                                    style={{width: '100px', height: '60px', backgroundColor: '#8CC753'}}
                                     type="primary"
                                     onClick={ClickDelete}
                                     disabled={!checkboxclick}
@@ -262,13 +308,12 @@ const Cart: React.FC = () => {
                                 </Button>
                             </div>
                         )}
-                    >
-                    </Table>
+                    />
                     <h1>Coupon Information</h1>
-                    <hr></hr>
-                    <Table <Coupon>
-                        rowSelection= {{
-                            type:'radio',
+                    <hr/>
+                    <Table<Coupon>
+                        rowSelection={{
+                            type: 'radio',
                             onChange: (selectedRowKeys) => {
                                 setCouponkey(selectedRowKeys[0]);  // 設定選中的優惠券key
                             },
@@ -276,21 +321,30 @@ const Cart: React.FC = () => {
                         dataSource={Coupon}
                         columns={CouponTable}
                         footer={() => (
-                            <div style={{textAlign: 'right',display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
-                                    <h3 style={{marginRight:'32px'}}>總價：{total_price}</h3>
-                                    <Button
-                                        style={{width: '100px', height: '60px',marginRight:'16px',backgroundColor:'#16ff44'}}
-                                        type="primary"
-                                        onClick={ClickBuy}
-                                        loading={buyload}
-                                        disabled={!checkboxclick}
-                                    >
-                                        購買
-                                    </Button>
+                            <div style={{
+                                textAlign: 'right',
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                alignItems: 'center'
+                            }}>
+                                <h3 style={{marginRight: '32px'}}>總價：{total_price}</h3>
+                                <Button
+                                    style={{
+                                        width: '100px',
+                                        height: '60px',
+                                        marginRight: '16px',
+                                        backgroundColor: '#8CC753'
+                                    }}
+                                    type="primary"
+                                    onClick={ClickBuy}
+                                    loading={buyload}
+                                    disabled={!checkboxclick}
+                                >
+                                    購買
+                                </Button>
                             </div>
                         )}
-                    >
-                    </Table>
+                    />
                 </div>
             ) : (
                 <div className="container">
@@ -310,7 +364,6 @@ const Cart: React.FC = () => {
             )
         )
     );
-
 }
 
 export default Cart;
