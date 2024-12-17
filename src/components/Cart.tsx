@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Flex, Layout, Button, InputNumber } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import {Carousel} from "react-bootstrap";
+import { useMutation } from '@tanstack/react-query';
 const { Content } = Layout;
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
@@ -174,7 +174,30 @@ const Cart: React.FC = () => {
                 seterror(true);  // 處理錯誤
             });
     };
+    /*Modify Sopping cart*/
+    const DeleteShoppingCart = useMutation({
+        mutationFn: (deleteIds: number[]) =>
+            fetch('/api/Product/RemoveProductFromCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(deleteIds ), // 传递要删除的 ID 数组
+            }).then((res) => res.json()), // 解析返回的 JSON 数据
 
+        onSuccess: () => {
+            console.log('Products deleted successfully');
+
+        },
+        onError: (error) => {
+            console.error('Error deleting products:', error);
+
+        },
+        onSettled: () => {
+
+        },
+    });
     /* Get Coupon Info */
     const [Coupon, setcatchCoupon] = useState<Coupon[]>([]);
     const [hasCoupon, sethasCoupon] = useState(false);
@@ -183,7 +206,7 @@ const Cart: React.FC = () => {
     const fetchUserCoupon = (token: string) => {
         fetch('/api/Coupon/GetUserCoupons', {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
         })
             .then(response => {
@@ -210,7 +233,7 @@ const Cart: React.FC = () => {
     const [selectCouponkey, setCouponkey] = useState<React.Key | null>(null);
     const [buyload, setbuyload] = useState(false);
     const [deleteload, setdeleteload] = useState(false);
-
+    const [deleteId,setdeleteId] = useState<number[]>([]);
     /* Modify Product Table */
 
     const SelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -263,11 +286,15 @@ const Cart: React.FC = () => {
 
     const ClickDelete = () => {
         const lastproduct = Product.filter(product => !selectkey.includes(product.key));
+        const deleteproduct = Product.filter(product => selectkey.includes(product.key));
+        const deleteIds = deleteproduct.map(product => product.ID);
+        setdeleteId(deleteIds);
         setdeleteload(true);
         setTimeout(() => {
             setcatchProduct(lastproduct);
             setdeleteload(false);
             setselectkey([]);
+            DeleteShoppingCart.mutate(deleteIds);
         }, 1000);
         /* Need fetch post into database. */
     };
@@ -287,81 +314,82 @@ const Cart: React.FC = () => {
                 </Flex>
             </div>
         ) : (
-            hasProduct ? (
-                <div className="container">
-                    <h1>Cart Information</h1>
-                    <hr/>
-                    <Table<ProductInCart>
-                        rowSelection={rowSelection}
-                        dataSource={Product}
-                        columns={CartTable}
-                        footer={() => (
-                            <div style={{textAlign: 'right'}}>
-                                <Button
-                                    style={{width: '100px', height: '60px', backgroundColor: '#8CC753'}}
-                                    type="primary"
-                                    onClick={ClickDelete}
-                                    disabled={!checkboxclick}
-                                    loading={deleteload}
-                                >
-                                    刪除
-                                </Button>
+            <div className="container">
+                <h1>Cart Information</h1>
+                <hr/>
+                <Table<ProductInCart>
+                    rowSelection={rowSelection}
+                    dataSource={Product}
+                    columns={CartTable}
+                    locale={{
+                        emptyText: (
+                            <div className="container">
+                                <h1 style={{
+                                    fontSize: '45px',
+                                    textAlign: 'center',
+                                    marginTop: '90px',
+                                    whiteSpace: 'normal'
+                                }}> &#x2615;你他媽的應該要先買東西 </h1>
+                                <h1 style={{
+                                    fontSize: '45px',
+                                    textAlign: 'center',
+                                    marginTop: '90px',
+                                    whiteSpace: 'normal'
+                                }}> &#x1F602;再來點那該死的購物車 </h1>
                             </div>
-                        )}
-                    />
-                    <h1>Coupon Information</h1>
-                    <hr/>
-                    <Table<Coupon>
-                        rowSelection={{
-                            type: 'radio',
-                            onChange: (selectedRowKeys) => {
-                                setCouponkey(selectedRowKeys[0]);  // 設定選中的優惠券key
-                            },
-                        }}
-                        dataSource={Coupon}
-                        columns={CouponTable}
-                        footer={() => (
-                            <div style={{
-                                textAlign: 'right',
-                                display: 'flex',
-                                justifyContent: 'flex-end',
-                                alignItems: 'center'
-                            }}>
-                                <h3 style={{marginRight: '32px'}}>總價：{total_price}</h3>
-                                <Button
-                                    style={{
-                                        width: '100px',
-                                        height: '60px',
-                                        marginRight: '16px',
-                                        backgroundColor: '#8CC753'
-                                    }}
-                                    type="primary"
-                                    onClick={ClickBuy}
-                                    loading={buyload}
-                                    disabled={!checkboxclick}
-                                >
-                                    購買
-                                </Button>
-                            </div>
-                        )}
-                    />
-                </div>
-            ) : (
-                <div className="container">
-                    <h1 style={{
-                        fontSize: '90px',
-                        textAlign: 'center',
-                        marginTop: '90px',
-                        whiteSpace: 'normal'
-                    }}> 你他媽的應該要先買東西 </h1>
-                    <h1 style={{
-                        fontSize: '90px',
-                        textAlign: 'center',
-                        marginTop: '90px',
-                        whiteSpace: 'normal'
-                    }}> 再來點那該死的購物車 </h1>
-                </div>
-            )
+                        ),
+                    }}
+                    footer={() => (
+                        <div style={{textAlign: 'right'}}>
+                            <Button
+                                style={{width: '100px', height: '60px', backgroundColor: '#8CC753'}}
+                                type="primary"
+                                onClick={ClickDelete}
+                                disabled={!checkboxclick}
+                                loading={deleteload}
+                            >
+                                刪除
+                            </Button>
+                        </div>
+                    )}
+                />
+                <h1>Coupon Information</h1>
+                <hr/>
+                <Table<Coupon>
+                    rowSelection={{
+                        type: 'radio',
+                        onChange: (selectedRowKeys) => {
+                            setCouponkey(selectedRowKeys[0]);  // 設定選中的優惠券key
+                        },
+                    }}
+                    dataSource={Coupon}
+                    columns={CouponTable}
+                    footer={() => (
+                        <div style={{
+                            textAlign: 'right',
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center'
+                        }}>
+                            <h3 style={{marginRight: '32px'}}>總價：{total_price}</h3>
+                            <Button
+                                style={{
+                                    width: '100px',
+                                    height: '60px',
+                                    marginRight: '16px',
+                                    backgroundColor: '#8CC753'
+                                }}
+                                type="primary"
+                                onClick={ClickBuy}
+                                loading={buyload}
+                                disabled={!checkboxclick}
+                            >
+                                購買
+                            </Button>
+                        </div>
+                    )}
+                />
+            </div>
         )
     );
 }
