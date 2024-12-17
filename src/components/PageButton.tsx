@@ -16,11 +16,18 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
         return `?${queryParams.toString()}`;
     };
 
+    const scrollToTop = () => {
+        // https://stackoverflow.com/questions/24616322/mobile-safari-why-is-window-scrollto0-0-not-scrolling-to-0-0
+        setTimeout(() => {
+            window.scroll({ top: -1, left: 0, behavior: "smooth" });
+        }, 10);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-center align-items-center mb-4">
                 {page > 1 ? (
-                    <Link to={createPageLink(page - 1)} onClick={() => window.scrollTo(0, 0)}>
+                    <Link to={createPageLink(page - 1)} onClick={scrollToTop}>
                         <Button variant='outline-primary'>上一頁</Button>
                     </Link>
                 ) : (
@@ -28,7 +35,7 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
                 )}
                 <p className="mx-2 my-0">Page: {page}</p>
                 {page < PageCount ? (
-                    <Link to={createPageLink(page + 1)} onClick={() => window.scrollTo(0, 0)}>
+                    <Link to={createPageLink(page + 1)} onClick={scrollToTop}>
                         <Button variant='outline-primary'>下一頁</Button>
                     </Link>
                 ) : (
@@ -36,7 +43,7 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
                 )}
             </div>
             <div className="d-flex justify-content-center align-items-center">
-                <Link to='/' onClick={() => window.scrollTo(0, 0)}>
+                <Link to='/' onClick={scrollToTop}>
                     <strong>Oh Online Tea Delivery</strong>
                 </Link>
             </div>

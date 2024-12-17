@@ -59,12 +59,12 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
     };
 
     return (
-        <Navbar bg={theme === 'dark' ? 'dark' : 'light'} variant={theme === 'dark' ? 'dark' : 'light'} expand="lg">
+        <Navbar className='shadow' bg={theme === 'dark' ? 'dark' : 'light'} variant={theme === 'dark' ? 'dark' : 'light'} expand="lg">
             <Container fluid>
                 <Navbar.Brand as={Link} to="/" style={linkStyle} className="d-flex align-items-center">
-                    {/* <span className="d-none d-md-block">Oh Online Tea Delivery</span>
-                    <span className="d-md-none">OOTD</span> */}
-                    <span>Oh Online Tea Delivery</span>
+                    <span className="d-none d-sm-block">Oh Online Tea Delivery</span>
+                    <span className="d-sm-none">OOTD</span>
+                    {/* <span>Oh Online Tea Delivery</span> */}
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarNav" />
                 <Search />
@@ -96,6 +96,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                                 )}
                             </>) : <Spinner className='mx-3' animation="border" size="sm" />}
                         <Form.Check
+                            className='ms-5 d-flex align-items-center nav-link'
                             type="switch"
                             id="themeSwitch"
                             label="Theme"
