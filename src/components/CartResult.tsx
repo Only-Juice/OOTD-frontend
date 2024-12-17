@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button, Table } from 'antd';
+import { Table,Switch,Radio } from 'antd';
 
 interface ProductInCart {
     key: React.Key;
@@ -78,8 +78,10 @@ const CouponTable: TableColumnsType<Coupon> = [
 
 const CartResult: React.FC = () => {
     const location = useLocation();
-
-
+    const [BuyState, setBuyState] = useState<string>();
+    const handleBuyState = (e: RadioChangeEvent) => {
+        setBuyState(e.target.value);
+    }
     const { products, coupon, origin_price ,total } = location.state || {};
 
     return (
@@ -105,7 +107,13 @@ const CartResult: React.FC = () => {
                 )}
             />
             <hr/>
+            <p>{BuyState}</p>
             <div style={{ textAlign: 'right' }}>
+                <Radio.Group onChange={handleBuyState}>
+                    <Radio.Button value="PayOnGet">貨到付款</Radio.Button>
+                    <Radio.Button value="LinePay">Line Pay</Radio.Button>
+                    <Radio.Button value="CreditCard">信用卡</Radio.Button>
+                </Radio.Group>
                 <h3 style={{display: 'inline-block', width: '100px', textAlign: 'right'}}>
                     原價：
                 </h3>
