@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Row, Col } from "react-bootstrap"
 import { FaSearch } from "react-icons/fa";
 import "../styles/Search.css"
 
 const Search: React.FC = () => {
-    const [query, setQuery] = useState('');
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get('q');
+    const [query, setQuery] = useState(searchQuery || '');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setQuery(searchQuery || '');
+    }, [searchQuery]);
 
     const onSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,8 +28,8 @@ const Search: React.FC = () => {
             }
             return res.json();
         })
-    },
-    );
+    });
+
 
     return (
         <Row className='justify-content-center w-100'>
