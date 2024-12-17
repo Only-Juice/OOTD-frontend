@@ -4,7 +4,7 @@ import { Product } from "../types";
 import { useMutation } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-// import Rating from "./Rating";
+import Rating from "./Rating";
 
 interface ProductContainerProps {
     product: Product | null;
@@ -148,7 +148,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
                 </Modal.Body>
             </Modal>
 
-            {/* <Rating productId={product.ID} /> */}
+            <Rating productId={product.ID} />
         </>
     );
 };
