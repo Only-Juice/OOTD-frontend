@@ -78,15 +78,15 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
                         >
                             <Card>
                                 <Card className='m-1'>
-                                    <div className='ms-2 mt-2 mb-1'>
+                                    <div className='ms-2 mt-2'>
                                         {data && data.Username && <>
                                             <UserBadge username={data.Username} />
-                                            <Nav.Link onClick={() => setActiveKey('profile')} className='text-secondary'>
-                                                <FaPen className='me-2' />
-                                                編輯個人檔案
-                                            </Nav.Link>
                                         </>}
                                     </div>
+                                    <Nav.Link className='text-secondary mb-1' onClick={() => setActiveKey('profile')}>
+                                        <FaPen className='me-2' />
+                                        編輯個人檔案
+                                    </Nav.Link>
                                 </Card>
                                 <Nav.Item>
                                     <Nav.Link eventKey="profile">個人檔案</Nav.Link>
