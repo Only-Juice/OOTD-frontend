@@ -12,7 +12,8 @@ const C8763 = React.lazy(() => import('./pages/StarBurstStream.tsx'));
 const ProductPVCResult = React.lazy(() => import('./pages/ProductPVCResult'));
 const Register = React.lazy(() => import('./pages/Register.tsx'));
 const CartResult = React.lazy(() => import('./pages/CartResult.tsx'));
-const RickROll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp.tsx'));
+const RickROll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp'));
+const C0 = React.lazy(() => import('./components/YaoDong'));
 const GoToTop = React.lazy(() => import('./components/GoToTOP'));
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
@@ -75,6 +76,7 @@ const App: React.FC = () => {
             <Route path="/PVC/:id" element={<ProductPVCResult />} />
             <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
             <Route path="/rickroll" element={<RickROll />} />
+            <Route path="/c0" element={<C0 />} />
             <Route path="/c8763" element={<C8763 />} />
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
