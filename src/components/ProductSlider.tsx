@@ -5,6 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { Container } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 import { useQuery } from '@tanstack/react-query';
+import { Product } from '../types';
 
 const ProductSlider: React.FC = () => {
     const settings = {
@@ -50,7 +51,7 @@ const ProductSlider: React.FC = () => {
         <Container>
             <Slider {...settings}>
                 {data && Array.isArray(data) ? (
-                    data.slice(0, 5).map((product: any) => (
+                    data.slice(0, 5).map((product: Product) => (
                         <ProductCard key={product.ID} product={product} />
                     ))
                 ) : (
