@@ -1,24 +1,24 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-const Home = React.lazy(() => import('./components/Home'));
-const Cart = React.lazy(() => import('./components/Cart'));
+const Home = React.lazy(() => import('./pages/Home'));
+const Cart = React.lazy(() => import('./pages/Cart.tsx'));
 const Login = React.lazy(() => import('./components/Login'));
-const UserPage = React.lazy(() => import('./components/UserPage'));
+const UserPage = React.lazy(() => import('./pages/UserPage'));
 const NavBar = React.lazy(() => import('./components/NavBar'));
-const SearchResults = React.lazy(() => import('./components/SearchResults'));
-const ProductResult = React.lazy(() => import('./components/ProductResult'));
-const C8763= React.lazy(() => import('./components/StarBurstStream'));
-const RickRoll = React.lazy(() => import('./components/NeverGonnaGiveYouUp.tsx'));
+const SearchResults = React.lazy(() => import('./pages/SearchResults'));
+const ProductResult = React.lazy(() => import('./pages/ProductResult'));
+const C8763 = React.lazy(() => import('./pages/StarBurstStream.tsx'));
+const RickRoll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp.tsx'));
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import GoToTop from './components/GoToTOP';
-import ProductPVCResult from './components/ProductPVCResult';
-import Register from './components/Register';
-import CartResult from "./components/CartResult.tsx";
-import RickROll from "./components/NeverGonnaGiveYouUp.tsx";
+import ProductPVCResult from './pages/ProductPVCResult';
+import Register from './pages/Register.tsx';
+import CartResult from "./pages/CartResult.tsx";
+import RickROll from "./pages/NeverGonnaGiveYouUp.tsx";
 
 
 const App: React.FC = () => {

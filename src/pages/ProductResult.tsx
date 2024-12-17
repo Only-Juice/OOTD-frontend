@@ -1,14 +1,18 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import ProductContainer from './ProductContainer';
+import ProductContainer from '../components/ProductContainer';
 import { useQuery } from '@tanstack/react-query';
-import Loading from './Loading';
+import Loading from '../components/Loading';
 
-const ProductPVCResult: React.FC = () => {
+const ProductResult: React.FC = () => {
     const { id } = useParams<{ id: string }>();
 
     const { isPending, error, data } = useQuery({
-        queryKey: [`GetProdcutByPVCID_${id}`], queryFn: () => fetch(`/api/Product/GetProdcutByPVCID?PVCID=${id}`).then((res) => {
+        queryKey: [`GetProduct_${id}`], queryFn: () => fetch(`/api/Product/GetProduct?id=${id}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        }).then((res) => {
             if (!res.ok) {
                 return null;
             }
@@ -32,4 +36,4 @@ const ProductPVCResult: React.FC = () => {
     );
 };
 
-export default ProductPVCResult;
+export default ProductResult;

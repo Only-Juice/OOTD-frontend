@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Row, Col, Form } from 'react-bootstrap';
 import { SearchProduct } from '../types';
-import ProductCard from './ProductCard';
+import ProductCard from '../components/ProductCard';
 import { useQuery } from '@tanstack/react-query';
-import Loading from './Loading';
-import PageButton from './PageButton';
+import Loading from '../components/Loading';
+import PageButton from '../components/PageButton';
 
 const SearchResults: React.FC = () => {
     const [searchResults, setSearchResults] = useState<SearchProduct | null>();
