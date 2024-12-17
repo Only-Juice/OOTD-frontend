@@ -23,6 +23,37 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
         }, 10);
     };
 
+    const getPageNumbers = (currentPage: number, totalPages: number) => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+
+        if (totalPages <= maxPagesToShow) {
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers.push(i);
+            }
+        } else {
+            if (currentPage <= 4) {
+                for (let i = 1; i <= maxPagesToShow; i++) {
+                    pageNumbers.push(i);
+                }
+                pageNumbers.push('...', totalPages);
+            } else if (currentPage > 4 && currentPage < totalPages - 3) {
+                pageNumbers.push(1, '...');
+                for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+                    pageNumbers.push(i);
+                }
+                pageNumbers.push('...', totalPages);
+            } else {
+                pageNumbers.push(1, '...');
+                for (let i = totalPages - 4; i <= totalPages; i++) {
+                    pageNumbers.push(i);
+                }
+            }
+        }
+
+        return pageNumbers;
+    };
+
     return (
         <>
             <div className="d-flex justify-content-center align-items-center mb-4">
@@ -33,7 +64,17 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
                 ) : (
                     <Button variant='outline-primary' disabled>上一頁</Button>
                 )}
-                <p className="mx-2 my-0">Page: {page}</p>
+                <div className="mx-2 my-0">
+                    {getPageNumbers(page, PageCount).map((pageNumber, index) => (
+                        pageNumber === '...' ? (
+                            <span key={index} className="mx-2">...</span>
+                        ) : (
+                            <Link key={index} to={createPageLink(Number(pageNumber))} onClick={scrollToTop}>
+                                <Button variant={pageNumber === page ? 'primary' : 'outline-primary'}>{pageNumber}</Button>
+                            </Link>
+                        )
+                    ))}
+                </div>
                 {page < PageCount ? (
                     <Link to={createPageLink(page + 1)} onClick={scrollToTop}>
                         <Button variant='outline-primary'>下一頁</Button>

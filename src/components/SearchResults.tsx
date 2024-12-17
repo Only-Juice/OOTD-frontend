@@ -49,7 +49,7 @@ const SearchResults: React.FC = () => {
             {!isLoading && searchResults && searchResults.Products.length > 0 && (
                 <>
                     <Form.Group controlId="sortSelect" className='mb-4'>
-                        <Form.Label>Sort by</Form.Label>
+                        <Form.Label>排序方式</Form.Label>
                         <Form.Control
                             as="select"
                             value={`${sortField}-${sortOrder}`}
@@ -57,12 +57,12 @@ const SearchResults: React.FC = () => {
                                 navigate(`?q=${searchWord}&page=${page}&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
                             }}
                         >
-                            <option value="Default-true">Default (Ascending)</option>
-                            <option value="Default-false">Default (Descending)</option>
-                            <option value="Price-true">Price (Ascending)</option>
-                            <option value="Price-false">Price (Descending)</option>
-                            <option value="Quantity-true">Quantity (Ascending)</option>
-                            <option value="Quantity-false">Quantity (Descending)</option>
+                            <option value="Default-true">預設 (由小到大)</option>
+                            <option value="Default-false">預設 (由大到小)</option>
+                            <option value="Price-true">價格 (由小到大)</option>
+                            <option value="Price-false">價格 (由大到小)</option>
+                            <option value="Quantity-true">數量 (由小到大)</option>
+                            <option value="Quantity-false">數量 (由大到小)</option>
                         </Form.Control>
                     </Form.Group>
                     <Row>
