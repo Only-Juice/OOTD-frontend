@@ -20,11 +20,12 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
 
     const mutation = useMutation({
         mutationFn: () => {
+            const token = localStorage.getItem('token');
             setIsLoading(true);
             return fetch('/api/Product/AddToCart', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ ProductID: product?.ID, Quantity: quantity }),
