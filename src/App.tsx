@@ -8,6 +8,7 @@ const UserPage = React.lazy(() => import('./components/UserPage'));
 const NavBar = React.lazy(() => import('./components/NavBar'));
 const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const ProductResult = React.lazy(() => import('./components/ProductResult'));
+const C8763= React.lazy(() => import('./components/StarBurstStream'));
 const RickRoll = React.lazy(() => import('./components/NeverGonnaGiveYouUp.tsx'));
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
@@ -75,6 +76,7 @@ const App: React.FC = () => {
             <Route path="/PVC/:id" element={<ProductPVCResult />} />
             <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
             <Route path="/rickroll" element={<RickROll />} />
+            <Route path="/c8763" element={<C8763 />} />
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />

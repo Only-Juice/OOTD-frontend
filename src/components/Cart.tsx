@@ -195,9 +195,8 @@ const Cart: React.FC = () => {
     const checkboxclick = selectkey.length > 0;
     /*Buy and Delete*/
     const ClickBuy = () =>{
-        const selectedProducts = Product.filter(product => selectkey.includes(product.key));  // 選定的商品
-        const selectedCoupon = Coupon.find(coupon => coupon.key === selectCouponkey);  // 選定的優惠券
-        const total = calculateDiscountedTotal(Coupon, selectCouponkey, calculatecartPrice(Product, selectkey));  // 計算總價
+        const selectedProducts = Product.filter(product => selectkey.includes(product.key));
+        const selectedCoupon = Coupon.find(coupon => coupon.key === selectCouponkey);
 
         // 顯示 loading 狀態（可選）
         setbuyload(true);
@@ -209,7 +208,8 @@ const Cart: React.FC = () => {
                 state: {
                     products: selectedProducts,
                     coupon: selectedCoupon,
-                    total: total,
+                    origin_price: origin_price,
+                    total: total_price,
                 }
             });
 
@@ -227,7 +227,8 @@ const Cart: React.FC = () => {
         }, 1000);
         /* Need fetch post into database.*/
     }
-    const total_price = calculateDiscountedTotal(Coupon,selectCouponkey,calculatecartPrice(Product,selectkey));
+    const origin_price = calculatecartPrice(Product,selectkey);
+    const total_price = calculateDiscountedTotal(Coupon,selectCouponkey,origin_price);
     return (
         token == null ? (
             <div className="container">
@@ -251,7 +252,7 @@ const Cart: React.FC = () => {
                         footer={() => (
                             <div style={{textAlign: 'right'}}>
                                 <Button
-                                    style={{width: '100px', height: '60px'}}
+                                    style={{width: '100px', height: '60px',backgroundColor:'#16ff44'}}
                                     type="primary"
                                     onClick={ClickDelete}
                                     disabled={!checkboxclick}
@@ -276,12 +277,13 @@ const Cart: React.FC = () => {
                         columns={CouponTable}
                         footer={() => (
                             <div style={{textAlign: 'right',display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
-                                <h3 style={{marginRight:'32px'}}>總價：{total_price}</h3>
+                                    <h3 style={{marginRight:'32px'}}>總價：{total_price}</h3>
                                     <Button
-                                        style={{width: '100px', height: '60px',marginRight:'16px'}}
+                                        style={{width: '100px', height: '60px',marginRight:'16px',backgroundColor:'#16ff44'}}
                                         type="primary"
                                         onClick={ClickBuy}
                                         loading={buyload}
+                                        disabled={!checkboxclick}
                                     >
                                         購買
                                     </Button>
