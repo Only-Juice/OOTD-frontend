@@ -9,16 +9,15 @@ const NavBar = React.lazy(() => import('./components/NavBar'));
 const SearchResults = React.lazy(() => import('./pages/SearchResults'));
 const ProductResult = React.lazy(() => import('./pages/ProductResult'));
 const C8763 = React.lazy(() => import('./pages/StarBurstStream.tsx'));
-const RickRoll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp.tsx'));
+const ProductPVCResult = React.lazy(() => import('./pages/ProductPVCResult'));
+const Register = React.lazy(() => import('./pages/Register.tsx'));
+const CartResult = React.lazy(() => import('./pages/CartResult.tsx'));
+const RickROll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp.tsx'));
+const GoToTop = React.lazy(() => import('./components/GoToTOP'));
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import GoToTop from './components/GoToTOP';
-import ProductPVCResult from './pages/ProductPVCResult';
-import Register from './pages/Register.tsx';
-import CartResult from "./pages/CartResult.tsx";
-import RickROll from "./pages/NeverGonnaGiveYouUp.tsx";
 
 
 const App: React.FC = () => {
