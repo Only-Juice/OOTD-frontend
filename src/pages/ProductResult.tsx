@@ -8,16 +8,20 @@ const ProductResult: React.FC = () => {
     const { id } = useParams<{ id: string }>();
 
     const { isPending, error, data } = useQuery({
-        queryKey: [`GetProduct_${id}`], queryFn: () => fetch(`/api/Product/GetProduct?id=${id}`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        }).then((res) => {
-            if (!res.ok) {
-                return null;
-            }
-            return res.json();
-        })
+        queryKey: [`GetProduct_${id}`], queryFn: () => {
+            const token = localStorage.getItem('token');
+            return fetch(`/api/Product/GetProduct?id=${id}`, {
+                headers: {
+                    'Authorization': `${token ? ('Bearer' + token) : ''}`,
+                },
+            })
+                .then((res) => {
+                    if (!res.ok) {
+                        return null;
+                    }
+                    return res.json();
+                })
+        }
     },
     );
 
