@@ -88,10 +88,9 @@ const Register: React.FC = () => {
             });
         },
         onError: (error) => {
-            console.error('Error:', error); // 調試訊息
             MySwal.fire({
                 title: 'Error',
-                text: 'Registration failed',
+                text: error.message,
                 icon: 'error',
             });
         }
