@@ -40,10 +40,6 @@ export interface NavBarProps {
   handleLogout: () => void;
 }
 
-export interface ProductSliderProps {
-  products: Product[];
-}
-
 export interface UserBadgeProps {
   username: string;
 }
