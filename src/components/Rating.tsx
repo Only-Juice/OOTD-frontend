@@ -31,7 +31,7 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
         }
     });
 
-    const { data, refetch } = useQuery<Rating[]>({
+    const { isPending, data, refetch } = useQuery<Rating[]>({
         queryKey: [`GetProductRating_${productId}`],
         queryFn: () => fetch(`/api/Rating/GetProductRating?productId=${productId}`).then((res) => {
             if (res.status === 404) {
@@ -129,7 +129,7 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
             <Card className="my-4">
                 <Card.Body>
                     <Card.Title className='ms-3'>商品評價</Card.Title>
-                    {data?.length === 0 ? (
+                    {isPending || data?.length === 0 ? (
                         <div>暫時沒有評價</div>
                     ) : (
                         <ListGroup variant="flush">
