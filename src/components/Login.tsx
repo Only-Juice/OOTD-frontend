@@ -69,8 +69,8 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
         }),
         onSuccess: (data) => {
             if (data) {
-                console.log('Login successful:', data);
-                localStorage.setItem('token', data);
+                console.log('Login successful:', data.Token);
+                localStorage.setItem('token', data.Token);
                 refetch();
             }
         },

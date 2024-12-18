@@ -183,11 +183,15 @@ const Cart: React.FC = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: JSON.stringify(deleteIds), // 传递要删除的 ID 数组
+                body: JSON.stringify({ IDs: deleteIds }), // 传递要删除的 ID 数组
             }).then((res) => res.json()), // 解析返回的 JSON 数据
 
-        onSuccess: () => {
-            console.log('Products deleted successfully');
+        onSuccess: (data) => {
+            if (data.StatusCode === 200) {
+                console.log('Products deleted successfully');
+            } else {
+                console.log(data);
+            }
 
         },
         onError: (error) => {

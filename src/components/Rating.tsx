@@ -3,18 +3,20 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ListGroup, Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 interface Rating {
-    UserName: string;
+    Username: string;
     Rating: number;
     CreatedAt: string;
 }
 
 interface RatingProps {
     productId: number;
+    isPVC?: boolean;
 }
 
-const Rating: React.FC<RatingProps> = ({ productId }) => {
+const Rating: React.FC<RatingProps> = ({ productId, isPVC }) => {
     const queryClient = useQueryClient();
     const [newRating, setNewRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -30,6 +32,7 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
             toast.onmouseleave = Swal.resumeTimer;
         }
     });
+    const MySwal = withReactContent(Swal);
 
     const { isPending, data, refetch } = useQuery<Rating[]>({
         queryKey: [`GetProductRating_${productId}`],
@@ -62,12 +65,34 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
             if (data.status === 401) {
                 Toast.fire({
                     icon: "error",
+                    title: "評價失敗，請確認是否已購買過本商品"
+                });
+            } else if (data.status === 401) {
+                Toast.fire({
+                    icon: "error",
                     title: "請先登入"
                 });
             } else if (data.ok) {
-                Toast.fire({
-                    icon: "success",
-                    title: "評價成功"
+                let timerInterval: number;
+                MySwal.fire({
+                    title: 'Success',
+                    text: '評價成功!',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup()?.querySelector("b");
+                        if (timer) {
+                            timerInterval = setInterval(() => {
+                                timer.textContent = `${Swal.getTimerLeft()}`;
+                            }, 100);
+                        }
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
                 });
             }
         },
@@ -129,7 +154,7 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
             <Card className="my-4">
                 <Card.Body>
                     <Card.Title className='ms-3'>商品評價</Card.Title>
-                    {isPending || data?.length === 0 ? (
+                    {isPending || data && data.length === 0 ? (
                         <div>暫時沒有評價</div>
                     ) : (
                         <ListGroup variant="flush">
@@ -156,7 +181,7 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
                                 <ListGroup.Item key={index}>
                                     <Row>
                                         <Col xs={12} md={6}>
-                                            <div>{rating.UserName.length > 2 ? `${rating.UserName[0]}*****${rating.UserName[rating.UserName.length - 1]}` : `${rating.UserName[0]}*`}</div>
+                                            <div>{rating.Username.length > 2 ? `${rating.Username[0]}*****${rating.Username[rating.Username.length - 1]}` : `${rating.Username[0]}*`}</div>
                                         </Col>
                                         <Col xs={12} md={6}>
                                             <div>{renderStars(rating.Rating, 30)}</div>
@@ -169,42 +194,44 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
                             ))}
                         </ListGroup>
                     )}
-                    <Form onSubmit={handleSubmit} className="mt-4">
-                        <Form.Group controlId="rating">
-                            <Form.Label>留下評價</Form.Label>
-                            <div>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <span
-                                        key={`star-${star}`}
-                                        style={{ cursor: 'pointer', position: 'relative', display: 'inline-block' }}
-                                    >
+                    {isPVC && (
+                        <Form onSubmit={handleSubmit} className="mt-4">
+                            <Form.Group controlId="rating">
+                                <Form.Label>留下評價</Form.Label>
+                                <div>
+                                    {[1, 2, 3, 4, 5].map((star) => (
                                         <span
-                                            style={{ position: 'absolute', left: 0, width: '50%', height: '100%' }}
-                                            onMouseEnter={() => setHoverRating(star - 0.5)}
-                                            onMouseLeave={() => setHoverRating(0)}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleStarClick(star - 0.5);
-                                            }}
-                                        />
-                                        <span
-                                            style={{ position: 'absolute', right: 0, width: '50%', height: '100%' }}
-                                            onMouseEnter={() => setHoverRating(star)}
-                                            onMouseLeave={() => setHoverRating(0)}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleStarClick(star);
-                                            }}
-                                        />
-                                        {renderOneStar(hoverRating || newRating, star)}
-                                    </span>
-                                ))}
-                            </div>
-                        </Form.Group>
-                        <Button variant="primary" type="submit" className="mt-2">
-                            提交
-                        </Button>
-                    </Form>
+                                            key={`star-${star}`}
+                                            style={{ cursor: 'pointer', position: 'relative', display: 'inline-block' }}
+                                        >
+                                            <span
+                                                style={{ position: 'absolute', left: 0, width: '50%', height: '100%' }}
+                                                onMouseEnter={() => setHoverRating(star - 0.5)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStarClick(star - 0.5);
+                                                }}
+                                            />
+                                            <span
+                                                style={{ position: 'absolute', right: 0, width: '50%', height: '100%' }}
+                                                onMouseEnter={() => setHoverRating(star)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStarClick(star);
+                                                }}
+                                            />
+                                            {renderOneStar(hoverRating || newRating, star)}
+                                        </span>
+                                    ))}
+                                </div>
+                            </Form.Group>
+                            <Button variant="primary" type="submit" className="mt-2">
+                                提交
+                            </Button>
+                        </Form>
+                    )}
                 </Card.Body>
             </Card>
         </Container>

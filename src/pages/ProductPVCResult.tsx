@@ -25,7 +25,7 @@ const ProductPVCResult: React.FC = () => {
             {!isPending && error && <p style={{ color: 'red' }}>{error.message}</p>}
             {!isPending && !error && !data && <p>找不到相關結果</p>}
             {!isPending && !error && data && (
-                <ProductContainer product={data} />
+                <ProductContainer product={data} isPVC={true} />
             )
             }
         </>

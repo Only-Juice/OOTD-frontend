@@ -7,42 +7,6 @@ body {
   color: var(--text-color);
 }
 
-nav {
-  background-color: var(--nav-background-color);
-  color: var(--nav-text-color);
-  padding: 1rem;
-}
-
-nav ul {
-  list-style-type: none;
-  padding: 0;
-  display: flex;
-}
-
-nav ul li {
-  margin-right: 1rem;
-}
-
-nav ul li a, nav ul li button {
-  color: var(--nav-text-color);
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-nav ul li button:hover, nav ul li a:hover {
-  text-decoration: underline;
-}
-
-/* h1, h2 {
-  color: var(--heading-color);
-} */
-
-.container {
-  padding: 2rem;
-}
-
 .product-list {
   list-style-type: none;
   padding: 0;
@@ -97,10 +61,6 @@ nav ul li button:hover, nav ul li a:hover {
   /* color: var(--button-text-color); */
   cursor: pointer;
 }
-/* 
-.modal-content button:hover {
-  background-color: var(--button-hover-background-color);
-} */
 
 /* 淺色模式 */
 :root {
@@ -143,4 +103,10 @@ nav ul li button:hover, nav ul li a:hover {
   flex: 1 1 calc(33.333% - 10px);
   margin: 5px;
   box-sizing: border-box;
+}
+
+.nav-link {
+  display: flex !important; /* 保證標題和箭頭在同一行 */
+  align-items: center;      /* 垂直置中 */
+  white-space: nowrap;      /* 禁止換行 */
 }
