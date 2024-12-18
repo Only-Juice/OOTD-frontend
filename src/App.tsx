@@ -57,7 +57,7 @@ const App: React.FC = () => {
     if (localStorage.getItem('token') === null) {
       setIsModalOpen(true);
     }
-  }, [localStorage]);
+  }, [localStorage, localStorage.getItem('token')]);
 
   return (
     <QueryClientProvider client={queryClient}>
