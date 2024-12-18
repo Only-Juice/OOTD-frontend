@@ -180,13 +180,13 @@ const UserOrders: React.FC = () => {
                                                                 <Col md={6} className='text-start'>
                                                                     <div>
                                                                         <p>商品總金額</p>
-                                                                        <p>全站優惠券</p>
+                                                                        {order.Discount !== 1 && <p>全站優惠券</p>}
                                                                     </div>
                                                                 </Col>
                                                                 <Col md={6} className='text-end'>
                                                                     <div>
                                                                         <p>${order.Amount}</p>
-                                                                        <p>-${(order.Amount - order.Amount * order.Discount).toFixed(0)}</p>
+                                                                        {order.Discount !== 1 && <p>-${(order.Amount - order.Amount * order.Discount).toFixed(0)}</p>}
                                                                     </div>
                                                                 </Col>
                                                             </Row>
