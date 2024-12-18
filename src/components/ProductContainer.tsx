@@ -131,6 +131,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
             }
 
             <Modal show={showModal} onHide={handleClose} centered size="lg">
+                <Modal.Header closeButton />
                 <Modal.Body>
                     {selectedImageIndex !== null && (
                         <Carousel activeIndex={selectedImageIndex} onSelect={(index) => setSelectedImageIndex(index)}>
