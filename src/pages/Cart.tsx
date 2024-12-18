@@ -153,7 +153,7 @@ const Cart: React.FC = () => {
     const fetchUserInfo = (token: string) => {
         fetch('/api/Product/GetCartProducts', {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
         })
             .then(response => {
@@ -181,9 +181,9 @@ const Cart: React.FC = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: JSON.stringify(deleteIds ), // 传递要删除的 ID 数组
+                body: JSON.stringify(deleteIds), // 传递要删除的 ID 数组
             }).then((res) => res.json()), // 解析返回的 JSON 数据
 
         onSuccess: () => {
