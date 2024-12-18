@@ -112,7 +112,7 @@ const UserOrders: React.FC = () => {
                                         <div>
                                             <strong>訂單編號:</strong> <span>{order.OrderID}</span> <br />
                                             <strong>訂單日期:</strong> <span>{new Date(order.CreateAt).toLocaleString()}</span> <br />
-                                            <strong>折扣:</strong> <span>{order.Discount === 1 ? '無折扣' : `${(order.Discount * 10).toFixed(2)}折`}</span> <br />
+                                            <strong>折扣:</strong> <span>{order.Discount === 1 ? '無折扣' : `${(order.Discount * 10).toFixed(2).replace(/\.?0+$/, '')}折`}</span> <br />
                                             <strong>狀態:</strong> <span>{order.Status}</span> <br />
                                             {getStatusTimeline(order.Status)}
                                             {order.Discount === 1 ? (
