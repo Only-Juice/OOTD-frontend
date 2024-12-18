@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import ProductContainer from './ProductContainer';
+import ProductContainer from '../components/ProductContainer';
 import { useQuery } from '@tanstack/react-query';
-import Loading from './Loading';
+import Loading from '../components/Loading';
 
 const ProductPVCResult: React.FC = () => {
     const { id } = useParams<{ id: string }>();

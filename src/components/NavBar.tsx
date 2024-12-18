@@ -25,10 +25,11 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
     const { isPending, data, refetch } = useQuery({
         queryKey: [`UserInfo`],
         queryFn: () => {
-            if (!localStorage.getItem('token')) return null;
+            const token = localStorage.getItem('token');
+            if (!token) return null;
             return fetch('/api/User/Get', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             }).then((res) => {
                 if (!res.ok) {

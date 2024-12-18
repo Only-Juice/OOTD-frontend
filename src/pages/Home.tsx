@@ -1,11 +1,11 @@
 import React from 'react';
-import ProductSlider from './ProductSlider';
+import ProductSlider from '../components/ProductSlider';
 import { Row, Col } from 'react-bootstrap';
-import ProductCard from './ProductCard';
+import ProductCard from '../components/ProductCard';
 import { useQuery } from '@tanstack/react-query';
 import { Product } from '../types';
-import Loading from './Loading';
-import PageButton from './PageButton';
+import Loading from '../components/Loading';
+import PageButton from '../components/PageButton';
 import { useLocation } from 'react-router-dom';
 
 const Home: React.FC = () => {

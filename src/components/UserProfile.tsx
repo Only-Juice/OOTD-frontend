@@ -22,10 +22,11 @@ const UserProfile: React.FC = () => {
     const { isLoading, data, refetch } = useQuery({
         queryKey: [`UserInfo`],
         queryFn: () => {
-            if (!localStorage.getItem('token')) return null;
+            const token = localStorage.getItem('token');
+            if (!token) return null;
             return fetch('/api/User/Get', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             }).then((res) => {
                 if (!res.ok) {
@@ -56,19 +57,22 @@ const UserProfile: React.FC = () => {
     }, [data]);
 
     const mutation = useMutation({
-        mutationFn: (newData: { Username: string; Email: string; Address: string }) => fetch('/api/User/ModifyUserInformation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(newData),
-        }).then((res) => {
-            if (!res.ok) {
-                throw new Error('Update failed');
-            }
-            return null;
-        }),
+        mutationFn: (newData: { Username: string; Email: string; Address: string }) => {
+            const token = localStorage.getItem('token');
+            return fetch('/api/User/ModifyUserInformation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+                },
+                body: JSON.stringify(newData),
+            }).then((res) => {
+                if (!res.ok) {
+                    throw new Error('Update failed');
+                }
+                return null;
+            })
+        },
         onSuccess: () => {
             Toast.fire({
                 icon: "success",

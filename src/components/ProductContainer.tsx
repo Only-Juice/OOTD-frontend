@@ -1,24 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Carousel, Button, Modal, Row, Col, Spinner } from "react-bootstrap";
 import { Product } from "../types";
 import { useMutation } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import Rating from "./Rating";
 
-const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) => {
+interface ProductContainerProps {
+    product: Product | null;
+}
+
+
+const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
     const [quantity, setQuantity] = useState(1);
+    const [leftQuantity, setLeftQuantity] = useState(product?.Quantity || 0);
     const [isLoading, setIsLoading] = useState(false);
     const MySwal = withReactContent(Swal);
 
     const mutation = useMutation({
         mutationFn: () => {
+            const token = localStorage.getItem('token');
             setIsLoading(true);
             return fetch('/api/Product/AddToCart', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ ProductID: product?.ID, Quantity: quantity }),
@@ -37,6 +45,7 @@ const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) =>
                 text: 'Added to cart',
                 icon: 'success',
             });
+            setLeftQuantity(leftQuantity - quantity);
         },
         onError: (error) => {
             MySwal.fire({
@@ -56,6 +65,13 @@ const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) =>
         setShowModal(false);
         setSelectedImageIndex(null);
     };
+
+    useEffect(() => {
+        if (leftQuantity <= 0) {
+            setQuantity(1);
+            setLeftQuantity(product?.Quantity || 0);
+        }
+    }, [leftQuantity]);
 
     return (
         <>
@@ -86,7 +102,7 @@ const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) =>
                             </React.Fragment>
                         ))}</p>
                         <h4 style={{ color: 'red' }}><b>NT${product.Price}</b></h4>
-                        <p style={{ color: '#6c757d' }}>庫存: {product.Quantity}</p>
+                        <p style={{ color: '#6c757d' }}>庫存: {leftQuantity}</p>
 
                         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
                             <label htmlFor="quantity" className="mr-2">數量:</label>
@@ -95,11 +111,16 @@ const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) =>
                                 id="quantity"
                                 name="quantity"
                                 min="1"
-                                max={product.Quantity}
-                                defaultValue="1"
+                                max={leftQuantity}
+                                value={quantity}
                                 className="form-control d-inline-block"
                                 style={{ width: '60px', marginRight: '10px' }}
-                                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                                onChange={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    if (value >= 1 && value <= leftQuantity) {
+                                        setQuantity(value);
+                                    }
+                                }}
                             />
                             <Button className="w-25" variant="primary" onClick={() => mutation.mutate()} disabled={isLoading}>
                                 {isLoading ? <Spinner animation="border" size="sm" /> : '加入購物車'}
@@ -126,6 +147,8 @@ const ProductContainer: React.FC<{ product: Product | null }> = ({ product }) =>
                     )}
                 </Modal.Body>
             </Modal>
+
+            {product && <Rating productId={product.ID} />}
         </>
     );
 };

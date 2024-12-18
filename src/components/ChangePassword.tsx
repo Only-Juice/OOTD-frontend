@@ -25,19 +25,22 @@ const ChangePassword: React.FC = () => {
     });
 
     const mutation = useMutation({
-        mutationFn: () => fetch('/api/User/ModifyPassword', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify({ OldPassword: currentPassword, NewPassword: newPassword }),
-        }).then((res) => {
-            if (!res.ok) {
-                throw new Error(res.status.toString());
-            }
-            return null;
-        }),
+        mutationFn: () => {
+            const token = localStorage.getItem('token');
+            return fetch('/api/User/ModifyPassword', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+                },
+                body: JSON.stringify({ OldPassword: currentPassword, NewPassword: newPassword }),
+            }).then((res) => {
+                if (!res.ok) {
+                    throw new Error(res.status.toString());
+                }
+                return null;
+            })
+        },
         onSuccess: () => {
             Toast.fire({
                 icon: "success",

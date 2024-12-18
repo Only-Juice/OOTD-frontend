@@ -26,10 +26,11 @@ const UserOrders: React.FC = () => {
     const { isLoading, error, data, refetch } = useQuery({
         queryKey: [`UserOrders`],
         queryFn: () => {
-            if (!localStorage.getItem('token')) return null;
+            const token = localStorage.getItem('token');
+            if (!token) return null;
             return fetch('/api/Order/GetUserOrders', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
             }).then((res) => {
                 if (!res.ok) {
