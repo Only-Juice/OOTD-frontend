@@ -11,11 +11,7 @@ import { FaPen } from "react-icons/fa";
 import ChangePassword from '../components/ChangePassword';
 
 
-interface UserPageProps {
-    setIsModalOpen: (isOpen: boolean) => void;
-}
-
-const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
+const UserPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
@@ -44,17 +40,15 @@ const UserPage: React.FC<UserPageProps> = ({ setIsModalOpen }) => {
 
 
     useEffect(() => {
-        if (!localStorage.getItem('token')) {
-            setIsModalOpen(true);
-        }
-        refetch();
-    }, [localStorage.getItem('token')]);
-
-    useEffect(() => {
         const newQueryParams = new URLSearchParams(queryParams.toString());
         newQueryParams.set('tab', activeKey);
         navigate(`?${newQueryParams.toString()}`, { replace: true });
     }, []);
+
+    useEffect(() => {
+        refetch();
+    }, [localStorage.getItem('token')]);
+
 
     const changeActiveKey = (key: string) => {
         const newQueryParams = new URLSearchParams(queryParams.toString());

@@ -62,6 +62,7 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
         }).then((res) => {
             if (!res.ok) {
                 setError('登入失敗');
+                setIsLoading(false);
                 return null;
             }
             return res.json();

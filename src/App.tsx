@@ -52,6 +52,12 @@ const App: React.FC = () => {
     }
   }, [isModalOpen]);
 
+  useEffect(() => {
+    if (localStorage.getItem('token') === null) {
+      setIsModalOpen(true);
+    }
+  }, [localStorage]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <GoToTop />
@@ -70,7 +76,7 @@ const App: React.FC = () => {
             <Route path="/search" element={<SearchResults />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/cartresult" element={<CartResult />} />
-            <Route path="/user" element={<UserPage setIsModalOpen={setIsModalOpen} />} />
+            <Route path="/user" element={<UserPage />} />
             <Route path="/product/:id" element={<ProductResult />} />
             <Route path="/products/:id" element={<Navigate to="/product/:id" />} />
             <Route path="/PVC/:id" element={<ProductPVCResult />} />

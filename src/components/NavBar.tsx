@@ -42,7 +42,6 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
     });
 
     useEffect(() => {
-        console.log('Refetching user info');
         refetch();
     }, [localStorage.getItem('token')]);
 

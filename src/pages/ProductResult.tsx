@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ProductContainer from '../components/ProductContainer';
 import { useQuery } from '@tanstack/react-query';
@@ -7,7 +7,7 @@ import Loading from '../components/Loading';
 const ProductResult: React.FC = () => {
     const { id } = useParams<{ id: string }>();
 
-    const { isPending, error, data } = useQuery({
+    const { isPending, error, data, refetch } = useQuery({
         queryKey: [`GetProduct_${id}`], queryFn: () => {
             const token = localStorage.getItem('token');
             return fetch(`/api/Product/GetProduct?id=${id}`, {
@@ -24,6 +24,10 @@ const ProductResult: React.FC = () => {
         }
     },
     );
+
+    useEffect(() => {
+        refetch();
+    }, [localStorage.getItem('token')]);
 
     return (
         <>

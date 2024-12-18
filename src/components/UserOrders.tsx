@@ -54,10 +54,6 @@ const UserOrders: React.FC = () => {
         refetch();
     }, [localStorage.getItem('token')]);
 
-    const calculateTotalQuantity = (details: OrderDetail[]) => {
-        return details.reduce((total, detail) => total + detail.Quantity, 0);
-    };
-
     const getStatusTimeline = (status: string) => {
         const statuses = [
             '未審查',
@@ -114,12 +110,21 @@ const UserOrders: React.FC = () => {
                                 <Accordion.Item eventKey={`${order.OrderID}`}>
                                     <Accordion.Header>
                                         <div>
-                                            <strong>訂單編號:</strong> {order.OrderID} <br />
-                                            <strong>訂單日期:</strong> {new Date(order.CreateAt).toLocaleString()} <br />
-                                            <strong>折扣:</strong> {order.Discount === 1 ? '無折扣' : `${order.Discount * 10}折`} <br />
-                                            <strong>狀態:</strong> {order.Status} <br />
+                                            <strong>訂單編號:</strong> <span>{order.OrderID}</span> <br />
+                                            <strong>訂單日期:</strong> <span>{new Date(order.CreateAt).toLocaleString()}</span> <br />
+                                            <strong>折扣:</strong> <span>{order.Discount === 1 ? '無折扣' : `${(order.Discount * 10).toFixed(2)}折`}</span> <br />
+                                            <strong>狀態:</strong> <span>{order.Status}</span> <br />
                                             {getStatusTimeline(order.Status)}
-                                            <strong>總金額:</strong> NT${order.Amount}
+                                            {order.Discount === 1 ? (
+                                                <>
+                                                    <strong>總金額:</strong><span> NT${order.Amount}</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <strong>總金額:</strong><del> NT${order.Amount}</del>
+                                                    <span> NT${(order.Amount * order.Discount).toFixed(0)}</span>
+                                                </>
+                                            )}
                                         </div>
                                     </Accordion.Header>
                                     <Accordion.Body>
@@ -136,31 +141,58 @@ const UserOrders: React.FC = () => {
                                                                 )}
                                                             </Link>
                                                         </Col>
-                                                        <Col md={6}>
-                                                            <Link to={`/PVC/${detail.PVCID}`}>
-                                                                <h5>{detail.Name}</h5>
-                                                            </Link>
-                                                        </Col>
+                                                        <Col md={10}>
+                                                            <Row>
+                                                                <Link to={`/PVC/${detail.PVCID}`}>
+                                                                    <h5>{detail.Name}</h5>
+                                                                </Link>
+                                                                <br />
+                                                                <span className='text-end text-muted'>
+                                                                    x{detail.Quantity}
+                                                                </span>
+                                                                <br />
+                                                                <div className='mt-2 text-end'>
+                                                                    {order.Discount === 1 ? (
+                                                                        <span>
+                                                                            NT${detail.Price * detail.Quantity}
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span>
+                                                                            <del className='text-muted small'>NT${detail.Price * detail.Quantity}</del>
+                                                                            <span> NT${(detail.Price * detail.Quantity * order.Discount).toFixed(0)}</span>
+                                                                        </span>
+                                                                    )}
+                                                                </div>
 
-                                                        <Col md={2}>
-                                                            <strong>數量:</strong> {detail.Quantity}
-                                                        </Col>
-                                                        <Col md={2}>
-                                                            <strong>價格:</strong> NT${detail.Price * detail.Quantity}
+                                                            </Row>
                                                         </Col>
                                                     </Row>
                                                 </ListGroup.Item>
                                             ))}
                                             <ListGroup.Item>
-                                                <Row>
-                                                    <Col md={8}></Col>
-                                                    <Col md={2}>
-                                                        <strong>總數量:</strong> {calculateTotalQuantity(order.Details)}
-                                                    </Col>
-                                                    <Col md={2}>
-                                                        <strong>總金額:</strong> NT${order.Amount}
-                                                    </Col>
-                                                </Row>
+                                                <Accordion>
+                                                    <Accordion.Item eventKey={`${order.OrderID}-discount`}>
+                                                        <Accordion.Header>
+                                                            <span>訂單金額: NT${(order.Amount * order.Discount).toFixed(0)}</span>
+                                                        </Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <Row>
+                                                                <Col md={6} className='text-start'>
+                                                                    <div>
+                                                                        <p>商品總金額</p>
+                                                                        {order.Discount !== 1 && <p>全站優惠券</p>}
+                                                                    </div>
+                                                                </Col>
+                                                                <Col md={6} className='text-end'>
+                                                                    <div>
+                                                                        <p>${order.Amount}</p>
+                                                                        {order.Discount !== 1 && <p>-${(order.Amount - order.Amount * order.Discount).toFixed(0)}</p>}
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Accordion.Body>
+                                                    </Accordion.Item>
+                                                </Accordion>
                                             </ListGroup.Item>
                                         </ListGroup>
                                     </Accordion.Body>
@@ -168,8 +200,8 @@ const UserOrders: React.FC = () => {
                             </Accordion>
                         ))
                         }
-                    </div>
-                </Card>
+                    </div >
+                </Card >
             }
         </>
     );
