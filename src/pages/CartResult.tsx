@@ -23,10 +23,12 @@ interface Coupon {
     EndDate: string;
     Quantity: number;
 }
+
 interface ProductDetails {
     ProductID: number;
     Quantity: number;
 }
+
 /*Handle Shopping Cart Table*/
 const CartTable: TableColumnsType<ProductInCart> = [
     {
@@ -64,6 +66,7 @@ const CartTable: TableColumnsType<ProductInCart> = [
         sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
     },
 ];
+
 const CouponTable: TableColumnsType<Coupon> = [
     {
         title: "名稱",
@@ -80,6 +83,7 @@ const CouponTable: TableColumnsType<Coupon> = [
 ];
 const CartResult: React.FC = () => {
     const location = useLocation();
+
     const [BuyState, setBuyState] = useState<string>('');
     const [havebuy,sethavebuy] = useState(false);
     const [Paybuttomloading,setPaybuttomloading] = useState(false);
@@ -379,7 +383,6 @@ const CartResult: React.FC = () => {
             </div>
         )
 
-    );
 };
 
 export default CartResult;
