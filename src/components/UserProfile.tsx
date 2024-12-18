@@ -64,7 +64,7 @@ const UserProfile: React.FC = () => {
         mutationFn: (newData: { Username: string; Email: string; Address: string }) => {
             const token = localStorage.getItem('token');
             return fetch('/api/User/ModifyUserInformation', {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `${token ? ('Bearer ' + token) : ''}`,
