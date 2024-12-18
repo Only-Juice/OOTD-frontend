@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
+import type { TableColumnsType, TableProps } from 'antd';
 import {Table, Input, Radio, Button} from 'antd';
+import {Layout} from 'antd';
+const {Content,Header, Footer} = Layout;
 
 interface ProductInCart {
     key: React.Key;
@@ -23,12 +26,34 @@ interface Coupon {
     EndDate: string;
     Quantity: number;
 }
-
 interface ProductDetails {
     ProductID: number;
     Quantity: number;
 }
+const headerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    color: '#fff',
+    height: 256,
+    paddingInline: 48,
+    lineHeight: '64px',
+};
 
+const contentStyle: React.CSSProperties = {
+    display: 'flex', // 使用 flexbox 來排版
+    flexDirection: 'column', // 垂直排列內部元素
+    justifyContent: 'center', // 垂直居中
+    alignItems: 'center', // 水平居中
+    textAlign: 'center', // 文字居中
+    minHeight: '70vh', // 設定最小高度為視窗高度
+    color: '#000',
+    backgroundColor: '#f4f4f4',
+};
+
+const footerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    color: '#fff',
+    backgroundColor: '#4096ff',
+};
 /*Handle Shopping Cart Table*/
 const CartTable: TableColumnsType<ProductInCart> = [
     {
@@ -66,7 +91,6 @@ const CartTable: TableColumnsType<ProductInCart> = [
         sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
     },
 ];
-
 const CouponTable: TableColumnsType<Coupon> = [
     {
         title: "名稱",
@@ -83,7 +107,6 @@ const CouponTable: TableColumnsType<Coupon> = [
 ];
 const CartResult: React.FC = () => {
     const location = useLocation();
-
     const [BuyState, setBuyState] = useState<string>('');
     const [havebuy,sethavebuy] = useState(false);
     const [Paybuttomloading,setPaybuttomloading] = useState(false);
@@ -109,7 +132,7 @@ const CartResult: React.FC = () => {
     const handleBuyState = (e: RadioChangeEvent) => {
         setBuyState(e.target.value);
     }
-    const { products, coupon, origin_price ,total } = location.state || {};
+    const { products = [], coupon = undefined, origin_price, total } = location.state || {};
 
     const ClickBuy = () =>{
         setPaybuttomloading(true);
@@ -127,8 +150,10 @@ const CartResult: React.FC = () => {
     }));
     const orderrequestbody = {
         CouponID: coupon === undefined ? null : coupon.CouponID,
-        Details: GetProductDetails,
+        Details: GetProductDetails === 0 ? [] : GetProductDetails,
     };
+
+
     /*Handle Making Order*/
     const DeleteShoppingCart = useMutation({
         mutationFn: (orderjson:JSON) =>
@@ -175,11 +200,17 @@ const CartResult: React.FC = () => {
 
         },
     });
-    return (havebuy? (
-            <div>
-                <h3> &#x1F4B8; 小老媽逼付款成功</h3>
-                <h3> &#x1F4B8; 正在將您導回首頁</h3>
-            </div>): (
+    return (havebuy ? (
+        <Layout>
+            <Content style={contentStyle}>
+                <h1>&#x1F4B8; 野格炸彈超爽口感</h1>
+                <h1>&#x1F4B8; 野格炸彈我的最愛</h1>
+                <h1>&#x1F4B8; 付款大成功</h1>
+                {(total > 1000) ? <h1>&#x1F4B8; 可於個人頁面查看訂單</h1>
+                    : <h1>&#x1F4B8; 可於個人頁面查看你那小乞丐訂單</h1>}
+            </Content>
+        </Layout>
+        ): (
             <div className="container">
                 <Table<ProductInCart>
                     dataSource={products}
@@ -192,7 +223,7 @@ const CartResult: React.FC = () => {
                     )}
                 />
                 <Table<Coupon>
-                    dataSource={[coupon]}
+                    dataSource={coupon === undefined ? [] : [coupon]}
                     columns={CouponTable}
                     rowKey="key"
                     title={() => (
@@ -383,6 +414,7 @@ const CartResult: React.FC = () => {
             </div>
         )
 
+    );
 };
 
 export default CartResult;
