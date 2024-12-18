@@ -23,7 +23,7 @@ const SearchResults: React.FC = () => {
             setSearchResults(null);
             if (!searchWord) return Promise.resolve(null);
             return fetch(`/api/Product/SearchProducts?keyword=${searchWord}&page=${page}&pageLimitNumber=30&orderField=${sortField}&isASC=${sortOrder}`, {
-                method: 'POST',
+                method: 'GET',
             }).then((res) => {
                 if (!res.ok) {
                     return null;
