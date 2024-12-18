@@ -38,6 +38,10 @@ const UserProfile: React.FC = () => {
         },
     });
 
+    useEffect(() => {
+        refetch();
+    }, [localStorage.getItem('token')]);
+
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         Username: '',

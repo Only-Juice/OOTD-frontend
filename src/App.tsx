@@ -52,6 +52,12 @@ const App: React.FC = () => {
     }
   }, [isModalOpen]);
 
+  useEffect(() => {
+    if (localStorage.getItem('token') === null) {
+      setIsModalOpen(true);
+    }
+  }, [localStorage]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <GoToTop />
