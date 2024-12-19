@@ -4,10 +4,13 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Container } from 'react-bootstrap';
 import ProductCard from './ProductCard';
-import { useQuery } from '@tanstack/react-query';
 import { Product } from '../types';
 
-const ProductSlider: React.FC = () => {
+interface ProductsDataProps {
+    ProductsData: Product[];
+}
+
+const ProductSlider: React.FC<ProductsDataProps> = ({ ProductsData }) => {
     const settings = {
         dots: true,
         infinite: true,
@@ -37,21 +40,13 @@ const ProductSlider: React.FC = () => {
         ]
     };
 
-    const { data } = useQuery({
-        queryKey: [`GetTopProducts`], queryFn: () => fetch(`/api/Product/GetTopProducts?count=5`).then((res) => {
-            if (!res.ok) {
-                return null;
-            }
-            return res.json();
-        })
-    },
-    );
+
 
     return (
         <Container>
             <Slider {...settings}>
-                {data && Array.isArray(data) ? (
-                    data.slice(0, 5).map((product: Product) => (
+                {ProductsData && Array.isArray(ProductsData) ? (
+                    ProductsData.slice(0, 5).map((product: Product) => (
                         <ProductCard key={product.ID} product={product} />
                     ))
                 ) : (
