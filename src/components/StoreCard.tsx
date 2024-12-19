@@ -9,15 +9,16 @@ const StoreCard: React.FC<{ product: Product | null }> = ({ product }) => {
 
     return (
         <>
-            {!product && <Card className='h-100'>
-                <Card.Body>
-                    <div className='image-container img-thumbnail'>
-                        <div className='store-image'></div>
-                    </div>
-                    <Card.Title>Loading</Card.Title>
-                    <Card.Text>Loading</Card.Text>
-                </Card.Body>
-            </Card>}
+            {!product &&
+                <Card className='h-100'>
+                    <Card.Body>
+                        <div className='image-container img-thumbnail'>
+                            <div className='store-image'></div>
+                        </div>
+                        <Card.Title>Loading</Card.Title>
+                        <Card.Text>Loading</Card.Text>
+                    </Card.Body>
+                </Card>}
             {product &&
                 <Link to={`/product/${product.ID}`} className='text-decoration-none'>
                     <Card className='h-100'>
