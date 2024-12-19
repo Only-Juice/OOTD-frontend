@@ -142,7 +142,7 @@ export const calculateDiscountedTotal = (coupons, selectCouponkey, total) => {
 };
 
 interface CartProps {
-    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
