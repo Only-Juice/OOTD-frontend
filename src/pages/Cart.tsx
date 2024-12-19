@@ -141,7 +141,11 @@ export const calculateDiscountedTotal = (coupons, selectCouponkey, total) => {
     return Math.floor(total * selectedCoupon.Discount);
 };
 
-const Cart: React.FC = () => {
+interface CartProps {
+    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
     const navigate = useNavigate();
 
     /* Get Cart Info */
@@ -149,6 +153,12 @@ const Cart: React.FC = () => {
     const [hasProduct, sethasProduct] = useState(false);
     const [error, seterror] = useState(false);
     const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        if (token == null) {
+            setIsModalOpen(true);
+        }
+    }, [token]);
 
     const fetchUserInfo = (token: string) => {
         fetch('/api/Product/GetCartProducts', {

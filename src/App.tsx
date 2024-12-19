@@ -46,6 +46,8 @@ const App: React.FC = () => {
     queryClient.invalidateQueries();
   };
 
+  const requiredLoginPaths = ['/cart', '/cartresult', '/user'];
+
   useEffect(() => {
     if (isModalOpen === undefined) return;
     if (isModalOpen) {
@@ -55,7 +57,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (localStorage.getItem('token') === null) {
-      setIsModalOpen(true);
+      if (requiredLoginPaths.includes(window.location.pathname)) {
+        setIsModalOpen(true);
+      }
     }
   }, [localStorage, localStorage.getItem('token')]);
 
@@ -76,7 +80,7 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/searchStore" element={<BriefStoreSearch />} />
-            <Route path="/cart" element={<Cart />} />
+            <Route path="/cart" element={<Cart setIsModalOpen={setIsModalOpen} />} />
             <Route path="/cartresult" element={<CartResult />} />
             <Route path="/user" element={<UserPage />} />
             <Route path="/product/:id" element={<ProductResult />} />
