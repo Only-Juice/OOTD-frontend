@@ -5,10 +5,10 @@ import Loading from "./Loading";
 import { Card } from "react-bootstrap";
 
 interface Store {
-    StoreID: number;
-    OwnerID: number;
-    Name: string;
     Description: string;
+    Name: string;
+    OwnerUsername: string;
+    StoreID: number;
 }
 
 interface SearchStoresResponse {
