@@ -5,7 +5,7 @@ import { Store } from '../types';
 import UserBadge from './UserBadge';
 import { useQuery } from '@tanstack/react-query';
 import ProductSlider from './ProductSlider';
-import StoreCard from './StoreCard';
+import StoreCard from './StoreProductCard';
 
 const StoreBar: React.FC<{ store: Store | null }> = ({ store }) => {
     const { data: StoreProductsData } = useQuery({
