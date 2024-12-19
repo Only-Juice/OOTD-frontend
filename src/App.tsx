@@ -19,6 +19,7 @@ import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import BriefStoreSearch from './components/BriefStoreSearch.tsx';
 
 
 const App: React.FC = () => {
@@ -56,7 +57,7 @@ const App: React.FC = () => {
     if (localStorage.getItem('token') === null) {
       setIsModalOpen(true);
     }
-  }, [localStorage]);
+  }, [localStorage, localStorage.getItem('token')]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -74,6 +75,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/search" element={<SearchResults />} />
+            <Route path="/searchStore" element={<BriefStoreSearch />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/cartresult" element={<CartResult />} />
             <Route path="/user" element={<UserPage />} />
