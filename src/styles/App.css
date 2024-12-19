@@ -110,3 +110,13 @@ body {
   align-items: center;      /* 垂直置中 */
   white-space: nowrap;      /* 禁止換行 */
 }
+
+.sold-out {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}

@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../components/Loading';
 import PageButton from '../components/PageButton';
+import BriefStoreSearch from '../components/BriefStoreSearch';
 
 const SearchResults: React.FC = () => {
     const [searchResults, setSearchResults] = useState<SearchProduct | null>();
@@ -13,8 +14,8 @@ const SearchResults: React.FC = () => {
     const queryParams = new URLSearchParams(location.search);
     const searchWord = queryParams.get('q');
     const page = parseInt(queryParams.get('page') || '1', 10);
-    const sortOrder = queryParams.get('sortOrder') || true;
-    const sortField = queryParams.get('sortField') || 'Default';
+    const sortOrder = queryParams.get('sortOrder') || false;
+    const sortField = queryParams.get('sortField') || 'Sale';
     const navigate = useNavigate();
 
     const { isLoading, error, data } = useQuery({
@@ -41,6 +42,9 @@ const SearchResults: React.FC = () => {
 
     return (
         <>
+            <div className='mb-4'>
+                <BriefStoreSearch />
+            </div>
             {isLoading && (
                 <Loading />
             )}
@@ -57,12 +61,14 @@ const SearchResults: React.FC = () => {
                                 navigate(`?q=${searchWord}&page=${page}&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
                             }}
                         >
-                            <option value="Default-true">預設 (由小到大)</option>
-                            <option value="Default-false">預設 (由大到小)</option>
+                            <option value="Sale-true">銷量 (由小到大)</option>
+                            <option value="Sale-false">銷量 (由大到小)</option>
                             <option value="Price-true">價格 (由小到大)</option>
                             <option value="Price-false">價格 (由大到小)</option>
                             <option value="Quantity-true">數量 (由小到大)</option>
                             <option value="Quantity-false">數量 (由大到小)</option>
+                            <option value="Default-false">上架時間 (由新到舊)</option>
+                            <option value="Default-true">上架時間 (由舊到新)</option>
                         </Form.Control>
                     </Form.Group>
                     <Row>

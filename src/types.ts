@@ -4,12 +4,15 @@ export interface SearchProduct {
   PageCount: number;
   Products: Product[];
 }
+
 export interface Product {
   ID: number;
   Name: string;
   Description: string;
   Price: number;
   Quantity: number;
+  Sale?: number;
+  StoreID: number;
   Images: string[];
 }
 
@@ -42,6 +45,7 @@ export interface NavBarProps {
 
 export interface UserBadgeProps {
   username: string;
+  size?: number;
 }
 
 export interface UserInfo {
@@ -55,4 +59,11 @@ export interface UserInfo {
 export interface LoginProps {
   isModalOpen: boolean|undefined;
   setIsModalOpen: (isOpen: boolean) => void;
+}
+
+export interface Store {
+  Description: string;
+  Name: string;
+  OwnerUsername: string;
+  StoreID: number;
 }

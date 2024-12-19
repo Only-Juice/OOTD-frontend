@@ -12,6 +12,7 @@ const Register = React.lazy(() => import('./pages/Register.tsx'));
 const CartResult = React.lazy(() => import('./pages/CartResult.tsx'));
 const RickROll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp'));
 const C0 = React.lazy(() => import('./pages/YaoDong.tsx'));
+const StorePage = React.lazy(() => import('./pages/Store.tsx'));
 import Login from './components/Login';
 import GoToTop from './components/GoToTOP';
 import NavBar from './components/NavBar';
@@ -19,7 +20,6 @@ import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean | undefined>(undefined);
@@ -45,6 +45,8 @@ const App: React.FC = () => {
     queryClient.invalidateQueries();
   };
 
+  const requiredLoginPaths = ['/cart', '/cartresult', '/user'];
+
   useEffect(() => {
     if (isModalOpen === undefined) return;
     if (isModalOpen) {
@@ -54,9 +56,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (localStorage.getItem('token') === null) {
-      setIsModalOpen(true);
+      if (requiredLoginPaths.includes(window.location.pathname)) {
+        setIsModalOpen(true);
+      }
     }
-  }, [localStorage]);
+  }, [localStorage, localStorage.getItem('token')]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -74,7 +78,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/search" element={<SearchResults />} />
-            <Route path="/cart" element={<Cart />} />
+            <Route path="/cart" element={<Cart setIsModalOpen={setIsModalOpen} />} />
             <Route path="/cartresult" element={<CartResult />} />
             <Route path="/user" element={<UserPage />} />
             <Route path="/product/:id" element={<ProductResult />} />
@@ -86,6 +90,7 @@ const App: React.FC = () => {
             <Route path="/c8763" element={<C8763 />} />
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
+            <Route path="/store/:storeID" element={<StorePage />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
           </Routes>
         </Container>

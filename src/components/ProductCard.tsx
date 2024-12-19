@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import '../styles/ProductCard.css';
 import { Product } from '../types';
+import '../styles/ProductCard.css';
 
 const ProductCard: React.FC<{ product: Product | null }> = ({ product }) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -31,6 +31,7 @@ const ProductCard: React.FC<{ product: Product | null }> = ({ product }) => {
                                     onMouseLeave={() => setIsHovered(false)}
                                 />
                             </div>
+                            {product.Quantity === 0 && <div className='sold-out' style={{ position: 'absolute', top: '10px', left: '10px', backgroundColor: 'rgba(255, 0, 0, 0.7)', color: 'white', padding: '5px', borderRadius: '5px' }}>售完</div>}
                             <Card.Title style={{ color: isHovered ? '#0645AD' : 'inherit' }}>{product.Name}</Card.Title>
                             <Card.Text>NT${product.Price}</Card.Text>
                         </Card.Body>

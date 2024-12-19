@@ -1,0 +1,35 @@
+.store-image {
+    height: 200px;
+    width: 100%;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .store-image {
+        height: 100px;
+    }
+}
+
+.image-container {
+    overflow: hidden;
+}
+
+.store-image {
+    transition: transform 0.25s ease-in-out;
+}
+
+.store-image.zoom {
+    object-fit: contain;
+    transform: scale(1.1);
+}
+
+.hover-price {
+    position: absolute; 
+    bottom: 10px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7); 
+    color: white; 
+    padding: 5px; 
+    border-radius: 5px;
+}
