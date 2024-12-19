@@ -33,7 +33,7 @@ const StoreBar: React.FC<{ store: Store | null }> = ({ store }) => {
                         {StoreProductsData?.Products.length &&
                             <ProductSlider ProductsData={StoreProductsData?.Products || undefined} Card={StoreCard} />
                         }
-                        <Card.Text className='text-end'>更多商店</Card.Text>
+                        <Card.Text className='mt-4 text-end'>更多商店</Card.Text>
                     </Card.Body>
                 </Card>
             }
