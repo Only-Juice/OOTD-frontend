@@ -11,17 +11,22 @@ interface Store {
     Description: string;
 }
 
+interface SearchStoresResponse {
+    PageCoint: number;
+    Stores: Store[];
+}
+
 const BriefStoreSearch: React.FC = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchWord = queryParams.get('q');
 
-    const { isLoading, data } = useQuery<Store[]>({
+    const { isLoading, data } = useQuery<SearchStoresResponse>({
         queryKey: [`SearchStores_${searchWord}`],
         queryFn: () => {
             if (!searchWord) return Promise.resolve(null);
             return fetch(`/api/Store/SearchStores?keyword=${searchWord}`, {
-                method: 'POST',
+                method: 'GET',
             }).then((res) => {
                 if (!res.ok) {
                     return null;
@@ -35,11 +40,11 @@ const BriefStoreSearch: React.FC = () => {
             {isLoading && (
                 <Loading />
             )}
-            {!isLoading && data && data.length > 0 && (
+            {!isLoading && data && (
                 <>
                     <h2>店家列表</h2>
                     <ul>
-                        {data.map((store) => (
+                        {data.Stores.map((store) => (
                             <li key={store.StoreID}>
                                 <h3>{store.Name}</h3>
                                 <p>{store.Description}</p>
