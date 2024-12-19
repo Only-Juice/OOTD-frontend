@@ -79,7 +79,6 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/search" element={<SearchResults />} />
-            <Route path="/searchStore" element={<BriefStoreSearch />} />
             <Route path="/cart" element={<Cart setIsModalOpen={setIsModalOpen} />} />
             <Route path="/cartresult" element={<CartResult />} />
             <Route path="/user" element={<UserPage />} />
