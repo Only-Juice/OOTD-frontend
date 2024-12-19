@@ -99,6 +99,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) =
                                         alt={product.Name}
                                         onClick={() => handleImageClick(index)}
                                     />
+                                    {product.Quantity === 0 && <div className='sold-out'>售完</div>}
                                 </Carousel.Item>
                             ))}
                         </Carousel>

@@ -35,7 +35,7 @@ const StoreCard: React.FC<{ product: Product | null }> = ({ product }) => {
                             <div className='hover-price'>
                                 NT${product.Price}
                             </div>
-                            {product.Quantity === 0 && <div className='sold-out' style={{ position: 'absolute', top: '10px', left: '10px', backgroundColor: 'rgba(255, 0, 0, 0.7)', color: 'white', padding: '5px', borderRadius: '5px' }}>售完</div>}
+                            {product.Quantity === 0 && <div className='sold-out'>售完</div>}
                         </Card.Body>
                     </Card>
                 </Link>
