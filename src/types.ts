@@ -42,6 +42,7 @@ export interface NavBarProps {
 
 export interface UserBadgeProps {
   username: string;
+  size?: number;
 }
 
 export interface UserInfo {
@@ -55,4 +56,11 @@ export interface UserInfo {
 export interface LoginProps {
   isModalOpen: boolean|undefined;
   setIsModalOpen: (isOpen: boolean) => void;
+}
+
+export interface Store {
+  Description: string;
+  Name: string;
+  OwnerUsername: string;
+  StoreID: number;
 }

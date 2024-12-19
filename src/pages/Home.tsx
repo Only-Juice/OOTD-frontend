@@ -44,7 +44,7 @@ const Home: React.FC = () => {
                     {page !== 1 && <h1 className="mb-4">全站商品</h1>}
                     {page === 1 &&
                         <div className="shadow mb-4">
-                            <ProductSlider ProductsData={TopProductsData} />
+                            <ProductSlider ProductsData={TopProductsData} Card={ProductCard} />
                         </div>
                     }
                     <Row>

@@ -2,14 +2,9 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "./Loading";
-import { Card } from "react-bootstrap";
+import { Store } from "../types";
+import StoreBar from "./StoreBar";
 
-interface Store {
-    Description: string;
-    Name: string;
-    OwnerUsername: string;
-    StoreID: number;
-}
 
 interface SearchStoresResponse {
     PageCoint: number;
@@ -35,23 +30,20 @@ const BriefStoreSearch: React.FC = () => {
             })
         },
     });
+
     return (
         <>
-            {isLoading && (
+            {isLoading ? (
                 <Loading />
-            )}
-            {!isLoading && data && (
-                <>
-                    <h2>店家列表</h2>
-                    <ul>
-                        {data.Stores.map((store) => (
-                            <li key={store.StoreID}>
-                                <h3>{store.Name}</h3>
-                                <p>{store.Description}</p>
-                            </li>
-                        ))}
-                    </ul>
-                </>
+            ) : (
+                data && Array.isArray(data.Stores) ? (
+                    <>
+                        <p>推薦商店</p>
+                        <StoreBar key={data.Stores[0].StoreID} store={data.Stores[0]} />
+                    </>
+                ) : (
+                    <StoreBar key={null} store={null} />
+                )
             )}
         </>
     );

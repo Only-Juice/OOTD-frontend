@@ -3,18 +3,18 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Container } from 'react-bootstrap';
-import ProductCard from './ProductCard';
 import { Product } from '../types';
 
 interface ProductsDataProps {
-    ProductsData: Product[];
+    ProductsData: Product[] | undefined;
+    Card: React.FC<{ product: Product | null }>;
 }
 
-const ProductSlider: React.FC<ProductsDataProps> = ({ ProductsData }) => {
+const ProductSlider: React.FC<ProductsDataProps> = ({ ProductsData, Card }) => {
     const settings = {
         dots: true,
         infinite: true,
-        slidesToShow: 3,
+        slidesToShow: ProductsData && ProductsData.length < 3 ? ProductsData.length : 3,
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 2000,
@@ -23,7 +23,7 @@ const ProductSlider: React.FC<ProductsDataProps> = ({ ProductsData }) => {
             {
                 breakpoint: 1024,
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: ProductsData && ProductsData.length < 3 ? ProductsData.length : 2,
                     slidesToScroll: 1,
                     infinite: true,
                     dots: true
@@ -41,17 +41,16 @@ const ProductSlider: React.FC<ProductsDataProps> = ({ ProductsData }) => {
     };
 
 
-
     return (
         <Container>
             <Slider {...settings}>
                 {ProductsData && Array.isArray(ProductsData) ? (
                     ProductsData.slice(0, 5).map((product: Product) => (
-                        <ProductCard key={product.ID} product={product} />
+                        <Card key={product.ID} product={product} />
                     ))
                 ) : (
                     [...Array(5)].map((_, index) => (
-                        <ProductCard key={index} product={null} />
+                        <Card key={index} product={null} />
                     ))
                 )}
             </Slider>

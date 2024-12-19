@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../components/Loading';
 import PageButton from '../components/PageButton';
+import BriefStoreSearch from '../components/BriefStoreSearch';
 
 const SearchResults: React.FC = () => {
     const [searchResults, setSearchResults] = useState<SearchProduct | null>();
@@ -41,6 +42,9 @@ const SearchResults: React.FC = () => {
 
     return (
         <>
+            <div className='mb-4'>
+                <BriefStoreSearch />
+            </div>
             {isLoading && (
                 <Loading />
             )}
