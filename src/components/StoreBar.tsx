@@ -28,11 +28,9 @@ const StoreBar: React.FC<{ store: Store | null }> = ({ store }) => {
                         <Link to={`/store/${store.StoreID}`} className='text-decoration-none'>
                             <Card.Title style={{ fontSize: '2rem' }}>{store.Name}</Card.Title>
                         </Link>
-                        <Card.Text className='mb-2'>
-                            {StoreProductsData?.Products.length &&
-                                <ProductSlider ProductsData={StoreProductsData?.Products || undefined} Card={StoreCard} />
-                            }
-                        </Card.Text>
+                        {StoreProductsData?.Products.length &&
+                            <ProductSlider ProductsData={StoreProductsData?.Products || undefined} Card={StoreCard} />
+                        }
                         <Card.Text className='text-end'>更多商店</Card.Text>
                     </Card.Body>
                 </Card>
