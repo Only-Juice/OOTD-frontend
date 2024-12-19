@@ -130,7 +130,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) =
                     </Col>
                     <Col md={6}>
                         <h1><b>{product.Name}</b></h1>
-                        <p style={{ color: '#6c757d' }}>商品編號: {product.ID} ｜ 售出數量: {product.Sale}件</p>
+                        <p style={{ color: '#6c757d' }}>商品編號: {product.ID} {!isPVC && <>｜ 售出數量: {product.Sale} 件</>}</p>
                         <p>{product.Description.split('\n').map((line, index) => (
                             <React.Fragment key={index}>
                                 {line}

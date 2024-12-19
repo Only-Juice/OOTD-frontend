@@ -11,7 +11,7 @@ export interface Product {
   Description: string;
   Price: number;
   Quantity: number;
-  Sale: number;
+  Sale?: number;
   StoreID: number;
   Images: string[];
 }
