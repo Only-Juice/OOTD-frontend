@@ -7,24 +7,7 @@ import { Row, Col } from 'react-bootstrap';
 import ProductCard from '../components/ProductCard';
 import PageButton from '../components/PageButton';
 import Loading from '../components/Loading';
-
-interface Store {
-    StoreID: number;
-    OwnerUsername: string;
-    Name: string;
-    Description: string;
-}
-
-interface Product {
-    ID: number;
-    Name: string;
-    Description: string;
-    Price: number;
-    Quantity: number;
-    Sale: number;
-    StoreID: number;
-    Images: string[];
-}
+import { Product, Store } from '../types';
 
 interface StoreProductsResponse {
     PageCount: number;

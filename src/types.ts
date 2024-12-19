@@ -4,12 +4,15 @@ export interface SearchProduct {
   PageCount: number;
   Products: Product[];
 }
+
 export interface Product {
   ID: number;
   Name: string;
   Description: string;
   Price: number;
   Quantity: number;
+  Sale: number;
+  StoreID: number;
   Images: string[];
 }
 

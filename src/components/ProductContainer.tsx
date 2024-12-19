@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Carousel, Button, Modal, Row, Col, Spinner } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { Carousel, Button, Modal, Row, Col, Spinner, Card } from "react-bootstrap";
 import { Product } from "../types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Rating from "./Rating";
+import UserBadge from "./UserBadge";
+import { Store } from "../types";
 
 interface ProductContainerProps {
     product: Product | null;
@@ -67,6 +70,17 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) =
         }
     });
 
+    const { data: storeData, isLoading: isStoreLoading } = useQuery<Store>({
+        queryKey: [`GetStoreById_${product?.StoreID}`],
+        queryFn: async () => {
+            const res = await fetch(`/api/Store/GetStoreById?storeID=${product?.StoreID}`);
+            if (!res.ok) {
+                return null;
+            }
+            return res.json();
+        },
+    });
+
     const handleImageClick = (index: number) => {
         setSelectedImageIndex(index);
         setShowModal(true);
@@ -103,6 +117,16 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) =
                                 </Carousel.Item>
                             ))}
                         </Carousel>
+                        {isStoreLoading ? <Spinner animation="border" /> : storeData &&
+                            <Link to={`/store/${storeData.StoreID}`} className='text-decoration-none'>
+                                <Card className="mt-4">
+                                    <Card.Body>
+                                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge username={storeData.OwnerUsername} size={20} /></Card.Title>
+                                        <Card.Title style={{ fontSize: '2rem' }}>{storeData.Name}</Card.Title>
+                                    </Card.Body>
+                                </Card>
+                            </Link>
+                        }
                     </Col>
                     <Col md={6}>
                         <h1><b>{product.Name}</b></h1>
