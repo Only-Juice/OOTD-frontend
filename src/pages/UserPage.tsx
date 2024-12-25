@@ -24,7 +24,7 @@ const UserPage: React.FC = () => {
         queryFn: () => {
             const token = localStorage.getItem('token');
             if (!token) return null;
-            return fetch('/api/User/Get', {
+            return fetch('/api/User/GetUser', {
                 headers: {
                     'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },

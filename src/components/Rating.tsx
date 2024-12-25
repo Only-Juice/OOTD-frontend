@@ -62,7 +62,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPVC }) => {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: [`GetProductRating_${productId}`] });
             refetch();
-            if (data.status === 401) {
+            if (data.status === 400) {
                 Toast.fire({
                     icon: "error",
                     title: "評價失敗，請確認是否已購買過本商品"
