@@ -18,13 +18,35 @@ import GoToTop from './components/GoToTOP';
 import NavBar from './components/NavBar';
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 
-const App: React.FC = () => {
+interface AppProps {
+  queryClient: QueryClient;
+}
+
+const App: React.FC<AppProps> = ({ queryClient }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean | undefined>(undefined);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const queryClient = new QueryClient();
+
+  const { isLoading: isLoadinUserInfo, isPending: isPendingUserInfo, data: dataUserInfo, refetch: refetchUserInfo } = useQuery({
+    queryKey: [`UserInfo`],
+    queryFn: () => {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+      return fetch('/api/User/GetUser', {
+        headers: {
+          'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+        },
+      }).then((res) => {
+        if (!res.ok) {
+          localStorage.removeItem('token');
+          return null;
+        }
+        return res.json();
+      })
+    },
+  });
 
 
   useEffect(() => {
@@ -63,7 +85,7 @@ const App: React.FC = () => {
   }, [localStorage, localStorage.getItem('token')]);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <GoToTop />
       <Router>
         <NavBar
@@ -71,6 +93,9 @@ const App: React.FC = () => {
           setIsModalOpen={setIsModalOpen}
           toggleTheme={toggleTheme}
           handleLogout={handleLogout}
+          isPendingUserInfo={isPendingUserInfo}
+          dataUserInfo={dataUserInfo}
+          refetchUserInfo={refetchUserInfo}
         />
 
         <Container>
@@ -80,7 +105,7 @@ const App: React.FC = () => {
             <Route path="/search" element={<SearchResults />} />
             <Route path="/cart" element={<Cart setIsModalOpen={setIsModalOpen} />} />
             <Route path="/cartresult" element={<CartResult />} />
-            <Route path="/user" element={<UserPage />} />
+            <Route path="/user" element={<UserPage isLoading={isLoadinUserInfo} isPending={isPendingUserInfo} data={dataUserInfo} refetch={refetchUserInfo} />} />
             <Route path="/product/:id" element={<ProductResult />} />
             <Route path="/products/:id" element={<Navigate to="/product/:id" />} />
             <Route path="/PVC/:id" element={<ProductPVCResult />} />
@@ -97,11 +122,11 @@ const App: React.FC = () => {
         <Login
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
+          refetchUserInfo={refetchUserInfo}
+          dataUserInfo={dataUserInfo}
         />
-
       </Router>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-    </QueryClientProvider >
+    </>
   );
 };
 

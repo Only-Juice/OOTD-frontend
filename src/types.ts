@@ -41,6 +41,9 @@ export interface NavBarProps {
   setIsModalOpen: (isOpen: boolean) => void;
   toggleTheme: () => void;
   handleLogout: () => void;
+  isPendingUserInfo: boolean;
+  dataUserInfo: UserInfo;
+  refetchUserInfo: () => void;
 }
 
 export interface UserBadgeProps {
@@ -48,17 +51,11 @@ export interface UserBadgeProps {
   size?: number;
 }
 
-export interface UserInfo {
-  Username: string;
-  Email: string;
-  Address: string;
-  IsAdministrator: boolean;
-  HaveStore: boolean;
-}
-
 export interface LoginProps {
   isModalOpen: boolean|undefined;
   setIsModalOpen: (isOpen: boolean) => void;
+  refetchUserInfo: () => void;
+  dataUserInfo: UserInfo;
 }
 
 export interface Store {
