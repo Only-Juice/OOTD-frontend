@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../components/Loading';
 import PageButton from '../components/PageButton';
 import BriefStoreSearch from '../components/BriefStoreSearch';
+import { SearchStoresResponse } from "../types";
 
 const SearchResults: React.FC = () => {
     const location = useLocation();
@@ -16,6 +17,22 @@ const SearchResults: React.FC = () => {
     const sortOrder = queryParams.get('sortOrder') || false;
     const sortField = queryParams.get('sortField') || 'Sale';
     const navigate = useNavigate();
+
+    const { data: dataSearchStoresResponse } = useQuery<SearchStoresResponse>({
+        queryKey: [`SearchStores_${searchWord}`],
+        queryFn: () => {
+            if (!searchWord) return Promise.resolve(null);
+            return fetch(`/api/Store/SearchStores?keyword=${searchWord}`, {
+                method: 'GET',
+            }).then((res) => {
+                if (!res.ok) {
+                    return null;
+                }
+                return res.json();
+            })
+        },
+    });
+
 
     const { isLoading, error, data: searchResults } = useQuery<SearchProduct>({
         queryKey: [`SearchProducts_${searchWord}_${page}_${sortField}_${sortOrder}`],
@@ -35,7 +52,7 @@ const SearchResults: React.FC = () => {
     return (
         <>
             <div className='mb-4'>
-                <BriefStoreSearch />
+                <BriefStoreSearch data={dataSearchStoresResponse} />
             </div>
             {isLoading && (
                 <Loading />

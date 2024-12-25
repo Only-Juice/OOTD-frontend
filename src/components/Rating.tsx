@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ListGroup, Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
-interface Rating {
-    Username: string;
-    Rating: number;
-    CreatedAt: string;
-}
+import { RatingResult } from '../types';
 
 interface RatingProps {
     productId: number;
     isPVC?: boolean;
+    isPending: boolean;
+    data?: RatingResult[];
+    refetch: () => void;
 }
 
-const Rating: React.FC<RatingProps> = ({ productId, isPVC }) => {
+const Rating: React.FC<RatingProps> = ({ productId, isPVC, isPending, data, refetch }) => {
     const queryClient = useQueryClient();
     const [newRating, setNewRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -33,19 +31,6 @@ const Rating: React.FC<RatingProps> = ({ productId, isPVC }) => {
         }
     });
     const MySwal = withReactContent(Swal);
-
-    const { isPending, data, refetch } = useQuery<Rating[]>({
-        queryKey: [`GetProductRating_${productId}`],
-        queryFn: () => fetch(`/api/Rating/GetProductRating?productId=${productId}`).then((res) => {
-            if (res.status === 404) {
-                return [];
-            }
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return res.json();
-        }),
-    });
 
     const mutation = useMutation({
         mutationFn: (newRating: { ProductID: number; Rating: number }) => {

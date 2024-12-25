@@ -64,3 +64,14 @@ export interface Store {
   OwnerUsername: string;
   StoreID: number;
 }
+
+export interface SearchStoresResponse {
+  PageCoint: number;
+  Stores: Store[];
+}
+
+export interface RatingResult {
+  Username: string;
+  Rating: number;
+  CreatedAt: string;
+}

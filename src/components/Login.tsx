@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { LoginProps } from '../types';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 
 const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, refetchUserInfo, dataUserInfo }) => {

@@ -2,20 +2,25 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Carousel, Button, Modal, Row, Col, Spinner, Card } from "react-bootstrap";
 import { Product } from "../types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Rating from "./Rating";
 import UserBadge from "./UserBadge";
-import { Store } from "../types";
+import { Store, RatingResult } from "../types";
 
 interface ProductContainerProps {
     product: Product | null;
     isPVC?: boolean;
+    storeData?: Store;
+    isStoreLoading: boolean;
+    isPendingRating: boolean;
+    dataRating?: RatingResult[];
+    refetchRating: () => void;
 }
 
 
-const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) => {
+const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, storeData, isStoreLoading, isPendingRating, dataRating, refetchRating }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
     const [quantity, setQuantity] = useState(1);
@@ -54,7 +59,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) =
                 return '';
             })
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             Toast.fire({
                 title: '成功加入購物車',
                 icon: 'success',
@@ -68,17 +73,6 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) =
                 icon: 'error',
             });
         }
-    });
-
-    const { data: storeData, isLoading: isStoreLoading } = useQuery<Store>({
-        queryKey: [`GetStoreById_${product?.StoreID}`],
-        queryFn: async () => {
-            const res = await fetch(`/api/Store/GetStoreById?storeID=${product?.StoreID}`);
-            if (!res.ok) {
-                return null;
-            }
-            return res.json();
-        },
     });
 
     const handleImageClick = (index: number) => {
@@ -188,7 +182,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC }) =
                 </Modal.Body>
             </Modal>
 
-            {product && <Rating productId={product.ID} isPVC={isPVC} />}
+            {product && <Rating productId={product.ID} isPVC={isPVC} isPending={isPendingRating} data={dataRating} refetch={refetchRating} />}
         </>
     );
 };
