@@ -5,11 +5,10 @@ import UserBadge from './UserBadge';
 import { NavBarProps } from '../types';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Navbar, Nav, NavDropdown, Container, Button, Form, Spinner } from 'react-bootstrap';
-import { useQuery } from '@tanstack/react-query';
+import { Navbar, Nav, NavDropdown, Container, Form, Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 
-const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout }) => {
+const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout, isPendingUserInfo, dataUserInfo, refetchUserInfo }) => {
     const navigate = useNavigate();
     const Toast = Swal.mixin({
         toast: true,
@@ -22,27 +21,9 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
             toast.onmouseleave = Swal.resumeTimer;
         }
     });
-    const { isPending, data, refetch } = useQuery({
-        queryKey: [`UserInfo`],
-        queryFn: () => {
-            const token = localStorage.getItem('token');
-            if (!token) return null;
-            return fetch('/api/User/Get', {
-                headers: {
-                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
-                },
-            }).then((res) => {
-                if (!res.ok) {
-                    setIsModalOpen(true);
-                    return null;
-                }
-                return res.json();
-            })
-        },
-    });
 
     useEffect(() => {
-        refetch();
+        refetchUserInfo();
     }, [localStorage.getItem('token')]);
 
 
@@ -70,17 +51,17 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                 <Search />
                 <Navbar.Collapse id="navbarNav">
                     <Nav className="d-flex align-items-center">
-                        {!isPending ? (
+                        {!isPendingUserInfo ? (
                             <>
-                                {data && data.Username ? (
+                                {dataUserInfo && dataUserInfo.Username ? (
                                     <>
-                                        <NavDropdown title={<UserBadge username={data.Username} />} style={{ whiteSpace: 'nowrap' }}>
+                                        <NavDropdown title={<UserBadge username={dataUserInfo.Username} />} style={{ whiteSpace: 'nowrap' }}>
                                             <NavDropdown.Item as={Link} to="/user?tab=profile">用戶資訊</NavDropdown.Item>
                                             <NavDropdown.Item onClick={() => {
                                                 Toast.fire({
                                                     icon: "success",
                                                     title: "登出成功"
-                                                }); handleLogout(); refetch(); navigate("/");
+                                                }); handleLogout(); refetchUserInfo(); navigate("/");
                                             }}>
                                                 登出
                                             </NavDropdown.Item>

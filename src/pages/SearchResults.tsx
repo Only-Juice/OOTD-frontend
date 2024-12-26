@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Row, Col, Form } from 'react-bootstrap';
 import { SearchProduct } from '../types';
@@ -7,9 +7,9 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../components/Loading';
 import PageButton from '../components/PageButton';
 import BriefStoreSearch from '../components/BriefStoreSearch';
+import { SearchStoresResponse } from "../types";
 
 const SearchResults: React.FC = () => {
-    const [searchResults, setSearchResults] = useState<SearchProduct | null>();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchWord = queryParams.get('q');
@@ -18,10 +18,25 @@ const SearchResults: React.FC = () => {
     const sortField = queryParams.get('sortField') || 'Sale';
     const navigate = useNavigate();
 
-    const { isLoading, error, data } = useQuery({
+    const { data: dataSearchStoresResponse } = useQuery<SearchStoresResponse>({
+        queryKey: [`SearchStores_${searchWord}`],
+        queryFn: () => {
+            if (!searchWord) return Promise.resolve(null);
+            return fetch(`/api/Store/SearchStores?keyword=${searchWord}`, {
+                method: 'GET',
+            }).then((res) => {
+                if (!res.ok) {
+                    return null;
+                }
+                return res.json();
+            })
+        },
+    });
+
+
+    const { isLoading, error, data: searchResults } = useQuery<SearchProduct>({
         queryKey: [`SearchProducts_${searchWord}_${page}_${sortField}_${sortOrder}`],
         queryFn: () => {
-            setSearchResults(null);
             if (!searchWord) return Promise.resolve(null);
             return fetch(`/api/Product/SearchProducts?keyword=${searchWord}&page=${page}&pageLimitNumber=30&orderField=${sortField}&isASC=${sortOrder}`, {
                 method: 'GET',
@@ -34,16 +49,10 @@ const SearchResults: React.FC = () => {
         },
     });
 
-    useEffect(() => {
-        if (data) {
-            setSearchResults(data);
-        }
-    }, [data]);
-
     return (
         <>
             <div className='mb-4'>
-                <BriefStoreSearch />
+                <BriefStoreSearch data={dataSearchStoresResponse} />
             </div>
             {isLoading && (
                 <Loading />
@@ -58,7 +67,7 @@ const SearchResults: React.FC = () => {
                             as="select"
                             value={`${sortField}-${sortOrder}`}
                             onChange={(e) => {
-                                navigate(`?q=${searchWord}&page=${page}&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
+                                navigate(`?q=${searchWord}&page=1&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
                             }}
                         >
                             <option value="Sale-true">銷量 (由小到大)</option>

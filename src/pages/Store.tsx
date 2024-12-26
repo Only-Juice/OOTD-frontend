@@ -68,7 +68,7 @@ const StorePage: React.FC = () => {
                                         as="select"
                                         value={`${sortField}-${sortOrder}`}
                                         onChange={(e) => {
-                                            navigate(`?page=${page}&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
+                                            navigate(`?page=1&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
                                         }}
                                     >
                                         <option value="Sale-true">銷量 (由小到大)</option>

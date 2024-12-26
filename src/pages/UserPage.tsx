@@ -9,35 +9,23 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../components/Loading';
 import { FaPen } from "react-icons/fa";
 import ChangePassword from '../components/ChangePassword';
+import { UserInfo } from '../types';
+
+interface UserPageProps {
+    isLoading: boolean;
+    isPending: boolean;
+    data: UserInfo;
+    refetch: () => void;
+}
 
 
-const UserPage: React.FC = () => {
+const UserPage: React.FC<UserPageProps> = ({ isLoading, isPending, data, refetch }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     const initialTab = queryParams.get('tab') || 'profile';
     const [activeKey, setActiveKey] = useState<string>(initialTab);
     const changePassword = queryParams.get('changePassword')
-
-    const { isPending, data, refetch } = useQuery({
-        queryKey: [`UserInfo`],
-        queryFn: () => {
-            const token = localStorage.getItem('token');
-            if (!token) return null;
-            return fetch('/api/User/Get', {
-                headers: {
-                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
-                },
-            }).then((res) => {
-                if (!res.ok) {
-                    localStorage.removeItem('token');
-                    return null;
-                }
-                return res.json();
-            })
-        },
-    });
-
 
     useEffect(() => {
         const newQueryParams = new URLSearchParams(queryParams.toString());
@@ -96,7 +84,7 @@ const UserPage: React.FC = () => {
                         </Nav>
                     </Col>
                     <Col md={10}>
-                        {!changePassword && activeKey === 'profile' && <UserProfile />}
+                        {!changePassword && activeKey === 'profile' && <UserProfile isLoading={isLoading} data={data} refetch={refetch} />}
                         {activeKey === 'orders' && <UserOrders />}
                         {changePassword && <ChangePassword />}
                         {/* {activeKey === '#settings' && <UserSettings userInfo={userInfo} />} */}

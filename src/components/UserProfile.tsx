@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Form, Button, Spinner } from "react-bootstrap";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Loading from "./Loading";
 import Swal from 'sweetalert2';
+import { UserInfo } from "../types"
 
+interface UserProfileProps {
+    isLoading: boolean;
+    data: UserInfo;
+    refetch: () => void;
+}
 
-const UserProfile: React.FC = () => {
+const UserProfile: React.FC<UserProfileProps> = ({ isLoading, data, refetch }) => {
     const navigate = useNavigate();
     const Toast = Swal.mixin({
         toast: true,
@@ -18,24 +24,6 @@ const UserProfile: React.FC = () => {
             toast.onmouseenter = Swal.stopTimer;
             toast.onmouseleave = Swal.resumeTimer;
         }
-    });
-    const { isLoading, data, refetch } = useQuery({
-        queryKey: [`UserInfo`],
-        queryFn: () => {
-            const token = localStorage.getItem('token');
-            if (!token) return null;
-            return fetch('/api/User/Get', {
-                headers: {
-                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
-                },
-            }).then((res) => {
-                if (!res.ok) {
-                    localStorage.removeItem('token');
-                    return null;
-                }
-                return res.json();
-            })
-        },
     });
 
     useEffect(() => {
