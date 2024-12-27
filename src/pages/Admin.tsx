@@ -3,6 +3,7 @@ import { Alert, Card, Layout, Menu } from 'antd';
 import AddCouponForm from '../components/AddCouponForm';
 import GiveCoupon from '../components/GiveCoupon';
 import ModifyCoupon from '../components/ModifyCoupon';
+import GetRequest from '../components/GetRequest';
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
@@ -18,6 +19,8 @@ const Admin: React.FC = () => {
                 return <GiveCoupon />;
             case 'modify':
                 return <ModifyCoupon />;
+            case 'request':
+                return <GetRequest />;
             default:
                 return null;
         }
@@ -32,7 +35,7 @@ const Admin: React.FC = () => {
     };
 
     return (
-        <Card title="管理員頁面" className="mt-2">
+        <Card title="管理員頁面" className="mt-2 vh-100">
             <Layout>
                 <Sider style={{ background: '#fff' }}>
                     <Menu onClick={handleMenuClick} selectedKeys={[selectedComponent]} mode="inline">
@@ -41,6 +44,7 @@ const Admin: React.FC = () => {
                             <Menu.Item key="give">發放優惠券</Menu.Item>
                             <Menu.Item key="modify">修改優惠券</Menu.Item>
                         </SubMenu>
+                        <Menu.Item key="request">請求查看</Menu.Item>
                     </Menu>
                 </Sider>
                 <Layout>
