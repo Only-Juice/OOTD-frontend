@@ -36,7 +36,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) 
         queryFn: async () => {
             const token = localStorage.getItem('token');
             if (!productId || !token) {
-                return [];
+                return null;
             }
             return fetch(`/api/Rating/GetRemainingRatingTimes?productId=${productId}`, {
                 headers: {
@@ -45,7 +45,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) 
                 },
             }).then((res) => {
                 if (res.status === 404) {
-                    return [];
+                    return null;
                 }
                 if (!res.ok) {
                     throw new Error('Network response was not ok');
