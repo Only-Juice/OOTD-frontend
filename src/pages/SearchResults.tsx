@@ -8,6 +8,7 @@ import Loading from '../components/Loading';
 import PageButton from '../components/PageButton';
 import BriefStoreSearch from '../components/BriefStoreSearch';
 import { SearchStoresResponse } from "../types";
+import { Skeleton } from 'antd';
 
 const SearchResults: React.FC = () => {
     const location = useLocation();
@@ -18,7 +19,7 @@ const SearchResults: React.FC = () => {
     const sortField = queryParams.get('sortField') || 'Sale';
     const navigate = useNavigate();
 
-    const { data: dataSearchStoresResponse } = useQuery<SearchStoresResponse>({
+    const { isLoading: isLoadingSearchStores, data: dataSearchStoresResponse } = useQuery<SearchStoresResponse>({
         queryKey: [`SearchStores_${searchWord}`],
         queryFn: () => {
             if (!searchWord) return Promise.resolve(null);
@@ -34,7 +35,7 @@ const SearchResults: React.FC = () => {
     });
 
 
-    const { isLoading, error, data: searchResults } = useQuery<SearchProduct>({
+    const { isLoading: isLoadingSearchProduct, error, data: searchResults } = useQuery<SearchProduct>({
         queryKey: [`SearchProducts_${searchWord}_${page}_${sortField}_${sortOrder}`],
         queryFn: () => {
             if (!searchWord) return Promise.resolve(null);
@@ -51,45 +52,44 @@ const SearchResults: React.FC = () => {
 
     return (
         <>
-            <div className='mb-4'>
+            <Skeleton loading={isLoadingSearchStores} active>
                 <BriefStoreSearch data={dataSearchStoresResponse} />
-            </div>
-            {isLoading && (
-                <Loading />
-            )}
-            {!isLoading && error && <p style={{ color: 'red' }}>{error.message}</p>}
-            {!isLoading && !searchResults && !error && <p>找不到相關結果</p>}
-            {!isLoading && searchResults && searchResults.Products.length > 0 && (
-                <>
-                    <Form.Group controlId="sortSelect" className='mb-4'>
-                        <Form.Label>排序方式</Form.Label>
-                        <Form.Control
-                            as="select"
-                            value={`${sortField}-${sortOrder}`}
-                            onChange={(e) => {
-                                navigate(`?q=${searchWord}&page=1&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
-                            }}
-                        >
-                            <option value="Sale-true">銷量 (由小到大)</option>
-                            <option value="Sale-false">銷量 (由大到小)</option>
-                            <option value="Price-true">價格 (由小到大)</option>
-                            <option value="Price-false">價格 (由大到小)</option>
-                            <option value="Quantity-true">數量 (由小到大)</option>
-                            <option value="Quantity-false">數量 (由大到小)</option>
-                            <option value="Default-false">上架時間 (由新到舊)</option>
-                            <option value="Default-true">上架時間 (由舊到新)</option>
-                        </Form.Control>
-                    </Form.Group>
-                    <Row>
-                        {searchResults.Products.map(product => (
-                            <Col key={product.ID} md={4} className='mb-4'>
-                                <ProductCard key={product.ID} product={product} />
-                            </Col>
-                        ))}
-                    </Row>
-                    <PageButton PageCount={searchResults.PageCount} />
-                </>
-            )}
+            </Skeleton>
+            <Skeleton loading={isLoadingSearchProduct} active>
+                {!isLoadingSearchProduct && error && <p style={{ color: 'red' }}>{error.message}</p>}
+                {!isLoadingSearchProduct && !searchResults && !error && <p>找不到相關結果</p>}
+                {searchResults && searchResults.Products.length > 0 && (
+                    <>
+                        <Form.Group controlId="sortSelect" className='mb-4'>
+                            <Form.Label>排序方式</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={`${sortField}-${sortOrder}`}
+                                onChange={(e) => {
+                                    navigate(`?q=${searchWord}&page=1&sortField=${e.target.value.split('-')[0]}&sortOrder=${e.target.value.split('-')[1]}`);
+                                }}
+                            >
+                                <option value="Sale-true">銷量 (由小到大)</option>
+                                <option value="Sale-false">銷量 (由大到小)</option>
+                                <option value="Price-true">價格 (由小到大)</option>
+                                <option value="Price-false">價格 (由大到小)</option>
+                                <option value="Quantity-true">數量 (由小到大)</option>
+                                <option value="Quantity-false">數量 (由大到小)</option>
+                                <option value="Default-false">上架時間 (由新到舊)</option>
+                                <option value="Default-true">上架時間 (由舊到新)</option>
+                            </Form.Control>
+                        </Form.Group>
+                        <Row>
+                            {searchResults.Products.map(product => (
+                                <Col key={product.ID} md={4} className='mb-4'>
+                                    <ProductCard key={product.ID} product={product} />
+                                </Col>
+                            ))}
+                        </Row>
+                        <PageButton PageCount={searchResults.PageCount} />
+                    </>
+                )}
+            </Skeleton>
         </>
     );
 };
