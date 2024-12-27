@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { ListGroup, Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import Swal from 'sweetalert2';
@@ -8,13 +8,12 @@ import { RatingResult } from '../types';
 
 interface RatingProps {
     productId: number;
-    isPVC?: boolean;
     isPending: boolean;
     data?: RatingResult[];
     refetch: () => void;
 }
 
-const Rating: React.FC<RatingProps> = ({ productId, isPVC, isPending, data, refetch }) => {
+const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) => {
     const queryClient = useQueryClient();
     const [newRating, setNewRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -32,6 +31,30 @@ const Rating: React.FC<RatingProps> = ({ productId, isPVC, isPending, data, refe
     });
     const MySwal = withReactContent(Swal);
 
+    const { data: remainingRatingTimesData, refetch: remainingRatingTimesRefetch } = useQuery({
+        queryKey: [`GetRemainingRatingTimes_${productId}`],
+        queryFn: async () => {
+            const token = localStorage.getItem('token');
+            if (!productId || !token) {
+                return [];
+            }
+            return fetch(`/api/Rating/GetRemainingRatingTimes?productId=${productId}`, {
+                headers: {
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then((res) => {
+                if (res.status === 404) {
+                    return [];
+                }
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+        },
+    });
+
     const mutation = useMutation({
         mutationFn: (newRating: { ProductID: number; Rating: number }) => {
             const token = localStorage.getItem('token');
@@ -47,6 +70,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPVC, isPending, data, refe
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: [`GetProductRating_${productId}`] });
             refetch();
+            remainingRatingTimesRefetch();
             if (data.status === 400) {
                 Toast.fire({
                     icon: "error",
@@ -179,7 +203,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPVC, isPending, data, refe
                             ))}
                         </ListGroup>
                     )}
-                    {isPVC && (
+                    {remainingRatingTimesData && remainingRatingTimesData.RemainingRatingTimes != 0 && (
                         <Form onSubmit={handleSubmit} className="mt-4">
                             <Form.Group controlId="rating">
                                 <Form.Label>留下評價</Form.Label>

@@ -21,6 +21,9 @@ const ProductPVCResult: React.FC = () => {
     const { data: storeData, isLoading: isStoreLoading, refetch: refetchStoreData } = useQuery<Store>({
         queryKey: [`GetStoreById_${data?.StoreID}`],
         queryFn: async () => {
+            if (!data?.StoreID) {
+                return null;
+            }
             const res = await fetch(`/api/Store/GetStoreById?storeID=${data?.StoreID}`);
             if (!res.ok) {
                 return null;
@@ -31,20 +34,29 @@ const ProductPVCResult: React.FC = () => {
 
     const { isPending: isPendingRating, data: dataRating, refetch: refetchRating } = useQuery<RatingResult[]>({
         queryKey: [`GetProductRating_${data?.ID}`],
-        queryFn: () => fetch(`/api/Rating/GetProductRating?productId=${data?.ID}`).then((res) => {
-            if (res.status === 404) {
+        queryFn: async () => {
+            if (!data?.ID) {
                 return [];
             }
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return res.json();
-        }),
+            return fetch(`/api/Rating/GetProductRating?productId=${data?.ID}`).then((res) => {
+                if (res.status === 404) {
+                    return [];
+                }
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+        },
     });
 
     useEffect(() => {
         refetchStoreData();
     }, [data?.StoreID]);
+
+    useEffect(() => {
+        refetchRating();
+    }, [data?.ID]);
 
     return (
         <>
