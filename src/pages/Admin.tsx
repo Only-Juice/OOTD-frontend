@@ -27,6 +27,7 @@ const Admin: React.FC = () => {
                 <Button onClick={() => setSelectedComponent('give')}>給優惠券</Button>
                 <Button onClick={() => setSelectedComponent('modify')}>修改優惠券</Button>
             </div>
+            <hr />
             {renderComponent()}
         </Card>
     );
