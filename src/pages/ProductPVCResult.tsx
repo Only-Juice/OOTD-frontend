@@ -30,8 +30,8 @@ const ProductPVCResult: React.FC = () => {
     });
 
     const { isPending: isPendingRating, data: dataRating, refetch: refetchRating } = useQuery<RatingResult[]>({
-        queryKey: [`GetProductRating_${id}`],
-        queryFn: () => fetch(`/api/Rating/GetProductRating?productId=${id}`).then((res) => {
+        queryKey: [`GetProductRating_${data?.ID}`],
+        queryFn: () => fetch(`/api/Rating/GetProductRating?productId=${data?.ID}`).then((res) => {
             if (res.status === 404) {
                 return [];
             }
