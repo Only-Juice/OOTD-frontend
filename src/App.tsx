@@ -20,6 +20,7 @@ import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
+import Admin from './pages/Admin.tsx';
 
 interface AppProps {
   queryClient: QueryClient;
@@ -116,6 +117,7 @@ const App: React.FC<AppProps> = ({ queryClient }) => {
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
             <Route path="/store/:storeID" element={<StorePage />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
           </Routes>
         </Container>
