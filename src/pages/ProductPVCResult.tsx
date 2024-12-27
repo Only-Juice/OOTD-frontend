@@ -4,6 +4,7 @@ import ProductContainer from '../components/ProductContainer';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../components/Loading';
 import { Store, RatingResult } from '../types';
+import { Watermark } from 'antd';
 
 const ProductPVCResult: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -59,7 +60,7 @@ const ProductPVCResult: React.FC = () => {
     }, [data?.ID]);
 
     return (
-        <>
+        <Watermark content={['Oh Online Tea Delivery', '歷史產品頁面']}>
             {isPending && (
                 <Loading />
             )}
@@ -69,7 +70,7 @@ const ProductPVCResult: React.FC = () => {
                 <ProductContainer product={data} isPVC={true} storeData={storeData} isStoreLoading={isStoreLoading} isPendingRating={isPendingRating} dataRating={dataRating} refetchRating={refetchRating} />
             )
             }
-        </>
+        </Watermark>
     );
 };
 
