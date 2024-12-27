@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Table, Skeleton, Alert, Button, Pagination, Collapse, Switch, message } from 'antd';
+import { Table, Skeleton, Alert, Button, Pagination, Switch, message } from 'antd';
 
-interface Store {
-    StoreID: number;
-    OwnerUsername: string;
-    Name: string;
-    Description: string;
-    OwnerID: number;
+interface User {
+    UID: number;
+    Username: string;
+    Email: string;
+    Address: string;
+    CreatedAt: string;
     Enabled: boolean;
 }
 
-interface StoreResponse {
+interface UserResponse {
     PageCount: number;
-    Stores: Store[];
+    Users: User[];
 }
 
 const pageSize = 5;
 
-const StoreManage: React.FC = () => {
+const UserManage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [switchLoading, setSwitchLoading] = useState<{ [key: number]: boolean }>({});
     const queryClient = useQueryClient();
 
-    const { isLoading, error, data, refetch } = useQuery<StoreResponse>({
-        queryKey: ['GetStores', currentPage],
+    const { isLoading, error, data, refetch } = useQuery<UserResponse>({
+        queryKey: ['GetUsers', currentPage],
         queryFn: async () => {
             const token = localStorage.getItem('token');
             if (!token) {
                 return null;
             }
-            const res = await fetch(`/api/Store/GetStores?page=${currentPage}&pageLimitNumber=${pageSize}&isASC=true`, {
+            const res = await fetch(`/api/User/GetUsers?page=${currentPage}&pageLimitNumber=${pageSize}&isASC=true`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -44,18 +44,18 @@ const StoreManage: React.FC = () => {
 
     const mutation = useMutation(
         {
-            mutationFn: async ({ StoreID, Enabled }: { StoreID: number; Enabled: boolean }) => {
+            mutationFn: async ({ UID, Enabled }: { UID: number; Enabled: boolean }) => {
                 const token = localStorage.getItem('token');
                 if (!token) {
                     return null;
                 }
-                return fetch('/api/Store/ModifyStoreEnabled', {
+                return fetch('/api/User/ModifyUserEnabled', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
                     },
-                    body: JSON.stringify({ StoreID, Enabled }),
+                    body: JSON.stringify({ UID, Enabled }),
                 }).then((res) => {
                     if (!res.ok) {
                         return null;
@@ -65,74 +65,59 @@ const StoreManage: React.FC = () => {
             },
 
             onSuccess: () => {
-                message.success('商店狀態修改成功');
+                message.success('用戶狀態修改成功');
             },
             onError: () => {
-                message.error('商店狀態修改失敗');
+                message.error('用戶狀態修改失敗');
             },
-            onSettled: async (_, __, { StoreID }) => {
-                await queryClient.invalidateQueries({ queryKey: ['GetStores'] });
-                setSwitchLoading((prev) => ({ ...prev, [StoreID]: false }));
+            onSettled: async (_, __, { UID }) => {
+                await queryClient.invalidateQueries({ queryKey: ['GetUsers'] });
+                setSwitchLoading((prev) => ({ ...prev, [UID]: false }));
             },
         }
     );
 
-    const handleSwitchChange = (StoreID: number, Enabled: boolean) => {
-        setSwitchLoading((prev) => ({ ...prev, [StoreID]: true }));
-        mutation.mutate({ StoreID, Enabled });
+    const handleSwitchChange = (UID: number, Enabled: boolean) => {
+        setSwitchLoading((prev) => ({ ...prev, [UID]: true }));
+        mutation.mutate({ UID, Enabled });
     };
 
     const columns = [
         {
-            title: '商店 ID',
-            dataIndex: 'StoreID',
-            key: 'StoreID',
+            title: '用戶 ID',
+            dataIndex: 'UID',
+            key: 'UID',
         },
         {
             title: '用戶名稱',
-            dataIndex: 'OwnerUsername',
-            key: 'OwnerUsername',
+            dataIndex: 'Username',
+            key: 'Username',
         },
         {
-            title: '名稱',
-            dataIndex: 'Name',
-            key: 'Name',
-            render: (text: string, record: Store) => (
-                <a href={`/store/${record.StoreID}`} target="_blank" rel="noopener noreferrer">
-                    {text}
-                </a>
-            ),
+            title: '電子郵件',
+            dataIndex: 'Email',
+            key: 'Email',
         },
         {
-            title: '敘述',
-            dataIndex: 'Description',
-            key: 'Description',
-            render: (text: string) => (
-                <Collapse
-                    items={[
-                        {
-                            key: '1',
-                            label: '展開',
-                            children: text,
-                        },
-                    ]}
-                />
-            ),
+            title: '地址',
+            dataIndex: 'Address',
+            key: 'Address',
         },
         {
-            title: '用戶 ID',
-            dataIndex: 'OwnerID',
-            key: 'OwnerID',
+            title: '創建時間',
+            dataIndex: 'CreatedAt',
+            key: 'CreatedAt',
+            render: (text: string) => new Date(text).toLocaleString(),
         },
         {
             title: '啟用',
             dataIndex: 'Enabled',
             key: 'Enabled',
-            render: (enabled: boolean, record: Store) => (
+            render: (enabled: boolean, record: User) => (
                 <Switch
                     checked={enabled}
-                    onChange={(checked) => handleSwitchChange(record.StoreID, checked)}
-                    loading={switchLoading[record.StoreID]}
+                    onChange={(checked) => handleSwitchChange(record.UID, checked)}
+                    loading={switchLoading[record.UID]}
                 />
             ),
         },
@@ -154,7 +139,7 @@ const StoreManage: React.FC = () => {
                 <Alert message="Error" description={(error as Error).message} type="error" showIcon />
             ) : (
                 <>
-                    <Table dataSource={data?.Stores} columns={columns} rowKey="StoreID" pagination={false} />
+                    <Table dataSource={data?.Users} columns={columns} rowKey="UID" pagination={false} />
                     <Pagination
                         showSizeChanger={false}
                         current={currentPage}
@@ -169,4 +154,4 @@ const StoreManage: React.FC = () => {
     );
 };
 
-export default StoreManage;
+export default UserManage;

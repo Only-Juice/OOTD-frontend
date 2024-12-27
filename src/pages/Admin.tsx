@@ -5,6 +5,7 @@ import GiveCoupon from '../components/GiveCoupon';
 import ModifyCoupon from '../components/ModifyCoupon';
 import GetRequest from '../components/GetRequest';
 import StoreManage from '../components/StoreManage';
+import UserManage from '../components/UserManage';
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
@@ -24,6 +25,8 @@ const Admin: React.FC = () => {
                 return <GetRequest />;
             case 'store':
                 return <StoreManage />;
+            case 'user':
+                return <UserManage />;
             default:
                 return null;
         }
@@ -41,15 +44,25 @@ const Admin: React.FC = () => {
         <Card title="管理員頁面" className="mt-2">
             <Layout>
                 <Sider style={{ background: '#fff' }}>
-                    <Menu onClick={handleMenuClick} selectedKeys={[selectedComponent]} mode="inline">
-                        <SubMenu key="coupon" title="優惠券管理">
-                            <Menu.Item key="add">新增優惠券</Menu.Item>
-                            <Menu.Item key="give">發放優惠券</Menu.Item>
-                            <Menu.Item key="modify">修改優惠券</Menu.Item>
-                        </SubMenu>
-                        <Menu.Item key="request">請求查看</Menu.Item>
-                        <Menu.Item key="store">店家管理</Menu.Item>
-                    </Menu>
+                    <Menu
+                        onClick={handleMenuClick}
+                        selectedKeys={[selectedComponent]}
+                        mode="inline"
+                        items={[
+                            {
+                                key: 'coupon',
+                                label: '優惠券管理',
+                                children: [
+                                    { key: 'add', label: '新增優惠券' },
+                                    { key: 'give', label: '發放優惠券' },
+                                    { key: 'modify', label: '修改優惠券' },
+                                ],
+                            },
+                            { key: 'request', label: '請求查看' },
+                            { key: 'store', label: '店家管理' },
+                            { key: 'user', label: '用戶管理' },
+                        ]}
+                    />
                 </Sider>
                 <Layout>
                     <Content>
