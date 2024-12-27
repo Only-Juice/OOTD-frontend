@@ -20,17 +20,14 @@ import NavBar from './components/NavBar';
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
-import { QueryClient } from '@tanstack/react-query';
 import { useMediaQuery } from 'react-responsive';
+import { useQueryClient } from '@tanstack/react-query';
 
-interface AppProps {
-  queryClient: QueryClient;
-}
-
-const App: React.FC<AppProps> = ({ queryClient }) => {
+const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean | undefined>(undefined);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const isMobile = useMediaQuery({ maxWidth: 767 });
+  const queryClient = useQueryClient();
 
   const { isLoading: isLoadinUserInfo, isPending: isPendingUserInfo, data: dataUserInfo, refetch: refetchUserInfo } = useQuery({
     queryKey: [`UserInfo`],
