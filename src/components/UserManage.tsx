@@ -115,7 +115,7 @@ const UserManage: React.FC = () => {
             title: '創建時間',
             dataIndex: 'CreatedAt',
             key: 'CreatedAt',
-            render: (text: string) => new Date(text).toLocaleString(),
+            render: (text: string) => new Date(text).toLocaleString('zh-TW'),
         },
         {
             title: '啟用',
