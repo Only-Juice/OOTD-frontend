@@ -68,7 +68,7 @@ const App: React.FC<AppProps> = ({ queryClient }) => {
     queryClient.invalidateQueries();
   };
 
-  const requiredLoginPaths = ['/cart', '/cartresult', '/user'];
+  const requiredLoginPaths = ['/cart', '/cartresult', '/user', '/admin'];
 
   useEffect(() => {
     if (isModalOpen === undefined) return;
