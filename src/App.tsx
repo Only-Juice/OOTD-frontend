@@ -13,6 +13,7 @@ const CartResult = React.lazy(() => import('./pages/CartResult.tsx'));
 const RickROll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp'));
 const C0 = React.lazy(() => import('./pages/YaoDong.tsx'));
 const StorePage = React.lazy(() => import('./pages/Store.tsx'));
+const AdminPage = React.lazy(() => import('./pages/Admin.tsx'));
 import Login from './components/Login';
 import GoToTop from './components/GoToTOP';
 import NavBar from './components/NavBar';
@@ -116,6 +117,7 @@ const App: React.FC<AppProps> = ({ queryClient }) => {
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
             <Route path="/store/:storeID" element={<StorePage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
           </Routes>
         </Container>

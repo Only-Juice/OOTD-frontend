@@ -56,7 +56,8 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                                 {dataUserInfo && dataUserInfo.Username ? (
                                     <>
                                         <NavDropdown title={<UserBadge username={dataUserInfo.Username} />} style={{ whiteSpace: 'nowrap' }}>
-                                            <NavDropdown.Item as={Link} to="/user?tab=profile">用戶資訊</NavDropdown.Item>
+                                            <NavDropdown.Item as={Link} to="/user?tab=profile">用戶頁面</NavDropdown.Item>
+                                            {dataUserInfo.IsAdministrator && <NavDropdown.Item as={Link} to="/admin">管理頁面</NavDropdown.Item>}
                                             <NavDropdown.Item onClick={() => {
                                                 Toast.fire({
                                                     icon: "success",

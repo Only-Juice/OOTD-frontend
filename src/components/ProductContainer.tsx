@@ -182,7 +182,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                 </Modal.Body>
             </Modal>
 
-            {product && <Rating productId={product.ID} isPVC={isPVC} isPending={isPendingRating} data={dataRating} refetch={refetchRating} />}
+            {product && <Rating productId={product.ID} isPending={isPendingRating} data={dataRating} refetch={refetchRating} />}
         </>
     );
 };
