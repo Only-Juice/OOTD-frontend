@@ -4,7 +4,6 @@ import { Row, Col, Form } from 'react-bootstrap';
 import { SearchProduct } from '../types';
 import ProductCard from '../components/ProductCard';
 import { useQuery } from '@tanstack/react-query';
-import Loading from '../components/Loading';
 import PageButton from '../components/PageButton';
 import BriefStoreSearch from '../components/BriefStoreSearch';
 import { SearchStoresResponse } from "../types";
