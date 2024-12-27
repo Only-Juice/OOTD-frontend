@@ -138,7 +138,7 @@ const ModifyCoupon: React.FC = () => {
                 name="Discount"
                 rules={[{ required: true, message: '請輸入折扣!' }]}
             >
-                <Input />
+                <InputNumber min={0} max={1} step={0.01} />
             </Form.Item>
 
             <Form.Item
@@ -146,7 +146,7 @@ const ModifyCoupon: React.FC = () => {
                 name="StartDate"
                 rules={[{ required: true, message: '請輸入開始日期!' }]}
             >
-                <Input />
+                <DatePicker showTime />
             </Form.Item>
 
             <Form.Item
@@ -154,7 +154,7 @@ const ModifyCoupon: React.FC = () => {
                 name="ExpireDate"
                 rules={[{ required: true, message: '請輸入結束日期!' }]}
             >
-                <Input />
+                <DatePicker showTime />
             </Form.Item>
 
             <Form.Item
