@@ -196,7 +196,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) 
                                             <div>{renderStars(rating.Rating, 30)}</div>
                                         </Col>
                                         <Col xs={12} md={12} className="text-end">
-                                            <div><strong>日期:</strong> {new Date(rating.CreatedAt).toLocaleString()}</div>
+                                            <div><strong>日期:</strong> {new Date(rating.CreatedAt).toLocaleString('zh-TW')}</div>
                                         </Col>
                                     </Row>
                                 </ListGroup.Item>

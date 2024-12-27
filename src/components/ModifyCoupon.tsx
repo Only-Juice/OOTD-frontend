@@ -80,8 +80,8 @@ const ModifyCoupon: React.FC = () => {
                 Name: selectedCoupon.Name,
                 Description: selectedCoupon.Description,
                 Discount: selectedCoupon.Discount,
-                StartDate: new Date(selectedCoupon.StartDate).toLocaleString(),
-                ExpireDate: new Date(selectedCoupon.ExpireDate).toLocaleString(),
+                StartDate: new Date(selectedCoupon.StartDate).toLocaleString('zh-TW'),
+                ExpireDate: new Date(selectedCoupon.ExpireDate).toLocaleString('zh-TW'),
                 Enabled: selectedCoupon.Enabled,
             });
         }
@@ -111,7 +111,7 @@ const ModifyCoupon: React.FC = () => {
                                 <span style={{ fontWeight: 'bold' }}>{coupon.Name}</span>
                                 <span>{coupon.Description}</span>
                                 <span>折扣: {coupon.Discount === 1 ? '無折扣' : `${(coupon.Discount * 10).toFixed(2).replace(/\.?0+$/, '')}折`} </span>
-                                <span>有效日期 {new Date(coupon.StartDate).toLocaleString()} 到 {new Date(coupon.ExpireDate).toLocaleString()}</span>
+                                <span>有效日期 {new Date(coupon.StartDate).toLocaleString('zh-TW')} 到 {new Date(coupon.ExpireDate).toLocaleString('zh-TW')}</span>
                             </div>
                         </Select.Option>
                     ))}

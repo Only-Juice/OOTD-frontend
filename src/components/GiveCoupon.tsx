@@ -123,7 +123,7 @@ const GiveCoupon: React.FC = () => {
                                 <span style={{ fontWeight: 'bold' }}>{coupon.Name}</span>
                                 <span>{coupon.Description}</span>
                                 <span>折扣: {coupon.Discount === 1 ? '無折扣' : `${(coupon.Discount * 10).toFixed(2).replace(/\.?0+$/, '')}折`} </span>
-                                <span>有效日期 {new Date(coupon.StartDate).toLocaleString()} 到 {new Date(coupon.ExpireDate).toLocaleString()}</span>
+                                <span>有效日期 {new Date(coupon.StartDate).toLocaleString('zh-TW')} 到 {new Date(coupon.ExpireDate).toLocaleString('zh-TW')}</span>
                             </div>
                         </Select.Option>
                     ))}
