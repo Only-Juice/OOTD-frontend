@@ -75,3 +75,13 @@ export interface RatingResult {
   Rating: number;
   CreatedAt: string;
 }
+
+export interface Coupon {
+  CouponID: number;
+  Name: string;
+  Description: string;
+  Discount: number;
+  StartDate: string;
+  ExpireDate: string;
+  Enabled: boolean;
+}
