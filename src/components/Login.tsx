@@ -42,6 +42,8 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, refetchUserI
             if (data) {
                 console.log('Login successful:', data.Token);
                 localStorage.setItem('token', data.Token);
+                localStorage.setItem('admin', data.IsAdministrator);
+                localStorage.setItem('seller', data.HaveStore);
                 refetchUserInfo();
             }
         },
