@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Table, Skeleton, Alert, Button, Pagination, Switch, message } from 'antd';
 
@@ -22,6 +22,7 @@ const UserManage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [switchLoading, setSwitchLoading] = useState<{ [key: number]: boolean }>({});
     const queryClient = useQueryClient();
+    const [PageCount, setPageCount] = useState(0);
 
     const { isLoading, error, data, refetch } = useQuery<UserResponse>({
         queryKey: ['GetUsers', currentPage],
@@ -82,6 +83,13 @@ const UserManage: React.FC = () => {
         mutation.mutate({ UID, Enabled });
     };
 
+    useEffect(() => {
+        if (data) {
+            setPageCount(data.PageCount);
+        }
+    }, [data]);
+
+
     const columns = [
         {
             title: '用戶 ID',
@@ -113,6 +121,7 @@ const UserManage: React.FC = () => {
             title: '啟用',
             dataIndex: 'Enabled',
             key: 'Enabled',
+            fixed: 'right' as 'right',
             render: (enabled: boolean, record: User) => (
                 <Switch
                     checked={enabled}
@@ -129,9 +138,9 @@ const UserManage: React.FC = () => {
     };
 
     return (
-        <div>
+        <>
             <Button onClick={() => refetch()} type="primary" style={{ marginBottom: 16 }}>
-                重新載入資料
+                更新資料
             </Button>
             {isLoading ? (
                 <Skeleton active />
@@ -139,18 +148,19 @@ const UserManage: React.FC = () => {
                 <Alert message="Error" description={(error as Error).message} type="error" showIcon />
             ) : (
                 <>
-                    <Table dataSource={data?.Users} columns={columns} rowKey="UID" pagination={false} />
-                    <Pagination
-                        showSizeChanger={false}
-                        current={currentPage}
-                        total={(data?.PageCount ?? 0) * pageSize}
-                        pageSize={pageSize}
-                        onChange={handlePageChange}
-                        style={{ marginTop: 16 }}
-                    />
+                    <Table dataSource={data?.Users} columns={columns} rowKey="UID" pagination={false} scroll={{ x: 'max-content' }} />
                 </>
             )}
-        </div>
+            <Pagination
+                showSizeChanger={false}
+                current={currentPage}
+                total={(PageCount ?? 0) * pageSize}
+                pageSize={pageSize}
+                onChange={handlePageChange}
+                style={{ marginTop: 16 }}
+            />
+
+        </>
     );
 };
 

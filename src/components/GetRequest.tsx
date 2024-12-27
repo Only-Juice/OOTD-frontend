@@ -76,7 +76,7 @@ const GetRequest: React.FC = () => {
             ) : error ? (
                 <Alert message="Error" description={(error as Error).message} type="error" showIcon />
             ) : (
-                <Table dataSource={data} columns={columns} rowKey="ID" />
+                <Table dataSource={data} columns={columns} rowKey="ID" scroll={{ x: 'max-content' }} />
             )}
         </div>
     );
