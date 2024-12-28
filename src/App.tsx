@@ -20,15 +20,14 @@ import NavBar from './components/NavBar';
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
-import { QueryClient } from '@tanstack/react-query';
+import { useMediaQuery } from 'react-responsive';
+import { useQueryClient } from '@tanstack/react-query';
 
-interface AppProps {
-  queryClient: QueryClient;
-}
-
-const App: React.FC<AppProps> = ({ queryClient }) => {
+const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean | undefined>(undefined);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  const queryClient = useQueryClient();
 
   const { isLoading: isLoadinUserInfo, isPending: isPendingUserInfo, data: dataUserInfo, refetch: refetchUserInfo } = useQuery({
     queryKey: [`UserInfo`],
@@ -68,7 +67,7 @@ const App: React.FC<AppProps> = ({ queryClient }) => {
     queryClient.invalidateQueries();
   };
 
-  const requiredLoginPaths = ['/cart', '/cartresult', '/user'];
+  const requiredLoginPaths = ['/cart', '/cartresult', '/user', '/admin'];
 
   useEffect(() => {
     if (isModalOpen === undefined) return;
@@ -85,6 +84,29 @@ const App: React.FC<AppProps> = ({ queryClient }) => {
     }
   }, [localStorage, localStorage.getItem('token')]);
 
+  const AppRoutes: React.FC = () => {
+    return <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/search" element={<SearchResults />} />
+      <Route path="/cart" element={<Cart setIsModalOpen={setIsModalOpen} />} />
+      <Route path="/cartresult" element={<CartResult />} />
+      <Route path="/user" element={<UserPage isLoading={isLoadinUserInfo} isPending={isPendingUserInfo} data={dataUserInfo} refetch={refetchUserInfo} />} />
+      <Route path="/product/:id" element={<ProductResult />} />
+      <Route path="/products/:id" element={<Navigate to="/product/:id" />} />
+      <Route path="/PVC/:id" element={<ProductPVCResult />} />
+      <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
+      <Route path="/rickroll" element={<RickROll />} />
+      <Route path="/c0" element={<C0 />} />
+      <Route path="/c8763" element={<C8763 />} />
+      <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
+      <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
+      <Route path="/store/:storeID" element={<StorePage />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
+    </Routes>
+  }
+
   return (
     <>
       <GoToTop />
@@ -99,28 +121,8 @@ const App: React.FC<AppProps> = ({ queryClient }) => {
           refetchUserInfo={refetchUserInfo}
         />
 
-        <Container>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/cart" element={<Cart setIsModalOpen={setIsModalOpen} />} />
-            <Route path="/cartresult" element={<CartResult />} />
-            <Route path="/user" element={<UserPage isLoading={isLoadinUserInfo} isPending={isPendingUserInfo} data={dataUserInfo} refetch={refetchUserInfo} />} />
-            <Route path="/product/:id" element={<ProductResult />} />
-            <Route path="/products/:id" element={<Navigate to="/product/:id" />} />
-            <Route path="/PVC/:id" element={<ProductPVCResult />} />
-            <Route path="/profile" element={<Navigate to="/user?tab=profile" />} />
-            <Route path="/rickroll" element={<RickROll />} />
-            <Route path="/c0" element={<C0 />} />
-            <Route path="/c8763" element={<C8763 />} />
-            <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
-            <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
-            <Route path="/store/:storeID" element={<StorePage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
-          </Routes>
-        </Container>
+
+        {isMobile ? <div className='m-2'><AppRoutes /></div> : <Container> <AppRoutes /> </Container>}
         <Login
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}

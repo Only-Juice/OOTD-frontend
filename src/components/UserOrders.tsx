@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, ListGroup, Accordion, ProgressBar, Card } from 'react-bootstrap';
+import { Row, Col, ListGroup, Accordion, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Loading from './Loading';
+import { Steps } from 'antd';
 
 interface OrderDetail {
     PVCID: number;
@@ -20,6 +21,27 @@ interface Order {
     Discount: number;
     Details: OrderDetail[];
 }
+
+const getStatusTimeline: React.FC<string> = (status: string) => {
+    const statuses = [
+        '未審查',
+        '不通過',
+        '已通過',
+        '配送中',
+        '轉運作業中',
+        '貨件送達',
+        '取件完成'
+    ];
+
+    return (
+        <Steps className='mt-2' progressDot current={statuses.indexOf(status)} direction="horizontal">
+            {statuses.map((s, index) => (
+                <Steps.Step key={index} title={s} />
+            ))}
+        </Steps>
+    );
+};
+
 
 const UserOrders: React.FC = () => {
     const [notFound, setNotFound] = useState(false);
@@ -54,38 +76,6 @@ const UserOrders: React.FC = () => {
         refetch();
     }, [localStorage.getItem('token')]);
 
-    const getStatusTimeline = (status: string) => {
-        const statuses = [
-            '未審查',
-            '不通過',
-            '已通過',
-            '配送中',
-            '轉運作業中',
-            '貨件送達',
-            '取件完成'
-        ];
-
-        return (
-            <div className="d-flex justify-content-between align-items-center flex-column">
-                <ProgressBar
-                    now={statuses.indexOf(status) * 100 / (statuses.length - 1)}
-                    variant='primary'
-                    style={{ width: '100%', margin: '0 auto' }}
-                >
-                </ProgressBar>
-                <div className="d-flex justify-content-between align-items-center w-100 mt-2">
-                    {statuses.map((s, index) => (
-                        <div key={index}>
-                            <div className={`d-flex align-items-center justify-content-center p-2 ${status === s ? 'bg-primary text-white' : 'bg-light'}`}>
-                                {s}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div >
-        );
-    };
-
     return (
         <>
             {isLoading && (
@@ -111,7 +101,7 @@ const UserOrders: React.FC = () => {
                                     <Accordion.Header>
                                         <div>
                                             <strong>訂單編號:</strong> <span>{order.OrderID}</span> <br />
-                                            <strong>訂單日期:</strong> <span>{new Date(order.CreateAt).toLocaleString()}</span> <br />
+                                            <strong>訂單日期:</strong> <span>{new Date(order.CreateAt).toLocaleString('zh-TW')}</span> <br />
                                             <strong>折扣:</strong> <span>{order.Discount === 1 ? '無折扣' : `${(order.Discount * 10).toFixed(2).replace(/\.?0+$/, '')}折`}</span> <br />
                                             <strong>狀態:</strong> <span>{order.Status}</span> <br />
                                             {getStatusTimeline(order.Status)}
