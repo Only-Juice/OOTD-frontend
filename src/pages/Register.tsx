@@ -66,7 +66,7 @@ const Register: React.FC = () => {
             let timerInterval: number;
             MySwal.fire({
                 title: 'Success',
-                text: 'Registration successful!',
+                text: '註冊成功!',
                 icon: 'success',
                 timer: 2000,
                 showConfirmButton: false,

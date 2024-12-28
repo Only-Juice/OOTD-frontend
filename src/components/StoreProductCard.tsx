@@ -2,22 +2,23 @@ import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
-import '../styles/ProductCard.css';
+import '../styles/StoreCard.css';
 
-const ProductCard: React.FC<{ product: Product | null }> = ({ product }) => {
+const StoreCard: React.FC<{ product: Product | null }> = ({ product }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <>
-            {!product && <Card className='h-100'>
-                <Card.Body>
-                    <div className='image-container img-thumbnail'>
-                        <div className='product-image'></div>
-                    </div>
-                    <Card.Title>Loading</Card.Title>
-                    <Card.Text>Loading</Card.Text>
-                </Card.Body>
-            </Card>}
+            {!product &&
+                <Card className='h-100'>
+                    <Card.Body>
+                        <div className='image-container img-thumbnail'>
+                            <div className='store-image'></div>
+                        </div>
+                        <Card.Title>Loading</Card.Title>
+                        <Card.Text>Loading</Card.Text>
+                    </Card.Body>
+                </Card>}
             {product &&
                 <Link to={`/product/${product.ID}`} className='text-decoration-none'>
                     <Card className='h-100'>
@@ -26,14 +27,15 @@ const ProductCard: React.FC<{ product: Product | null }> = ({ product }) => {
                                 <Card.Img
                                     src={product.Images[0]}
                                     loading="lazy"
-                                    className={`product-image ${isHovered ? 'zoom' : ''}`}
+                                    className={`store-image ${isHovered ? 'zoom' : ''}`}
                                     onMouseEnter={() => setIsHovered(true)}
                                     onMouseLeave={() => setIsHovered(false)}
                                 />
                             </div>
+                            <div className='hover-price'>
+                                NT${product.Price}
+                            </div>
                             {product.Quantity === 0 && <div className='sold-out'>售完</div>}
-                            <Card.Title style={{ color: isHovered ? '#0645AD' : 'inherit' }}>{product.Name}</Card.Title>
-                            <Card.Text>NT${product.Price}</Card.Text>
                         </Card.Body>
                     </Card>
                 </Link>
@@ -42,4 +44,4 @@ const ProductCard: React.FC<{ product: Product | null }> = ({ product }) => {
     );
 };
 
-export default ProductCard;
+export default StoreCard;

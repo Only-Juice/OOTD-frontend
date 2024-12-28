@@ -28,7 +28,7 @@ const ChangePassword: React.FC = () => {
         mutationFn: () => {
             const token = localStorage.getItem('token');
             return fetch('/api/User/ModifyPassword', {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `${token ? ('Bearer ' + token) : ''}`,

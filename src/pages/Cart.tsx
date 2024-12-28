@@ -46,7 +46,7 @@ const layoutStyle = {
     maxWidth: 'calc(90% - 8px)',
 };
 
-const handleQuantityChange = (
+const handleQuantityChange = async (
     value: number | null,
     record: ProductInCart,
     dataSource: ProductInCart[],
@@ -59,52 +59,75 @@ const handleQuantityChange = (
         return item;
     });
     setDataSource(newData);
+    try{
+        const response = await fetch('/api/Product/ModifyProductQuantityInCart', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                ProductID: record.ID,
+                Quantity: value || 1,
+            }),
+        });
+
+        if (!response.ok) {
+            // 處理 API 請求失敗的情況
+            throw new Error('Failed to update quantity');
+        }
+
+        const data = await response.json();
+        console.log('API Response:', data);
+    } catch {
+        console.error('Error:', error);
+    }
 };
 const getColumns = (
     dataSource: ProductInCart[],
     setDataSource: React.Dispatch<React.SetStateAction<ProductInCart[]>>
 ): TableColumnsType<ProductInCart> => [
-    {
-        title: '圖片',
-        dataIndex: 'Images',
-        render: (t, r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
-    },
-    {
-        title: '商品名稱',
-        align: 'center',
-        dataIndex: 'Name',
-        key: 'name',
-    },
-    {
-        title: '單價',
-        align: 'center',
-        dataIndex: 'Price',
-        key: 'price',
-    },
-    {
-        title: '數量',
-        align: 'center',
-        dataIndex: 'Quantity',
-        key: 'amount',
-        render: (value, record) => (
-            <InputNumber
-                min={1}
-                value={value}
-                onChange={(val) => handleQuantityChange(val, record, dataSource, setDataSource)} // 更新數據
-            />
-        ),
-    },
-    {
-        title: '總計',
-        align: 'center',
-        dataIndex: 'totalPrice',
-        key: 'totalPrice',
-        render: (text, record) => {
-            return record.Quantity * record.Price;
+        {
+            title: '圖片',
+            dataIndex: 'Images',
+            render: (t, r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
         },
-        sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
-    },
-];
+        {
+            title: '商品名稱',
+            align: 'center',
+            dataIndex: 'Name',
+            key: 'name',
+        },
+        {
+            title: '單價',
+            align: 'center',
+            dataIndex: 'Price',
+            key: 'price',
+        },
+        {
+            title: '數量',
+            align: 'center',
+            dataIndex: 'Quantity',
+            key: 'amount',
+            render: (value, record) => (
+                <InputNumber
+                    min={1}
+                    value={value}
+                    onChange={(val) => handleQuantityChange(val, record, dataSource, setDataSource)} // 更新數據
+                />
+            ),
+        },
+        {
+            title: '總計',
+            align: 'center',
+            dataIndex: 'totalPrice',
+            key: 'totalPrice',
+            render: (text, record) => {
+                return record.Quantity * record.Price;
+            },
+            sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
+        },
+    ];
 
 const CouponTable: TableColumnsType<Coupon> = [
     {
@@ -141,7 +164,11 @@ export const calculateDiscountedTotal = (coupons, selectCouponkey, total) => {
     return Math.floor(total * selectedCoupon.Discount);
 };
 
-const Cart: React.FC = () => {
+interface CartProps {
+    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+}
+
+const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
     const navigate = useNavigate();
 
     /* Get Cart Info */
@@ -149,6 +176,12 @@ const Cart: React.FC = () => {
     const [hasProduct, sethasProduct] = useState(false);
     const [error, seterror] = useState(false);
     const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        if (token == null) {
+            setIsModalOpen(true);
+        }
+    }, [token]);
 
     const fetchUserInfo = (token: string) => {
         fetch('/api/Product/GetCartProducts', {
@@ -178,16 +211,20 @@ const Cart: React.FC = () => {
     const DeleteShoppingCart = useMutation({
         mutationFn: (deleteIds: number[]) =>
             fetch('/api/Product/RemoveProductFromCart', {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: JSON.stringify(deleteIds), // 传递要删除的 ID 数组
+                body: JSON.stringify({ IDs: deleteIds }), // 传递要删除的 ID 数组
             }).then((res) => res.json()), // 解析返回的 JSON 数据
 
-        onSuccess: () => {
-            console.log('Products deleted successfully');
+        onSuccess: (data) => {
+            if (data.StatusCode === 200) {
+                console.log('Products deleted successfully');
+            } else {
+                console.log(data);
+            }
 
         },
         onError: (error) => {
@@ -233,7 +270,7 @@ const Cart: React.FC = () => {
     const [selectCouponkey, setCouponkey] = useState<React.Key | null>(null);
     const [buyload, setbuyload] = useState(false);
     const [deleteload, setdeleteload] = useState(false);
-    const [deleteId,setdeleteId] = useState<number[]>([]);
+    const [deleteId, setdeleteId] = useState<number[]>([]);
     /* Modify Product Table */
 
     const SelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -316,7 +353,7 @@ const Cart: React.FC = () => {
         ) : (
             <div className="container">
                 <h1>Cart Information</h1>
-                <hr/>
+                <hr />
                 <Table<ProductInCart>
                     rowSelection={rowSelection}
                     dataSource={Product}
@@ -340,9 +377,9 @@ const Cart: React.FC = () => {
                         ),
                     }}
                     footer={() => (
-                        <div style={{textAlign: 'right'}}>
+                        <div style={{ textAlign: 'right' }}>
                             <Button
-                                style={{width: '100px', height: '60px', backgroundColor: '#8CC753'}}
+                                style={{ width: '100px', height: '60px', backgroundColor: '#8CC753' }}
                                 type="primary"
                                 onClick={ClickDelete}
                                 disabled={!checkboxclick}
@@ -354,7 +391,7 @@ const Cart: React.FC = () => {
                     )}
                 />
                 <h1>Coupon Information</h1>
-                <hr/>
+                <hr />
                 <Table<Coupon>
                     rowSelection={{
                         type: 'radio',
@@ -371,7 +408,7 @@ const Cart: React.FC = () => {
                             justifyContent: 'flex-end',
                             alignItems: 'center'
                         }}>
-                            <h3 style={{marginRight: '32px'}}>總價：{total_price}</h3>
+                            <h3 style={{ marginRight: '32px' }}>總價：{total_price}</h3>
                             <Button
                                 style={{
                                     width: '100px',

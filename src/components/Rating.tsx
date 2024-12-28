@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { ListGroup, Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-
-interface Rating {
-    UserName: string;
-    Rating: number;
-    CreatedAt: string;
-}
+import withReactContent from 'sweetalert2-react-content';
+import { RatingResult } from '../types';
 
 interface RatingProps {
     productId: number;
+    isPending: boolean;
+    data?: RatingResult[];
+    refetch: () => void;
 }
 
-const Rating: React.FC<RatingProps> = ({ productId }) => {
+const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) => {
     const queryClient = useQueryClient();
     const [newRating, setNewRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -30,18 +29,30 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
             toast.onmouseleave = Swal.resumeTimer;
         }
     });
+    const MySwal = withReactContent(Swal);
 
-    const { isPending, data, refetch } = useQuery<Rating[]>({
-        queryKey: [`GetProductRating_${productId}`],
-        queryFn: () => fetch(`/api/Rating/GetProductRating?productId=${productId}`).then((res) => {
-            if (res.status === 404) {
-                return [];
+    const { data: remainingRatingTimesData, refetch: remainingRatingTimesRefetch } = useQuery({
+        queryKey: [`GetRemainingRatingTimes_${productId}`],
+        queryFn: async () => {
+            const token = localStorage.getItem('token');
+            if (!productId || !token) {
+                return null;
             }
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return res.json();
-        }),
+            return fetch(`/api/Rating/GetRemainingRatingTimes?productId=${productId}`, {
+                headers: {
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then((res) => {
+                if (res.status === 404) {
+                    return null;
+                }
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+        },
     });
 
     const mutation = useMutation({
@@ -59,15 +70,38 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: [`GetProductRating_${productId}`] });
             refetch();
-            if (data.status === 401) {
+            remainingRatingTimesRefetch();
+            if (data.status === 400) {
+                Toast.fire({
+                    icon: "error",
+                    title: "評價失敗，請確認是否已購買過本商品"
+                });
+            } else if (data.status === 401) {
                 Toast.fire({
                     icon: "error",
                     title: "請先登入"
                 });
             } else if (data.ok) {
-                Toast.fire({
-                    icon: "success",
-                    title: "評價成功"
+                let timerInterval: number;
+                MySwal.fire({
+                    title: 'Success',
+                    text: '評價成功!',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup()?.querySelector("b");
+                        if (timer) {
+                            timerInterval = setInterval(() => {
+                                timer.textContent = `${Swal.getTimerLeft()}`;
+                            }, 100);
+                        }
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
                 });
             }
         },
@@ -129,7 +163,7 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
             <Card className="my-4">
                 <Card.Body>
                     <Card.Title className='ms-3'>商品評價</Card.Title>
-                    {isPending || data?.length === 0 ? (
+                    {isPending || data && data.length === 0 ? (
                         <div>暫時沒有評價</div>
                     ) : (
                         <ListGroup variant="flush">
@@ -156,55 +190,57 @@ const Rating: React.FC<RatingProps> = ({ productId }) => {
                                 <ListGroup.Item key={index}>
                                     <Row>
                                         <Col xs={12} md={6}>
-                                            <div>{rating.UserName.length > 2 ? `${rating.UserName[0]}*****${rating.UserName[rating.UserName.length - 1]}` : `${rating.UserName[0]}*`}</div>
+                                            <div>{rating.Username.length > 2 ? `${rating.Username[0]}*****${rating.Username[rating.Username.length - 1]}` : `${rating.Username[0]}*`}</div>
                                         </Col>
                                         <Col xs={12} md={6}>
                                             <div>{renderStars(rating.Rating, 30)}</div>
                                         </Col>
                                         <Col xs={12} md={12} className="text-end">
-                                            <div><strong>日期:</strong> {new Date(rating.CreatedAt).toLocaleString()}</div>
+                                            <div><strong>日期:</strong> {new Date(rating.CreatedAt).toLocaleString('zh-TW')}</div>
                                         </Col>
                                     </Row>
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>
                     )}
-                    <Form onSubmit={handleSubmit} className="mt-4">
-                        <Form.Group controlId="rating">
-                            <Form.Label>留下評價</Form.Label>
-                            <div>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <span
-                                        key={`star-${star}`}
-                                        style={{ cursor: 'pointer', position: 'relative', display: 'inline-block' }}
-                                    >
+                    {remainingRatingTimesData && remainingRatingTimesData.RemainingRatingTimes != 0 && (
+                        <Form onSubmit={handleSubmit} className="mt-4">
+                            <Form.Group controlId="rating">
+                                <Form.Label>留下評價</Form.Label>
+                                <div>
+                                    {[1, 2, 3, 4, 5].map((star) => (
                                         <span
-                                            style={{ position: 'absolute', left: 0, width: '50%', height: '100%' }}
-                                            onMouseEnter={() => setHoverRating(star - 0.5)}
-                                            onMouseLeave={() => setHoverRating(0)}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleStarClick(star - 0.5);
-                                            }}
-                                        />
-                                        <span
-                                            style={{ position: 'absolute', right: 0, width: '50%', height: '100%' }}
-                                            onMouseEnter={() => setHoverRating(star)}
-                                            onMouseLeave={() => setHoverRating(0)}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleStarClick(star);
-                                            }}
-                                        />
-                                        {renderOneStar(hoverRating || newRating, star)}
-                                    </span>
-                                ))}
-                            </div>
-                        </Form.Group>
-                        <Button variant="primary" type="submit" className="mt-2">
-                            提交
-                        </Button>
-                    </Form>
+                                            key={`star-${star}`}
+                                            style={{ cursor: 'pointer', position: 'relative', display: 'inline-block' }}
+                                        >
+                                            <span
+                                                style={{ position: 'absolute', left: 0, width: '50%', height: '100%' }}
+                                                onMouseEnter={() => setHoverRating(star - 0.5)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStarClick(star - 0.5);
+                                                }}
+                                            />
+                                            <span
+                                                style={{ position: 'absolute', right: 0, width: '50%', height: '100%' }}
+                                                onMouseEnter={() => setHoverRating(star)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStarClick(star);
+                                                }}
+                                            />
+                                            {renderOneStar(hoverRating || newRating, star)}
+                                        </span>
+                                    ))}
+                                </div>
+                            </Form.Group>
+                            <Button variant="primary" type="submit" className="mt-2">
+                                提交
+                            </Button>
+                        </Form>
+                    )}
                 </Card.Body>
             </Card>
         </Container>

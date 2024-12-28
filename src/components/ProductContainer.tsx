@@ -1,23 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { Carousel, Button, Modal, Row, Col, Spinner } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { Carousel, Button, Modal, Row, Col, Spinner, Card } from "react-bootstrap";
 import { Product } from "../types";
 import { useMutation } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Rating from "./Rating";
+import UserBadge from "./UserBadge";
+import { Store, RatingResult } from "../types";
 
 interface ProductContainerProps {
     product: Product | null;
+    isPVC?: boolean;
+    storeData?: Store;
+    isStoreLoading: boolean;
+    isPendingRating: boolean;
+    dataRating?: RatingResult[];
+    refetchRating: () => void;
 }
 
 
-const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
+const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, storeData, isStoreLoading, isPendingRating, dataRating, refetchRating }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
     const [quantity, setQuantity] = useState(1);
     const [leftQuantity, setLeftQuantity] = useState(product?.Quantity || 0);
     const [isLoading, setIsLoading] = useState(false);
     const MySwal = withReactContent(Swal);
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
 
     const mutation = useMutation({
         mutationFn: () => {
@@ -39,10 +59,9 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
                 return '';
             })
         },
-        onSuccess: (data) => {
-            MySwal.fire({
-                title: 'Success',
-                text: 'Added to cart',
+        onSuccess: () => {
+            Toast.fire({
+                title: '成功加入購物車',
                 icon: 'success',
             });
             setLeftQuantity(leftQuantity - quantity);
@@ -88,13 +107,24 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
                                         alt={product.Name}
                                         onClick={() => handleImageClick(index)}
                                     />
+                                    {product.Quantity === 0 && <div className='sold-out'>售完</div>}
                                 </Carousel.Item>
                             ))}
                         </Carousel>
+                        {isStoreLoading ? <Spinner animation="border" /> : storeData &&
+                            <Link to={`/store/${storeData.StoreID}`} className='text-decoration-none'>
+                                <Card className="mt-4">
+                                    <Card.Body>
+                                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge username={storeData.OwnerUsername} size={20} /></Card.Title>
+                                        <Card.Title style={{ fontSize: '2rem' }}>{storeData.Name}</Card.Title>
+                                    </Card.Body>
+                                </Card>
+                            </Link>
+                        }
                     </Col>
                     <Col md={6}>
                         <h1><b>{product.Name}</b></h1>
-                        <p style={{ color: '#6c757d' }}>商品編號: {product.ID}</p>
+                        <p style={{ color: '#6c757d' }}>商品編號: {product.ID} {!isPVC && <>｜ 售出數量: {product.Sale} 件</>}</p>
                         <p>{product.Description.split('\n').map((line, index) => (
                             <React.Fragment key={index}>
                                 {line}
@@ -102,30 +132,33 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
                             </React.Fragment>
                         ))}</p>
                         <h4 style={{ color: 'red' }}><b>NT${product.Price}</b></h4>
-                        <p style={{ color: '#6c757d' }}>庫存: {leftQuantity}</p>
+                        {!isPVC &&
+                            (<>
+                                <p style={{ color: '#6c757d' }}>庫存: {leftQuantity}</p>
+                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                                    <label htmlFor="quantity" className="mr-2">數量:</label>
+                                    <input
+                                        type="number"
+                                        id="quantity"
+                                        name="quantity"
+                                        min="1"
+                                        max={leftQuantity}
+                                        value={quantity}
+                                        className="form-control d-inline-block"
+                                        style={{ width: '60px', marginRight: '10px' }}
+                                        onChange={(e) => {
+                                            const value = parseInt(e.target.value);
+                                            if (value >= 1 && value <= leftQuantity) {
+                                                setQuantity(value);
+                                            }
+                                        }}
+                                    />
+                                    <Button className="w-25" variant="primary" onClick={() => mutation.mutate()} disabled={isLoading}>
+                                        {isLoading ? <Spinner animation="border" size="sm" /> : '加入購物車'}
+                                    </Button>
 
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                            <label htmlFor="quantity" className="mr-2">數量:</label>
-                            <input
-                                type="number"
-                                id="quantity"
-                                name="quantity"
-                                min="1"
-                                max={leftQuantity}
-                                value={quantity}
-                                className="form-control d-inline-block"
-                                style={{ width: '60px', marginRight: '10px' }}
-                                onChange={(e) => {
-                                    const value = parseInt(e.target.value);
-                                    if (value >= 1 && value <= leftQuantity) {
-                                        setQuantity(value);
-                                    }
-                                }}
-                            />
-                            <Button className="w-25" variant="primary" onClick={() => mutation.mutate()} disabled={isLoading}>
-                                {isLoading ? <Spinner animation="border" size="sm" /> : '加入購物車'}
-                            </Button>
-                        </div>
+                                </div>
+                            </>)}
                     </Col>
                 </Row >
             }
@@ -149,7 +182,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product }) => {
                 </Modal.Body>
             </Modal>
 
-            {product && <Rating productId={product.ID} />}
+            {product && <Rating productId={product.ID} isPending={isPendingRating} data={dataRating} refetch={refetchRating} />}
         </>
     );
 };

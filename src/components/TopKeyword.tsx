@@ -15,7 +15,7 @@ const TopKeyword: React.FC = () => {
     });
 
     return (
-        <div className='mt-2 mb-1 d-flex align-items-center' style={{ height: '1em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div className='mt-2 d-flex align-items-center' style={{ height: '1em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             <span style={{ color: 'var(--text-color)' }}>熱門搜尋: </span>
             {data && data.length > 0 && (
                 <ul className="list-inline mb-0">

@@ -5,11 +5,10 @@ import UserBadge from './UserBadge';
 import { NavBarProps } from '../types';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Navbar, Nav, Container, Button, Form, Spinner } from 'react-bootstrap';
-import { useQuery } from '@tanstack/react-query';
+import { Navbar, Nav, NavDropdown, Container, Form, Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 
-const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout }) => {
+const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout, isPendingUserInfo, dataUserInfo, refetchUserInfo }) => {
     const navigate = useNavigate();
     const Toast = Swal.mixin({
         toast: true,
@@ -22,27 +21,9 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
             toast.onmouseleave = Swal.resumeTimer;
         }
     });
-    const { isPending, data, refetch } = useQuery({
-        queryKey: [`UserInfo`],
-        queryFn: () => {
-            const token = localStorage.getItem('token');
-            if (!token) return null;
-            return fetch('/api/User/Get', {
-                headers: {
-                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
-                },
-            }).then((res) => {
-                if (!res.ok) {
-                    setIsModalOpen(true);
-                    return null;
-                }
-                return res.json();
-            })
-        },
-    });
 
     useEffect(() => {
-        refetch();
+        refetchUserInfo();
     }, [localStorage.getItem('token')]);
 
 
@@ -59,7 +40,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
     };
 
     return (
-        <Navbar className='shadow' bg={theme === 'dark' ? 'dark' : 'light'} variant={theme === 'dark' ? 'dark' : 'light'} expand="lg">
+        <Navbar className='shadow mb-3' bg={theme === 'dark' ? 'dark' : 'light'} variant={theme === 'dark' ? 'dark' : 'light'} expand="xl">
             <Container fluid>
                 <Navbar.Brand as={Link} to="/" style={linkStyle} className="d-flex align-items-center">
                     <span className="d-none d-sm-block">Oh Online Tea Delivery</span>
@@ -69,40 +50,42 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                 <Navbar.Toggle aria-controls="navbarNav" />
                 <Search />
                 <Navbar.Collapse id="navbarNav">
-                    <Nav className="ms-auto d-flex align-items-center">
-                        <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
-                            <FontAwesomeIcon icon={faShoppingCart} /> Cart
-                        </Nav.Link>
-                        {!isPending ? (
+                    <Nav className="d-flex align-items-center">
+                        {!isPendingUserInfo ? (
                             <>
-                                {data && data.Username ? (
+                                {dataUserInfo && dataUserInfo.Username ? (
                                     <>
-                                        <Nav.Link as={Link} to="/user" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
-                                            <UserBadge username={data.Username} />
-                                        </Nav.Link>
-                                        <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => {
-                                            Toast.fire({
-                                                icon: "success",
-                                                title: "登出成功"
-                                            }); handleLogout(); refetch(); navigate("/");
-                                        }} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
-                                            Logout
-                                        </Button>
+                                        <NavDropdown title={<UserBadge username={dataUserInfo.Username} />} style={{ whiteSpace: 'nowrap' }}>
+                                            <NavDropdown.Item as={Link} to="/user?tab=profile">用戶頁面</NavDropdown.Item>
+                                            {dataUserInfo.IsAdministrator && <NavDropdown.Item as={Link} to="/admin">管理頁面</NavDropdown.Item>}
+                                            <NavDropdown.Item onClick={() => {
+                                                Toast.fire({
+                                                    icon: "success",
+                                                    title: "登出成功"
+                                                }); handleLogout(); refetchUserInfo(); navigate("/");
+                                            }}>
+                                                登出
+                                            </NavDropdown.Item>
+                                        </NavDropdown>
                                     </>
                                 ) : (
-                                    <Button variant="link" className="nav-link d-flex align-items-center" onClick={() => setIsModalOpen(true)} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}>
-                                        Login
-                                    </Button>
+                                    <Nav.Link onClick={() => setIsModalOpen(true)} style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
+                                        登入
+                                    </Nav.Link>
                                 )}
                             </>) : <Spinner className='mx-3' animation="border" size="sm" />}
-                        <Form.Check
-                            className='ms-5 d-flex align-items-center nav-link'
-                            type="switch"
-                            id="themeSwitch"
-                            label="Theme"
-                            onChange={toggleTheme}
-                            style={{ color: theme === 'dark' ? 'white' : 'black' }}
-                        />
+                        <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
+                            <FontAwesomeIcon icon={faShoppingCart} /> 購物車
+                        </Nav.Link>
+                        <div className="ms-5 d-flex align-items-center">
+                            <Form.Check
+                                className={`nav-link ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+                                type="switch"
+                                id="themeSwitch"
+                                label="主題"
+                                onChange={toggleTheme}
+                            />
+                        </div>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

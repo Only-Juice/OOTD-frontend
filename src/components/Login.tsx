@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { LoginProps } from '../types';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 
-const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
+const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, refetchUserInfo, dataUserInfo }) => {
     const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,35 +21,6 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
             toast.onmouseenter = Swal.stopTimer;
             toast.onmouseleave = Swal.resumeTimer;
         }
-    });
-
-    const { refetch } = useQuery({
-        queryKey: [`UserInfo`],
-        queryFn: () => {
-            const token = localStorage.getItem('token');
-            if (!token) return null;
-            return fetch('/api/User/Get', {
-                headers: {
-                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
-                },
-            }).then((res) => {
-                if (!res.ok) {
-                    setIsModalOpen(true);
-                    return null;
-                }
-                {
-                    isModalOpen &&
-                        Toast.fire({
-                            icon: "success",
-                            title: "登入成功"
-                        });
-                }
-                setIsModalOpen(false);
-                setIsLoading(false);
-
-                return res.json();
-            })
-        },
     });
 
     const mutation = useMutation({
@@ -69,9 +40,9 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
         }),
         onSuccess: (data) => {
             if (data) {
-                console.log('Login successful:', data);
-                localStorage.setItem('token', data);
-                refetch();
+                console.log('Login successful:', data.Token);
+                localStorage.setItem('token', data.Token);
+                refetchUserInfo();
             }
         },
         onError: () => {
@@ -85,6 +56,24 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen }) => {
         setIsLoading(true);
         mutation.mutate();
     };
+
+    useEffect(() => {
+        setIsLoading(false);
+    }, [isModalOpen]);
+
+    useEffect(() => {
+        if (dataUserInfo) {
+            {
+                isModalOpen &&
+                    Toast.fire({
+                        icon: "success",
+                        title: "登入成功"
+                    });
+            }
+            setIsModalOpen(false);
+            setIsLoading(false);
+        }
+    }, [dataUserInfo]);
 
     return (
         <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)}>

@@ -23,6 +23,16 @@ const Home: React.FC = () => {
     },
     );
 
+    const { data: TopProductsData } = useQuery({
+        queryKey: [`GetTopProducts`], queryFn: () => fetch(`/api/Product/GetTopProducts?count=5`).then((res) => {
+            if (!res.ok) {
+                return null;
+            }
+            return res.json();
+        })
+    },
+    );
+
     return (
         <>
             {isLoading && (
@@ -34,7 +44,7 @@ const Home: React.FC = () => {
                     {page !== 1 && <h1 className="mb-4">全站商品</h1>}
                     {page === 1 &&
                         <div className="shadow mb-4">
-                            <ProductSlider />
+                            <ProductSlider ProductsData={TopProductsData} Card={ProductCard} />
                         </div>
                     }
                     <Row>

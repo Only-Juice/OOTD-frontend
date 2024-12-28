@@ -28,7 +28,8 @@ const GoToTop: React.FC = () => {
                 position: 'fixed',
                 bottom: '20px',
                 right: '20px',
-                display: isVisible ? 'block' : 'none'
+                display: isVisible ? 'block' : 'none',
+                zIndex: 1000 // Add this line to ensure the button is on the top layer
             }}
             onClick={scrollToTop}
         >
