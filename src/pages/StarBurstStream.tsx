@@ -4,38 +4,14 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 
 
 const C8763: React.FC = () => {
-    useEffect(() => {
-        // 获取图片元素
-        const img = document.getElementById('image') as HTMLImageElement;
-
-        // 监听图片加载完成事件
-        const handleImageLoad = () => {
-            // 图片加载完成后，延迟 3 秒跳转
-            setTimeout(() => {
-                window.location.href = "https://www.youtube.com/watch?v=lMK1Nnv1eqg&t=1s"; // 跳转目标地址
-            }, 2500); // 3 秒延迟
-        };
-
-        // 确保图片已经加载完毕
-        if (img.complete) {
-            handleImageLoad();
-        } else {
-            img.onload = handleImageLoad;
-        }
-
-        // 清理函数（如果需要）
-        return () => {
-            img.onload = null;
-        };
-    }, []);
 
     return (
         <div className="container">
-            <img
-                id="image"
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEJ0OOmz36mtd_eJ-xP_uqgN9XiTv2jgSUEw&s"
-                alt="Image"
-            />
+            <iframe width="1100" height="619" src="https://www.youtube.com/embed/lMK1Nnv1eqg"
+                    title="2024年10月18日📜桐人使用《星爆氣流斬》擊敗74層頭目青眼惡魔｜《刀劍神域劇場版-序列爭戰》​2024/11/1(五) 經典重映！"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
     );
 };
