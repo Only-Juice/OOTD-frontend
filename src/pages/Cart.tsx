@@ -46,7 +46,7 @@ const layoutStyle = {
     maxWidth: 'calc(90% - 8px)',
 };
 
-const handleQuantityChange = (
+const handleQuantityChange = async (
     value: number | null,
     record: ProductInCart,
     dataSource: ProductInCart[],
@@ -59,6 +59,29 @@ const handleQuantityChange = (
         return item;
     });
     setDataSource(newData);
+    try{
+        const response = await fetch('/api/Product/ModifyProductQuantityInCart', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                ProductID: record.ID,
+                Quantity: value || 1,
+            }),
+        });
+
+        if (!response.ok) {
+            // 處理 API 請求失敗的情況
+            throw new Error('Failed to update quantity');
+        }
+
+        const data = await response.json();
+        console.log('API Response:', data);
+    } catch {
+        console.error('Error:', error);
+    }
 };
 const getColumns = (
     dataSource: ProductInCart[],

@@ -14,6 +14,7 @@ const RickROll = React.lazy(() => import('./pages/NeverGonnaGiveYouUp'));
 const C0 = React.lazy(() => import('./pages/YaoDong.tsx'));
 const StorePage = React.lazy(() => import('./pages/Store.tsx'));
 const AdminPage = React.lazy(() => import('./pages/Admin.tsx'));
+const Message = React.lazy(() => import('./pages/Message.tsx'));
 import Login from './components/Login';
 import GoToTop from './components/GoToTOP';
 import NavBar from './components/NavBar';
@@ -99,6 +100,7 @@ const App: React.FC = () => {
       <Route path="/rickroll" element={<RickROll />} />
       <Route path="/c0" element={<C0 />} />
       <Route path="/c8763" element={<C8763 />} />
+      <Route path="/message" element={<Message setIsModalOpen={setIsModalOpen} />} />
       <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
       <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
       <Route path="/store/:storeID" element={<StorePage />} />
