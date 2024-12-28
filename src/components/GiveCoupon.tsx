@@ -34,12 +34,12 @@ const GiveCoupon: React.FC = () => {
     }, [localStorage.getItem('token')]);
 
     const mutation = useMutation({
-        mutationFn: (values: { couponId: number; count: number; uid?: number }) => {
+        mutationFn: (values: { CouponID: number; Count: number; UID?: number }) => {
             const token = localStorage.getItem('token');
             if (!token) return Promise.reject('No token found');
             var url = '';
             if (target === 'all') {
-                url = `/api/Coupon/GiveCouponToAllUser?couponId=${values.couponId}&count=${values.count}`;
+                url = `/api/Coupon/GiveCouponToAllUser?couponId=${values.CouponID}&count=${values.Count}`;
             } else {
                 url = "/api/Coupon/GiveCouponToSpecificlUser";
             }
