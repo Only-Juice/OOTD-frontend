@@ -1,12 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Search from './Search';
 import UserBadge from './UserBadge';
 import { NavBarProps } from '../types';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import {faComments, faShoppingCart} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, NavDropdown, Container, Form, Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+
+
+
+
+
 
 const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout, isPendingUserInfo, dataUserInfo, refetchUserInfo }) => {
     const navigate = useNavigate();
@@ -51,6 +56,16 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                 <Search />
                 <Navbar.Collapse id="navbarNav">
                     <Nav className="d-flex align-items-center">
+                        <Nav.Link
+                            style={linkStyle}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
+                            className="d-flex align-items-center"
+                            href="/message" // 新視窗打開
+                            target="_blank" // 在新視窗中打開
+                        >
+                            <FontAwesomeIcon icon={faComments} /> 訊息
+                        </Nav.Link>
                         {!isPendingUserInfo ? (
                             <>
                                 {dataUserInfo && dataUserInfo.Username ? (

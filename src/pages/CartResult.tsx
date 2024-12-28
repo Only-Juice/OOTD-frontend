@@ -140,9 +140,9 @@ const CartResult: React.FC = () => {
         setTimeout(() => {
             sethavebuy(true)
             setPaybuttomloading(false);
-            DeleteShoppingCart.mutate(orderrequestbody);
+            MakeOrder.mutate(orderrequestbody);
             DeleteProduct.mutate(deleteIds);
-        }, 1000);
+        }, 500);
     }
     const GetProductDetails = products.map(product => ({
         ProductID: product.ID,
@@ -155,7 +155,7 @@ const CartResult: React.FC = () => {
 
 
     /*Handle Making Order*/
-    const DeleteShoppingCart = useMutation({
+    const MakeOrder = useMutation({
         mutationFn: (orderjson: JSON) =>
             fetch('/api/Order/MakeOrder', {
                 method: 'POST',
