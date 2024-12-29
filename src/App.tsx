@@ -15,6 +15,7 @@ const C0 = React.lazy(() => import('./pages/YaoDong.tsx'));
 const StorePage = React.lazy(() => import('./pages/Store.tsx'));
 const AdminPage = React.lazy(() => import('./pages/Admin.tsx'));
 const Message = React.lazy(() => import('./pages/Message.tsx'));
+const AboutUs = React.lazy(() => import('./pages/AboutUs.tsx'));
 import GoToTop from './components/GoToTOP';
 import './styles/App.css';
 import { useQuery } from '@tanstack/react-query';
@@ -66,6 +67,7 @@ const App: React.FC = () => {
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
             <Route path="/store/:storeID" element={<StorePage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
           </Route>
         </Routes>

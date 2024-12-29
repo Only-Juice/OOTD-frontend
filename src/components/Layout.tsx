@@ -4,6 +4,7 @@ import Login from "./Login";
 import { useQueryClient } from '@tanstack/react-query';
 import { Outlet } from "react-router-dom";
 import { Container } from "react-bootstrap";
+import Bottombar from "./Bottombar.tsx";
 
 interface LayoutProps {
     isModalOpen: boolean | undefined;
@@ -77,6 +78,9 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
                     />
                 </Container>
             </main>
+            <footer>
+                <Bottombar />
+            </footer>
         </>
     );
 };

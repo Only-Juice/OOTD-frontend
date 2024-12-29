@@ -7,11 +7,6 @@ import { FaComments, FaShoppingCart } from "react-icons/fa";
 import { Navbar, Nav, NavDropdown, Container, Form, Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 
-
-
-
-
-
 const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout, isPendingUserInfo, dataUserInfo, refetchUserInfo }) => {
     const navigate = useNavigate();
     const Toast = Swal.mixin({
@@ -43,6 +38,8 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
         backgroundColor: theme === 'dark' ? '#555' : '#ddd',
     };
 
+
+
     return (
         <Navbar className='shadow mb-3' bg={theme === 'dark' ? 'dark' : 'light'} variant={theme === 'dark' ? 'dark' : 'light'} expand="xl">
             <Container fluid>
@@ -55,16 +52,10 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                 <Search />
                 <Navbar.Collapse id="navbarNav">
                     <Nav className="d-flex align-items-center">
-                        <Nav.Link
-                            style={linkStyle}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
-                            className="d-flex align-items-center"
-                            href="/message" // 新視窗打開
-                            target="_blank" // 在新視窗中打開
-                        >
-                            <FaComments /> 訊息
-                        </Nav.Link>
+                        <NavDropdown title={<><FaComments /> 訊息</>} style={{ whiteSpace: 'nowrap' }}>
+                            <NavDropdown.Item as={Link} to="/message">訊息頁面</NavDropdown.Item>
+                        </NavDropdown>
+
                         {!isPendingUserInfo ? (
                             <>
                                 {dataUserInfo && dataUserInfo.Username ? (
