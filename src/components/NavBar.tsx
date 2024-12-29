@@ -3,15 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import Search from './Search';
 import UserBadge from './UserBadge';
 import { NavBarProps } from '../types';
-import {faComments, faShoppingCart} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FaComments, FaShoppingCart } from "react-icons/fa";
 import { Navbar, Nav, NavDropdown, Container, Form, Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-
-
-
-
-
 
 const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, handleLogout, isPendingUserInfo, dataUserInfo, refetchUserInfo }) => {
     const navigate = useNavigate();
@@ -58,7 +52,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                 <Search />
                 <Navbar.Collapse id="navbarNav">
                     <Nav className="d-flex align-items-center">
-                        <NavDropdown title={<><FontAwesomeIcon icon={faComments} /> 訊息</>} style={{ whiteSpace: 'nowrap' }}>
+                        <NavDropdown title={<><FaComments /> 訊息</>} style={{ whiteSpace: 'nowrap' }}>
                             <NavDropdown.Item as={Link} to="/message">訊息頁面</NavDropdown.Item>
                         </NavDropdown>
 
@@ -86,7 +80,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                                 )}
                             </>) : <Spinner className='mx-3' animation="border" size="sm" />}
                         <Nav.Link as={Link} to="/cart" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
-                            <FontAwesomeIcon icon={faShoppingCart} /> 購物車
+                            <FaShoppingCart /> 購物車
                         </Nav.Link>
                         <div className="ms-5 d-flex align-items-center">
                             <Form.Check

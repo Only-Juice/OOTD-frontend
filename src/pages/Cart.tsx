@@ -3,21 +3,12 @@ import { Table, Flex, Layout, Button, InputNumber } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
+import type { ProductInCart } from '../types';
 const { Content } = Layout;
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
 /* Handle API object */
-interface ProductInCart {
-    key: React.Key;
-    ID: number;
-    Name: string;
-    Images: string[];
-    Price: number;
-    Quantity: number;
-    Description: string;
-}
-
 interface Coupon {
     key: React.Key;
     CouponID: number;
@@ -59,7 +50,7 @@ const handleQuantityChange = async (
         return item;
     });
     setDataSource(newData);
-    try{
+    try {
         const response = await fetch('/api/Product/ModifyProductQuantityInCart', {
             method: 'PUT',
             headers: {
@@ -90,7 +81,7 @@ const getColumns = (
         {
             title: '圖片',
             dataIndex: 'Images',
-            render: (r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
+            render: (_, record) => <img src={`${record.Images}`} style={{ width: '50px', height: '50px' }} />,
         },
         {
             title: '商品名稱',
@@ -122,7 +113,7 @@ const getColumns = (
             align: 'center',
             dataIndex: 'totalPrice',
             key: 'totalPrice',
-            render: ( record) => {
+            render: (_, record) => {
                 return record.Quantity * record.Price;
             },
             sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
@@ -154,8 +145,8 @@ function calculatecartPrice(data: { Price: number; Quantity: number; key: React.
     }, 0);
 }
 
-export const calculateDiscountedTotal = (coupons, selectCouponkey, total) => {
-    const selectedCoupon = coupons.find(coupon => coupon.key === selectCouponkey);
+export const calculateDiscountedTotal = (coupons: Coupon[], selectCouponkey: React.Key | null, total: number): number => {
+    const selectedCoupon = coupons.find((coupon: Coupon) => coupon.key === selectCouponkey);
 
     if (!selectedCoupon) {
         return total;
@@ -173,8 +164,6 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
 
     /* Get Cart Info */
     const [Product, setcatchProduct] = useState<ProductInCart[]>([]);
-    const [hasProduct, sethasProduct] = useState(false);
-    const [error, seterror] = useState(false);
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -183,7 +172,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
         }
     }, [token]);
 
-    const fetchUserInfo = (token: string) => {
+    const fetchUserInfo = () => {
         fetch('/api/Product/GetCartProducts', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -201,11 +190,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
                     key: index,  // 使用從0開始的索引作為key
                 }));
                 setcatchProduct(updatedData);
-                sethasProduct(true);
             })
-            .catch(error => {
-                seterror(true);  // 處理錯誤
-            });
     };
     /*Modify Sopping cart*/
     const DeleteShoppingCart = useMutation({
@@ -237,10 +222,8 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
     });
     /* Get Coupon Info */
     const [Coupon, setcatchCoupon] = useState<Coupon[]>([]);
-    const [hasCoupon, sethasCoupon] = useState(false);
-    const [couponerror, setcouponerror] = useState(false);
 
-    const fetchUserCoupon = (token: string) => {
+    const fetchUserCoupon = () => {
         fetch('/api/Coupon/GetUserCoupons', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -258,11 +241,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
                     key: index,  // 使用從0開始的索引作為key
                 }));
                 setcatchCoupon(updatedData);
-                sethasCoupon(true);
             })
-            .catch(error => {
-                setcouponerror(true);  // 處理錯誤
-            });
     };
 
     /* Table Modify */
@@ -270,29 +249,24 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
     const [selectCouponkey, setCouponkey] = useState<React.Key | null>(null);
     const [buyload, setbuyload] = useState(false);
     const [deleteload, setdeleteload] = useState(false);
-    const [deleteId, setdeleteId] = useState<number[]>([]);
     /* Modify Product Table */
 
     const SelectChange = (newSelectedRowKeys: React.Key[]) => {
         setselectkey(newSelectedRowKeys);
     };
 
-    const SelectCouponChange = (newSelectCouponKey: React.Key[]) => {
-        setCouponkey(newSelectCouponKey);
-    };
-
     const rowSelection: TableRowSelection<ProductInCart> = {
-        selectkey,
+        selectedRowKeys: selectkey,
         onChange: SelectChange,
     };
 
-    if(token !== null){
+    if (token !== null) {
         useEffect(() => {
-            fetchUserInfo(token);
+            fetchUserInfo();
         }, []);
 
         useEffect(() => {
-            fetchUserCoupon(token);
+            fetchUserCoupon();
         }, []);
     }
 
@@ -327,7 +301,6 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
         const lastproduct = Product.filter(product => !selectkey.includes(product.key));
         const deleteproduct = Product.filter(product => selectkey.includes(product.key));
         const deleteIds = deleteproduct.map(product => product.ID);
-        setdeleteId(deleteIds);
         setdeleteload(true);
         setTimeout(() => {
             setcatchProduct(lastproduct);
