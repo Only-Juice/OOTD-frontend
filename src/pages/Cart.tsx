@@ -80,7 +80,7 @@ const handleQuantityChange = async (
         const data = await response.json();
         console.log('API Response:', data);
     } catch {
-        console.error('Error:', error);
+        console.error('Error:', Error);
     }
 };
 const getColumns = (
@@ -90,7 +90,7 @@ const getColumns = (
         {
             title: '圖片',
             dataIndex: 'Images',
-            render: (t, r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
+            render: (r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
         },
         {
             title: '商品名稱',
@@ -122,7 +122,7 @@ const getColumns = (
             align: 'center',
             dataIndex: 'totalPrice',
             key: 'totalPrice',
-            render: (text, record) => {
+            render: ( record) => {
                 return record.Quantity * record.Price;
             },
             sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
@@ -286,13 +286,15 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
         onChange: SelectChange,
     };
 
-    useEffect(() => {
-        fetchUserInfo(token);
-    }, []);
+    if(token !== null){
+        useEffect(() => {
+            fetchUserInfo(token);
+        }, []);
 
-    useEffect(() => {
-        fetchUserCoupon(token);
-    }, []);
+        useEffect(() => {
+            fetchUserCoupon(token);
+        }, []);
+    }
 
     const checkboxclick = selectkey.length > 0;
 
