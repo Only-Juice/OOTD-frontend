@@ -1,8 +1,8 @@
-import React,{ useState, useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-const Bottombar = () => {
+const Bottombar: React.FC = () => {
     // 定义样式
     const titleStyle = {
         fontSize: '24px',

@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Button, Input, Form, Spin } from 'antd';
 import { useQuery } from "@tanstack/react-query";
 
+interface Contact {
+    UID: number;
+    Username: string;
+}
 
 interface Message {
     IsSender: boolean;
@@ -9,7 +13,11 @@ interface Message {
     CreatedAt: string;
 }
 
-const Message: React.FC = ({ setIsModalOpen }) => {
+interface MessageProps {
+    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+}
+
+const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
     const [Messages, setMessages] = useState<Record<number, Message[]>>({});
     const [currentContactUID, setCurrentContactUID] = useState<number | null>(null);
     const [newMessage, setNewMessage] = useState<string>('');
@@ -41,7 +49,7 @@ const Message: React.FC = ({ setIsModalOpen }) => {
     useEffect(() => {
         if (!Contact || Contact.length === 0) return;
 
-        Contact.forEach(contact => {
+        Contact.forEach((contact: Contact) => {
             fetch(`/api/Message/GetMessages/?contactUID=${contact.UID}`, {
                 method: 'GET',
                 headers: {
@@ -90,7 +98,7 @@ const Message: React.FC = ({ setIsModalOpen }) => {
                 }
                 return response.json();
             })
-            .then(data => {
+            .then(() => {
                 const newMessageData: Message = {
                     IsSender: true,
                     Message: newMessage,
@@ -117,12 +125,12 @@ const Message: React.FC = ({ setIsModalOpen }) => {
     }
 
     return (
-        <div style={{display: 'flex', height: '100vh'}}>
+        <div style={{ display: 'flex', height: '100vh' }}>
             {/* 左側聯絡人列表 */}
-            <div style={{width: '300px', padding: '20px', borderRight: '1px solid #ddd', overflowY: 'auto'}}>
+            <div style={{ width: '300px', padding: '20px', borderRight: '1px solid #ddd', overflowY: 'auto' }}>
                 <h1>聯絡人列表</h1>
-                <ul style={{listStyleType: 'none', padding: 0}}>
-                    {Contact?.map(contact => (
+                <ul style={{ listStyleType: 'none', padding: 0 }}>
+                    {Contact?.map((contact: Contact) => (
                         <li
                             key={contact.UID}
                             style={{
@@ -144,16 +152,16 @@ const Message: React.FC = ({ setIsModalOpen }) => {
             </div>
 
             {/* 右側訊息區域 */}
-            <div style={{flex: 1, padding: '20px', overflowY: 'auto'}}>
+            <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
                 {currentContactUID !== null && Messages[currentContactUID] ? (
                     <div>
                         <h2>
                             與外送茶販賣員
-                            {Contact?.find(contact => contact.UID === currentContactUID)?.Username || 'Unknown User'}
+                            {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
                             的對話
                         </h2>
-                        <div style={{maxHeight: '400px', overflowY: 'auto', marginBottom: '20px'}}>
-                            <ul style={{listStyleType: 'none', padding: 0}}>
+                        <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '20px' }}>
+                            <ul style={{ listStyleType: 'none', padding: 0 }}>
                                 {Messages[currentContactUID!]?.map((message, index) => (
                                     <li
                                         key={index}
@@ -166,7 +174,7 @@ const Message: React.FC = ({ setIsModalOpen }) => {
                                         {!message.IsSender && (
                                             <div>
                                                 <strong>
-                                                    {Contact?.find(contact => contact.UID === currentContactUID)?.Username || 'Unknown User'}
+                                                    {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
                                                 </strong>
                                             </div>
                                         )}
@@ -206,7 +214,7 @@ const Message: React.FC = ({ setIsModalOpen }) => {
                         </Button>
                     </div>
                 ) : (
-                    <div style={{padding: '20px'}}>
+                    <div style={{ padding: '20px' }}>
                         <h3>請選擇一個聯絡人查看訊息</h3>
                     </div>
                 )}

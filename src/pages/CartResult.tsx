@@ -1,20 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { useLocation, useNavigate } from 'react-router-dom';
-import type { TableColumnsType, TableProps } from 'antd';
-import { Table, Input, Radio, Button } from 'antd';
+import { useLocation } from 'react-router-dom';
+import type { TableColumnsType } from 'antd';
+import { Table, Input, Radio, Button, RadioChangeEvent } from 'antd';
 import { Layout } from 'antd';
-const { Content, Header, Footer } = Layout;
-
-interface ProductInCart {
-    key: React.Key;
-    ID: number;
-    Name: string;
-    Images: string[];
-    Price: number;
-    Quantity: number;
-    Description: string;
-}
+import type { ProductInCart } from '../types';
+const { Content } = Layout;
 
 interface Coupon {
     key: React.Key;
@@ -26,17 +17,6 @@ interface Coupon {
     EndDate: string;
     Quantity: number;
 }
-interface ProductDetails {
-    ProductID: number;
-    Quantity: number;
-}
-const headerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    height: 256,
-    paddingInline: 48,
-    lineHeight: '64px',
-};
 
 const contentStyle: React.CSSProperties = {
     display: 'flex', // 使用 flexbox 來排版
@@ -49,17 +29,12 @@ const contentStyle: React.CSSProperties = {
     backgroundColor: '#f4f4f4',
 };
 
-const footerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#4096ff',
-};
 /*Handle Shopping Cart Table*/
 const CartTable: TableColumnsType<ProductInCart> = [
     {
         title: "圖片",
         dataIndex: "Images",
-        render: (t, r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
+        render: (_, r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
     },
     {
         title: "商品名稱",
@@ -84,7 +59,7 @@ const CartTable: TableColumnsType<ProductInCart> = [
         align: "center",
         dataIndex: 'totalPrice',
         key: "totalPrice",
-        render: (text, record) => {
+        render: (_, record) => {
             return record["Quantity"] * record["Price"];
         },
         defaultSortOrder: null,
@@ -117,16 +92,16 @@ const CartResult: React.FC = () => {
     const [yy, setyy] = useState("");
     const [mm, setmm] = useState("");
 
-    const handleCardNumber = (e: InputEvent) => {
+    const handleCardNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
         setcardnumber(e.target.value);
     }
-    const handleSSN = (e: InputEvent) => {
+    const handleSSN = (e: React.ChangeEvent<HTMLInputElement>) => {
         setssn(e.target.value);
     }
-    const handleYY = (e: InputEvent) => {
+    const handleYY = (e: React.ChangeEvent<HTMLInputElement>) => {
         setyy(e.target.value);
     }
-    const handleMM = (e: InputEvent) => {
+    const handleMM = (e: React.ChangeEvent<HTMLInputElement>) => {
         setmm(e.target.value);
     }
     const handleBuyState = (e: RadioChangeEvent) => {
@@ -136,7 +111,7 @@ const CartResult: React.FC = () => {
 
     const ClickBuy = () => {
         setPaybuttomloading(true);
-        const deleteIds = products.map(product => product.ID);
+        const deleteIds = products.map((product: ProductInCart) => product.ID);
         setTimeout(() => {
             sethavebuy(true)
             setPaybuttomloading(false);
@@ -144,7 +119,7 @@ const CartResult: React.FC = () => {
             DeleteProduct.mutate(deleteIds);
         }, 500);
     }
-    const GetProductDetails = products.map(product => ({
+    const GetProductDetails = products.map((product: ProductInCart) => ({
         ProductID: product.ID,
         Quantity: product.Quantity
     }));
@@ -153,10 +128,18 @@ const CartResult: React.FC = () => {
         Details: GetProductDetails === 0 ? [] : GetProductDetails,
     };
 
+    interface orderrequest {
+        CouponID: number | null;
+        Details: {
+            ProductID: number;
+            Quantity: number;
+        }[];
+    }
+
 
     /*Handle Making Order*/
     const MakeOrder = useMutation({
-        mutationFn: (orderjson: JSON) =>
+        mutationFn: (orderjson: orderrequest) =>
             fetch('/api/Order/MakeOrder', {
                 method: 'POST',
                 headers: {

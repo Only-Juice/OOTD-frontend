@@ -85,3 +85,13 @@ export interface Coupon {
   ExpireDate: string;
   Enabled: boolean;
 }
+
+export interface ProductInCart {
+  key: React.Key;
+  ID: number;
+  Name: string;
+  Images: string[];
+  Price: number;
+  Quantity: number;
+  Description: string;
+}
