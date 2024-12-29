@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Input, Form } from 'antd';
-import type { ModalProps } from 'antd';
+import { Modal, Button, Input, Form, Spin } from 'antd';
+import { useQuery } from "@tanstack/react-query";
 
 interface Contact {
     UID: number;
@@ -10,15 +10,15 @@ interface Contact {
 interface Message {
     IsSender: boolean;
     Message: string;
-    CreatedAt: string;  // 這裡可以表示為字符串（ISO 8601 格式）
+    CreatedAt: string;
 }
 
 const Message: React.FC = ({ setIsModalOpen }) => {
-    const [Contacts, setContacts] = useState<Contact[]>([]); // 儲存聯絡人數據
-    const [Messages, setMessages] = useState<Record<number, Message[]>>({}); // 用來儲存每個聯絡人的訊息
-    const [isModalVisible, setIsModalVisible] = useState(false); // 控制對話框顯示
-    const [currentContactUID, setCurrentContactUID] = useState<number | null>(null); // 當前查看的聯絡人 UID
-    const [newMessage, setNewMessage] = useState<string>(''); // 用來存儲新訊息
+    const [Contacts, setContacts] = useState<Contact[]>([]);
+    const [Messages, setMessages] = useState<Record<number, Message[]>>({});
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [currentContactUID, setCurrentContactUID] = useState<number | null>(null);
+    const [newMessage, setNewMessage] = useState<string>('');
     const token = localStorage.getItem('token');
 
     // 如果沒有 token，開啟 Modal
@@ -28,34 +28,27 @@ const Message: React.FC = ({ setIsModalOpen }) => {
         }
     }, [token]);
 
-    // 獲取聯絡人列表
-    useEffect(() => {
-        fetch('/api/Message/GetContacts', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+    const { data: Contact, isLoading } = useQuery({
+        queryKey: [`GetContacts`],
+        queryFn: () =>
+            fetch(`/api/Message/GetContacts`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            }).then((res) => {
+                if (!res.ok) {
+                    return null;
                 }
-                return response.json();
-            })
-            .then(data => {
-                setContacts(data); // 更新聯絡人數據
-            })
-            .catch(error => {
-                console.error('Error fetching contacts:', error);
-            });
-    }, []); // 空陣列表示該 effect 僅在組件加載時執行一次
+                return res.json();
+            }),
+    });
 
-    // 根據聯絡人 UID 獲取對應的訊息
     useEffect(() => {
-        if (Contacts.length === 0) return; // 如果聯絡人數據還沒獲取完成，則不發送請求
+        if (!Contact || Contact.length === 0) return; // 如果聯絡人數據還沒獲取完成，則不發送請求
 
-        Contacts.forEach(contact => {
-            // 使用聯絡人的 UID 發送請求獲取該聯絡人的訊息
+        // 遍歷聯絡人並獲取每個聯絡人的訊息
+        Contact.forEach(contact => {
             fetch(`/api/Message/GetMessages/?contactUID=${contact.UID}`, {
                 method: 'GET',
                 headers: {
@@ -78,21 +71,18 @@ const Message: React.FC = ({ setIsModalOpen }) => {
                     console.error(`Error fetching messages for contact ${contact.UID}:`, error);
                 });
         });
-    }, [Contacts]); // 依賴於 Contacts，當聯絡人列表變動時會重新發送請求
+    }, [Contact]);
 
-    // 顯示對話框並加載該聯絡人的訊息
     const showMessagesModal = (contactUID: number) => {
-        setCurrentContactUID(contactUID); // 設置當前查看的聯絡人
+        setCurrentContactUID(contactUID);
         setIsModalVisible(true); // 顯示對話框
     };
 
-    // 關閉對話框
     const handleCancel = () => {
         setIsModalVisible(false);
         setNewMessage(''); // 清空訊息輸入框
     };
 
-    // 發送新訊息
     const handleSendMessage = () => {
         if (!newMessage.trim()) {
             return; // 如果訊息內容為空，則不執行發送操作
@@ -103,7 +93,6 @@ const Message: React.FC = ({ setIsModalOpen }) => {
             Message: newMessage,
         };
 
-        // 發送訊息到 API
         fetch('/api/Message/SendMessage', {
             method: 'POST',
             headers: {
@@ -119,14 +108,12 @@ const Message: React.FC = ({ setIsModalOpen }) => {
                 return response.json();
             })
             .then(data => {
-                // 如果發送成功，更新訊息數據
                 const newMessageData: Message = {
                     IsSender: true,
                     Message: newMessage,
                     CreatedAt: new Date().toISOString(),
                 };
 
-                // 更新 UI，顯示新發送的訊息
                 setMessages(prevMessages => ({
                     ...prevMessages,
                     [currentContactUID!]: [
@@ -135,7 +122,6 @@ const Message: React.FC = ({ setIsModalOpen }) => {
                     ],
                 }));
 
-                // 清空訊息輸入框
                 setNewMessage('');
             })
             .catch(error => {
@@ -143,12 +129,17 @@ const Message: React.FC = ({ setIsModalOpen }) => {
             });
     };
 
+    // 在 Contact 尚未載入完成時顯示加載中指示器
+    if (isLoading) {
+        return <Spin size="large" />;
+    }
+
     return (
         <div>
-            <h1>肏你媽</h1>
-            <h2>Contacts</h2>
+            <h1>Contacts</h1>
+            <h2>聯絡人列表</h2>
             <ul>
-                {Contacts.map(contact => (
+                {Contact?.map(contact => (
                     <li key={contact.UID}>
                         <strong>Username:</strong> {contact.Username}
                         <Button onClick={() => showMessagesModal(contact.UID)}>查看訊息</Button>
@@ -158,7 +149,9 @@ const Message: React.FC = ({ setIsModalOpen }) => {
 
             {/* 顯示訊息的對話框 */}
             <Modal
-                title={`Messages with ${Contacts.find(contact => contact.UID === currentContactUID)?.Username}`}
+                title={`Messages with ${
+                    Contact?.find(contact => contact.UID === currentContactUID)?.Username || "Unknown User"
+                }`}
                 visible={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
