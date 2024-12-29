@@ -3,6 +3,7 @@ import NavBar from "./NavBar";
 import Login from "./Login";
 import { useQueryClient } from '@tanstack/react-query';
 import { Outlet } from "react-router-dom";
+import { Container } from "react-bootstrap";
 
 interface LayoutProps {
     isModalOpen: boolean | undefined;
@@ -66,14 +67,15 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
                 />
             </header>
             <main>
-                <Outlet />
-                <Login
-                    isModalOpen={isModalOpen}
-                    setIsModalOpen={setIsModalOpen}
-                    refetchUserInfo={refetchUserInfo}
-                    dataUserInfo={dataUserInfo}
-                />
-
+                <Container>
+                    <Outlet />
+                    <Login
+                        isModalOpen={isModalOpen}
+                        setIsModalOpen={setIsModalOpen}
+                        refetchUserInfo={refetchUserInfo}
+                        dataUserInfo={dataUserInfo}
+                    />
+                </Container>
             </main>
         </>
     );
