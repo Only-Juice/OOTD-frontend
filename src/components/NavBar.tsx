@@ -1,9 +1,9 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Search from './Search';
 import UserBadge from './UserBadge';
 import { NavBarProps } from '../types';
-import {faComments, faShoppingCart} from '@fortawesome/free-solid-svg-icons';
+import { faComments, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, NavDropdown, Container, Form, Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
