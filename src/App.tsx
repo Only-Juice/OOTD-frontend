@@ -15,9 +15,11 @@ const C0 = React.lazy(() => import('./pages/YaoDong.tsx'));
 const StorePage = React.lazy(() => import('./pages/Store.tsx'));
 const AdminPage = React.lazy(() => import('./pages/Admin.tsx'));
 const Message = React.lazy(() => import('./pages/Message.tsx'));
+const AboutUs = React.lazy(() => import('./pages/AboutUs.tsx'));
 import Login from './components/Login';
 import GoToTop from './components/GoToTOP';
 import NavBar from './components/NavBar';
+import Bottombar  from "./components/Bottombar.tsx";
 import './styles/App.css';
 import { Container } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
@@ -105,34 +107,36 @@ const App: React.FC = () => {
       <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
       <Route path="/store/:storeID" element={<StorePage />} />
       <Route path="/admin" element={<AdminPage />} />
+      <Route path="/aboutus" element={<AboutUs />} />
       <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
     </Routes>
   }
 
   return (
-    <>
-      <GoToTop />
-      <Router>
-        <NavBar
-          theme={theme}
-          setIsModalOpen={setIsModalOpen}
-          toggleTheme={toggleTheme}
-          handleLogout={handleLogout}
-          isPendingUserInfo={isPendingUserInfo}
-          dataUserInfo={dataUserInfo}
-          refetchUserInfo={refetchUserInfo}
-        />
+      <>
+        <GoToTop/>
+        <Router>
+          <NavBar
+              theme={theme}
+              setIsModalOpen={setIsModalOpen}
+              toggleTheme={toggleTheme}
+              handleLogout={handleLogout}
+              isPendingUserInfo={isPendingUserInfo}
+              dataUserInfo={dataUserInfo}
+              refetchUserInfo={refetchUserInfo}
+          />
 
+          {isMobile ? <div className='m-2'><AppRoutes/></div> : <Container> <AppRoutes/> </Container>}
+          <Login
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+              refetchUserInfo={refetchUserInfo}
+              dataUserInfo={dataUserInfo}
+          />
+          <Bottombar/>
+        </Router>
 
-        {isMobile ? <div className='m-2'><AppRoutes /></div> : <Container> <AppRoutes /> </Container>}
-        <Login
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-          refetchUserInfo={refetchUserInfo}
-          dataUserInfo={dataUserInfo}
-        />
-      </Router>
-    </>
+      </>
   );
 };
 
