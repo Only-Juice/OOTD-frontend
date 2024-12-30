@@ -98,18 +98,29 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                 <Row>
                     <Col md={6}>
                         <Carousel>
-                            {product.Images.map((image, index) => (
-                                <Carousel.Item key={index}>
+                            {product.Images.length > 0 ? (
+                                product.Images.map((image, index) => (
+                                    <Carousel.Item key={index}>
+                                        <img
+                                            className="d-block w-100"
+                                            loading="lazy"
+                                            src={image}
+                                            alt={product.Name}
+                                            onClick={() => handleImageClick(index)}
+                                        />
+                                        {product.Quantity === 0 && <div className='sold-out'>售完</div>}
+                                    </Carousel.Item>
+                                ))
+                            ) : (
+                                <Carousel.Item>
                                     <img
                                         className="d-block w-100"
                                         loading="lazy"
-                                        src={image}
-                                        alt={product.Name}
-                                        onClick={() => handleImageClick(index)}
+                                        src="/path/to/placeholder-image.jpg"
+                                        alt="No image available"
                                     />
-                                    {product.Quantity === 0 && <div className='sold-out'>售完</div>}
                                 </Carousel.Item>
-                            ))}
+                            )}
                         </Carousel>
                         {isStoreLoading ? <Spinner animation="border" /> : storeData &&
                             <Link to={`/store/${storeData.StoreID}`} className='text-decoration-none'>

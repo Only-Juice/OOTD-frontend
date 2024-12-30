@@ -1,11 +1,10 @@
-import { Row, Col, Typography } from 'antd';
+import { Card, Row, Col, Typography } from 'antd';
 
 const { Title, Paragraph } = Typography;
 
 const AboutUs = () => {
     return (
-        <div style={{ padding: '20px', backgroundColor: '#f7f7f7', color: 'black' }}>
-            {/* 网站介绍部分 */}
+        <Card>
             <Row gutter={40}>
                 <Col span={24}>
                     <Title level={2}>關於 OOTD</Title>
@@ -22,7 +21,6 @@ const AboutUs = () => {
                 </Col>
             </Row>
 
-            {/* 创办人名单部分 */}
             <Row gutter={40} style={{ marginTop: '40px' }}>
                 <Col span={24}>
                     <Title level={3}>創辦人名單</Title>
@@ -35,7 +33,7 @@ const AboutUs = () => {
                     </ul>
                 </Col>
             </Row>
-        </div>
+        </Card>
     );
 };
 

@@ -1,95 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col } from 'antd';
+import { Row, Col, Container } from 'react-bootstrap';
+import { FaLocationDot, FaPhoneFlip, FaEnvelope, FaFacebook, FaInstagram, FaGithub } from "react-icons/fa6";
 
 const Bottombar: React.FC = () => {
-    // 定义样式
-    const titleStyle = {
-        fontSize: '24px',
-        margin: 0,
-    };
 
-    const footerStyle = {
-        fontSize: '18px',
-        lineHeight: '1.6',
-    };
-
-    const paragraphStyle = {
-        margin: '5px 0',
-    };
-
-    const [footerMargin, setFooterMargin] = useState(0);
-
-    useEffect(() => {
-        // 計算視口的高度
-        const updateFooterMargin = () => {
-            const windowHeight = window.innerHeight;
-            const bodyHeight = document.body.offsetHeight;
-            // 根據頁面內容的高度調整 marginTop，保證 footer 在底部
-            const margin = windowHeight - bodyHeight > 0 ? windowHeight - bodyHeight : 0;
-            setFooterMargin(margin);
-        };
-
-        // 當頁面加載時，執行一次計算
-        updateFooterMargin();
-
-        // 監聽視口變化，調整 marginTop
-        window.addEventListener('resize', updateFooterMargin);
-
-        // 清理事件監聽器
-        return () => {
-            window.removeEventListener('resize', updateFooterMargin);
-        };
-    }, []);  // 空依賴數組，確保只在加載時和視口變化時執行
 
     return (
-        <footer style={{
-            backgroundColor: 'black',
-            color: 'white',
-            padding: '20px',
-            marginTop: `${footerMargin}px`, // 给 footer 添加顶部外边距
-        }}>
-            <Row gutter={40}>
-                {/* 聯絡我們區域 */}
-                <Col span={2}>
-                    <h3 style={titleStyle}>聯絡我們</h3>
+        <Container fluid className='mt-5'>
+            <hr />
+            <Row>
+                <Col sm={8} md={4} className='text-center'>
+                    <h3 className='mb-4'><Link to="/aboutus" style={{ color: 'inherit', textDecoration: 'none' }}>關於我們</Link></h3>
+                    <p className='text-align'>OOTD 是一個致力於世界茶交易的電商網站。我們旨在提升全球茶文化的知識與認識，幫助人們了解正確的茶葉選擇和沖泡方法，提供優質的茶葉及茶具，並將世界各地的優質茶葉帶給每一位消費者。</p>
                 </Col>
-
-                <Col span={6}>
-                    <footer style={footerStyle}>
-                        <p style={paragraphStyle}>電話：02-1234-5678</p>
-                        <p style={paragraphStyle}>電子信箱：ootd@gmail.com</p>
-                        <p style={paragraphStyle}>地址：10608台北市大安區忠孝東路三段1號</p>
-                    </footer>
+                <Col sm={4} md={4} className='text-center'>
+                    <h3 className='mb-4'>聯絡我們</h3>
+                    <p><FaPhoneFlip /> <a href="tel:+886212345678">02-1234-5678</a></p>
+                    <p><FaEnvelope /> <a href="mailto:ootd@gmail.com">ootd@gmail.com</a></p>
+                    <p><FaLocationDot /> No. 1, Sec. 3, Zhongxiao E. Rd., Da'an Dist., Taipei City 10608 , Taiwan (R.O.C.)</p>
                 </Col>
-
-                {/* Contact Us 區域 */}
-                <Col span={2}>
-                    <h3 style={titleStyle}>Contact Us</h3>
+                <Col sm={12} md={4} className='text-center'>
+                    <h3 className='mb-4'>社群平台</h3>
+                    <p><FaGithub /> <Link to='https://github.com/Only-Juice/OOTD-frontend'>Github</Link></p>
+                    <p><FaFacebook /> <Link to='/rickroll'>Facebook</Link></p>
+                    <p><FaInstagram /> <Link to='/c8763'>Instagram</Link></p>
                 </Col>
-                <Col span={6}>
-                    <footer style={footerStyle}>
-                        <p style={paragraphStyle}>Phone: 02-1234-5678</p>
-                        <p style={paragraphStyle}>Email: ootd@gmail.com</p>
-                        <p style={paragraphStyle}>Address: No. 1, Sec. 3, Zhongxiao E. Rd., Da'an Dist., Taipei City 10608 , Taiwan (R.O.C.)</p>
-                    </footer>
-                </Col>
-
-                {/* About Us 和 關於我們區域 */}
-                <Col span={6} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-                    <Link
-                        to="/aboutus"
-                        style={{
-                            textDecoration: 'none',  // 禁用下划线
-                            color: 'white',          // 保证文字颜色为白色
-                        }}
-                    >
-                        <h3 style={titleStyle}>關於我們</h3>
-                        <h3 style={{ ...titleStyle, marginTop: '10px' }}>About Us</h3>
-                    </Link>
+                <hr />
+                <Col md={12} className='text-center'>
+                    <p>NTUT 2024 Fall Database Systems Final Project</p>
+                    <p>Made with <Link to='/c0' style={{ color: '#e25555' }}>❤</Link> in Taiwan</p>
                 </Col>
             </Row>
-        </footer>
+        </Container >
     );
 };
 
