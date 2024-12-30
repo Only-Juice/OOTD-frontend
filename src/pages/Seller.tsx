@@ -3,6 +3,7 @@ import { Alert, Card, Layout, Menu } from 'antd';
 import { useMediaQuery } from 'react-responsive';
 import type { UserInfo } from '../types';
 import SellerStoreManage from '../components/SellerStoreManage';
+import ShowOrder from '../components/ShowOrder';
 const { Sider, Content } = Layout;
 import { useQuery } from '@tanstack/react-query';
 import type { Store } from '../types';
@@ -35,11 +36,39 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
         },
     });
 
+    const { data: storeOrdersData } = useQuery({
+        queryKey: [`GetStoreOrders`],
+        queryFn: () => {
+            const token = localStorage.getItem('token');
+            if (!token) return null;
+            return fetch('/api/Store/GetStoreOrders', {
+                headers: {
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+                },
+            }).then((res) => {
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        localStorage.removeItem('token');
+                        return null;
+                    } else if (res.status === 404) {
+                        return null;
+                    }
+                    throw new Error(res.statusText);
+                }
+                return res.json();
+            })
+        },
+        retry: false,
+    });
+
+
 
     const renderComponent = () => {
         switch (selectedComponent) {
             case 'store':
                 return <SellerStoreManage store={store} error={errorStore} isLoading={isLoadingStore} />;
+            case 'orders':
+                return storeOrdersData ? <ShowOrder data={storeOrdersData} /> : null;
             default:
                 return null;
         }

@@ -55,7 +55,7 @@ const ShowOrder: React.FC<ShowOrderProps> = ({ data }) => {
     return (
         <Card>
             <div className="m-3">
-                <Title level={2}>我的訂單</Title>
+                <Title level={2}>訂單資訊</Title>
                 <Divider />
                 {data.map((order: Order) => (
                     <Collapse className='mb-2' key={order.OrderID}>
