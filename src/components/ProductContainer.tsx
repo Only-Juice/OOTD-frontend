@@ -9,6 +9,7 @@ import Rating from "./Rating";
 import UserBadge from "./UserBadge";
 import { Store, RatingResult } from "../types";
 import { AiOutlineSmile } from "react-icons/ai";
+import { Input, Form } from 'antd';
 
 interface ProductContainerProps {
     product: Product | null;
@@ -93,6 +94,49 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
         }
     }, [leftQuantity]);
 
+    const [ShowMessageModal, setShowMessageModal] = useState(false);
+    const [newMessage, setNewMessage] = useState('');  // 用來存儲訊息的 state
+
+    // 顯示對話框
+    const handleMessageShow = () => setShowMessageModal(true);
+
+    // 關閉對話框
+    const handleMessageClose = () => setShowMessageModal(false);
+
+    // 處理訊息發送
+    const handleSendMessage = () => {
+        if (newMessage.trim()) {
+            setNewMessage('');  // 清空訊息
+            const messageData = {
+                ReceiverID: storeData?.OwnerID,
+                Message: newMessage,
+            };
+
+            fetch('/api/Message/SendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify(messageData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send message');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+
+                    setNewMessage('');
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                });
+        }
+    };
+
+
     return (
         <>
             {product &&
@@ -136,12 +180,47 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                             <Link to={`/store/${storeData.StoreID}`} className='text-decoration-none'>
                                 <Card className="mt-4">
                                     <Card.Body>
-                                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge username={storeData.OwnerUsername} size={35} /></Card.Title>
-                                        <Card.Title style={{ fontSize: '2rem' }}>{storeData.Name}</Card.Title>
+                                        <Card.Title style={{fontSize: '1rem'}}><UserBadge
+                                            username={storeData.OwnerUsername} size={20}/></Card.Title>
+                                        <Card.Title style={{fontSize: '2rem'}}>{storeData.Name}</Card.Title>
+                                        <div className="d-flex justify-content-end mt-3">
+                                            <Button
+                                                variant="primary"
+                                                onClick={(e) => {
+                                                    e.preventDefault();  // 阻止 Link 的跳轉
+                                                    handleMessageShow();  // 觸發聊天邏輯
+                                                }}
+                                            >
+                                                來聊聊吧！
+                                            </Button>
+                                        </div>
                                     </Card.Body>
                                 </Card>
                             </Link>
                         }
+                        <Modal show={ShowMessageModal} onHide={handleMessageClose}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>開始聊天</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Form.Item label="New Message">
+                                    <Input
+                                        value={newMessage}
+                                        onChange={(e) => setNewMessage(e.target.value)}
+                                        onPressEnter={handleSendMessage}  // 按下 Enter 鍵發送訊息
+                                        placeholder="輸入訊息..."
+                                    />
+                                </Form.Item>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    關閉
+                                </Button>
+                                <Button variant="primary" onClick={handleSendMessage}>
+                                    發送訊息
+                                </Button>
+                            </Modal.Footer>
+                        </Modal>
                     </Col>
                     <Col md={6}>
                         <h1><b>{product.Name}</b></h1>
