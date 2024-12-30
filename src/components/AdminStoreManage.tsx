@@ -18,7 +18,7 @@ interface StoreResponse {
 
 const pageSize = 5;
 
-const StoreManage: React.FC = () => {
+const AdminStoreManage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [switchLoading, setSwitchLoading] = useState<{ [key: number]: boolean }>({});
     const queryClient = useQueryClient();
@@ -178,4 +178,4 @@ const StoreManage: React.FC = () => {
     );
 };
 
-export default StoreManage;
+export default AdminStoreManage;

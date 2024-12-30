@@ -21,6 +21,7 @@ import GoToTop from './components/GoToTOP';
 import './styles/App.css';
 import { useQuery } from '@tanstack/react-query';
 import Layout from './components/Layout.tsx';
+const Seller = React.lazy(() => import('./pages/Seller.tsx'));
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean | undefined>(undefined);
@@ -94,6 +95,7 @@ const App: React.FC = () => {
             <Route path="/store/:storeID" element={<StorePage />} />
             <Route path="/admin" element={<AdminPage dataUserInfo={dataUserInfo} />} />
             <Route path="/aboutus" element={<AboutUs />} />
+            <Route path="/seller" element={<Seller dataUserInfo={dataUserInfo} />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
           </Route>
         </Routes>

@@ -1,39 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Card, Layout, Menu, Grid } from 'antd';
+import { Alert, Card, Layout, Menu } from 'antd';
 import { useMediaQuery } from 'react-responsive';
-import AddCouponForm from '../components/AddCouponForm';
-import GiveCoupon from '../components/GiveCoupon';
-import ModifyCoupon from '../components/ModifyCoupon';
-import GetRequest from '../components/GetRequest';
-import AdminStoreManage from '../components/AdminStoreManage';
-import UserManage from '../components/UserManage';
 import type { UserInfo } from '../types';
+import SellerStoreManage from '../components/SellerStoreManage';
 const { Sider, Content } = Layout;
-const { useBreakpoint } = Grid;
+import { useQuery } from '@tanstack/react-query';
+import type { Store } from '../types';
 
-interface AdminProps {
+interface SellerProps {
     dataUserInfo: UserInfo | null;
 }
 
-const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
+const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-    const [selectedComponent, setSelectedComponent] = useState('add');
-    const screens = useBreakpoint();
+    const [selectedComponent, setSelectedComponent] = useState('store');
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+
+    const { isLoading: isLoadingStore, error: errorStore, data: store } = useQuery<Store>({
+        queryKey: ['GetSellerStore'],
+        queryFn: async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                return null;
+            }
+            const res = await fetch('/api/Store/GetStore', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            if (!res.ok) {
+                return null;
+            }
+            return res.json();
+        },
+    });
+
 
     const renderComponent = () => {
         switch (selectedComponent) {
-            case 'add':
-                return <AddCouponForm />;
-            case 'give':
-                return <GiveCoupon />;
-            case 'modify':
-                return <ModifyCoupon />;
-            case 'request':
-                return <GetRequest />;
             case 'store':
-                return <AdminStoreManage />;
-            case 'user':
-                return <UserManage />;
+                return <SellerStoreManage store={store} error={errorStore} isLoading={isLoadingStore} />;
             default:
                 return null;
         }
@@ -48,25 +54,23 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
     };
 
     const menuItems = [
+        { key: 'store', label: '商店資訊' },
+        { key: 'orders', label: '商店訂單' },
         {
             key: 'coupon',
-            label: '優惠券管理',
+            label: '商店報表',
             children: [
-                { key: 'add', label: '新增優惠券' },
-                { key: 'give', label: '發放優惠券' },
-                { key: 'modify', label: '修改優惠券' },
+                { key: 'productAndSale', label: '商品銷量' },
+                { key: 'ratings', label: '商店評價' },
             ],
         },
-        { key: 'request', label: '請求查看' },
-        { key: 'store', label: '店家管理' },
-        { key: 'user', label: '用戶管理' },
-    ]
+    ];
 
 
     return (
-        <Card title="管理員頁面" className="mt-2">
+        <Card title="賣家中心" className="mt-2">
             <Layout>
-                {screens.md && (
+                {!isMobile && (
                     <Sider style={{ background: '#fff' }}>
                         <Menu
                             onClick={handleMenuClick}
@@ -78,7 +82,7 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
                 )}
                 <Layout>
                     <Content>
-                        {!screens.md && (
+                        {isMobile && (
                             <Menu
                                 onClick={handleMenuClick}
                                 selectedKeys={[selectedComponent]}
@@ -89,13 +93,13 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
                         <Card>
                             {token ? (
                                 <>
-                                    {dataUserInfo?.IsAdministrator ? (
+                                    {dataUserInfo?.HaveStore ? (
                                         renderComponent()
                                     ) : (
                                         <Alert
                                             className='mb-2'
                                             message="錯誤"
-                                            description="您沒有管理員權限"
+                                            description="您尚未開通商店功能"
                                             type="error"
                                             showIcon
                                         />
@@ -118,4 +122,4 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
     );
 };
 
-export default Admin;
+export default Seller;
