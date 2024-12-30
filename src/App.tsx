@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 const Home = React.lazy(() => import('./pages/Home'));
 const Cart = React.lazy(() => import('./pages/Cart.tsx'));
@@ -44,6 +44,27 @@ const App: React.FC = () => {
       })
     },
   });
+
+  useEffect(() => {
+    if (localStorage.getItem('token') !== null) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        let expiration = null;
+        if (payload.Exp) {
+          // this is for .net framework
+          expiration = new Date(payload.Exp);
+        } else if (payload.exp) {
+          // this is for .net core
+          expiration = new Date(payload.exp * 1000);
+        }
+        if (expiration) {
+          localStorage.setItem('token_expiration', expiration.toString());
+        }
+      }
+    }
+  }, [localStorage.getItem('token')]);
+
   return (
     <>
       <GoToTop />
