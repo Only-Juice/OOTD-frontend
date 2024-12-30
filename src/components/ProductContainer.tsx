@@ -8,6 +8,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Rating from "./Rating";
 import UserBadge from "./UserBadge";
 import { Store, RatingResult } from "../types";
+import { AiOutlineSmile } from "react-icons/ai";
 
 interface ProductContainerProps {
     product: Product | null;
@@ -107,18 +108,27 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                                             src={image}
                                             alt={product.Name}
                                             onClick={() => handleImageClick(index)}
+                                            onError={(e) => {
+                                                e.currentTarget.style.display = 'none';
+                                                const parent = e.currentTarget.parentElement;
+                                                if (parent) {
+                                                    const errorDiv = document.createElement('div');
+                                                    errorDiv.className = 'd-flex justify-content-center align-items-center text-center';
+                                                    errorDiv.style.height = '500px';
+                                                    errorDiv.innerHTML = `圖片丟失`;
+                                                    parent.appendChild(errorDiv);
+                                                }
+                                            }}
                                         />
                                         {product.Quantity === 0 && <div className='sold-out'>售完</div>}
                                     </Carousel.Item>
                                 ))
                             ) : (
                                 <Carousel.Item>
-                                    <img
-                                        className="d-block w-100"
-                                        loading="lazy"
-                                        src="/path/to/placeholder-image.jpg"
-                                        alt="No image available"
-                                    />
+                                    <div className="d-flex justify-content-center text-center flex-column align-items-center" style={{ height: 500 }}>
+                                        <AiOutlineSmile fontSize={20} />
+                                        <p>找不到圖片</p>
+                                    </div>
                                 </Carousel.Item>
                             )}
                         </Carousel>
