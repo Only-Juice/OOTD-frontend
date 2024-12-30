@@ -108,7 +108,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
         if (newMessage.trim()) {
             setNewMessage('');  // 清空訊息
             const messageData = {
-                ReceiverID: storeData.OwnerID,
+                ReceiverID: storeData?.OwnerID,
                 Message: newMessage,
             };
 
