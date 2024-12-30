@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Form, message } from "antd";  // 使用 Ant Design 元素
+import { Button, Input, Form} from "antd";  // 使用 Ant Design 元素
 
 const Report: React.FC = () => {
     const [newRequest, setNewRequest] = useState<string>('');  // 儲存用戶輸入的訊息
