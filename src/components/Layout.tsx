@@ -34,6 +34,7 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('token_expiration');
         queryClient.invalidateQueries();
     };
 

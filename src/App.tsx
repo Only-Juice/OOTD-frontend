@@ -31,6 +31,29 @@ const App: React.FC = () => {
     queryFn: () => {
       const token = localStorage.getItem('token');
       if (!token) return null;
+      const expiration = localStorage.getItem('token_expiration');
+      if (expiration && new Date(expiration) < new Date()) {
+        localStorage.removeItem('token');
+        return null;
+      } else if (expiration && new Date(expiration) < new Date(new Date().getTime() + 10 * 60 * 1000)) {
+        // 如果快要過期，就更新token
+        fetch('/api/User/GetRefreshedJWT', {
+          method: 'GET',
+          headers: {
+            'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+          },
+        }).then((res) => {
+          if (!res.ok) {
+            return null;
+          }
+          return res.json();
+        }).then((data) => {
+          if (data) {
+            localStorage.setItem('token', data.Token);
+            localStorage.setItem('token_expiration', data.ExpireDate);
+          }
+        });
+      }
       return fetch('/api/User/GetUser', {
         headers: {
           'Authorization': `${token ? ('Bearer ' + token) : ''}`,
@@ -44,26 +67,6 @@ const App: React.FC = () => {
       })
     },
   });
-
-  useEffect(() => {
-    if (localStorage.getItem('token') !== null) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        let expiration = null;
-        if (payload.Exp) {
-          // this is for .net framework
-          expiration = new Date(payload.Exp);
-        } else if (payload.exp) {
-          // this is for .net core
-          expiration = new Date(payload.exp * 1000);
-        }
-        if (expiration) {
-          localStorage.setItem('token_expiration', expiration.toString());
-        }
-      }
-    }
-  }, [localStorage.getItem('token')]);
 
   return (
     <>
