@@ -52,10 +52,9 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                 <Search />
                 <Navbar.Collapse id="navbarNav">
                     <Nav className="d-flex align-items-center">
-                        <NavDropdown title={<><FaComments /> 訊息</>} style={{ whiteSpace: 'nowrap' }}>
-                            <NavDropdown.Item as={Link} to="/message">訊息頁面</NavDropdown.Item>
-                        </NavDropdown>
-
+                        <Nav.Link as={Link} to="/message" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
+                            <FaComments  /> 訊息
+                        </Nav.Link>
                         {!isPendingUserInfo ? (
                             <>
                                 {dataUserInfo && dataUserInfo.Username ? (
