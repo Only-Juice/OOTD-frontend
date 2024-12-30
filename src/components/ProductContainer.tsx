@@ -108,7 +108,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
         if (newMessage.trim()) {
             setNewMessage('');  // 清空訊息
             const messageData = {
-                ReceiverID: storeData.OwnerID,
+                ReceiverID: storeData?.OwnerID,
                 Message: newMessage,
             };
 
@@ -181,7 +181,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                                 <Card className="mt-4">
                                     <Card.Body>
                                         <Card.Title style={{fontSize: '1rem'}}><UserBadge
-                                            username={storeData.OwnerUsername} size={20}/></Card.Title>
+                                            username={storeData.OwnerUsername} size={35}/></Card.Title>
                                         <Card.Title style={{fontSize: '2rem'}}>{storeData.Name}</Card.Title>
                                         <div className="d-flex justify-content-end mt-3">
                                             <Button
