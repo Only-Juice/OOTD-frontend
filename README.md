@@ -31,11 +31,11 @@ docker build -t ootd-frontend . --no-cache
 ```
 然後
 ```
-docker run ootd-frontend
+docker run -p 4173:4173 ootd-frontend
 ```
 網頁在
 ```
-http://[Docker IP]/
+http://localhost:4173/
 ```
 
 
