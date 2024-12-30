@@ -10,7 +10,6 @@ import UserBadge from "./UserBadge";
 import { Store, RatingResult } from "../types";
 import { AiOutlineSmile } from "react-icons/ai";
 import { Input, Form } from 'antd';
-import Message from "../pages/Message.tsx";
 
 interface ProductContainerProps {
     product: Product | null;
@@ -128,19 +127,6 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                     return response.json();
                 })
                 .then(() => {
-                    const newMessageData: Message = {
-                        IsSender: true,
-                        Message: newMessage,
-                        CreatedAt: new Date().toISOString(),
-                    };
-
-                    setMessages(prevMessages => ({
-                        ...prevMessages,
-                        [storeData.UID!]: [
-                            ...(prevMessages[storeData.UID!] || []),
-                            newMessageData,
-                        ],
-                    }));
 
                     setNewMessage('');
                 })
