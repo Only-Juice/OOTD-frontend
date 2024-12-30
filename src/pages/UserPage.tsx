@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Row, Col, Menu, Card, Spin, Layout, Grid } from 'antd';
+import { Menu, Card, Spin, Layout, Grid } from 'antd';
 import UserProfile from '../components/UserProfile';
 import UserOrders from '../components/UserOrders'; // Assuming you have this component
 import UserBadge from '../components/UserBadge';
 // import UserSettings from './UserSettings'; // Assuming you have this component
-import { FaPen } from "react-icons/fa";
 import ChangePassword from '../components/ChangePassword';
 import { UserInfo } from '../types';
 import Sider from 'antd/es/layout/Sider';

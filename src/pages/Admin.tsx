@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Card, Layout, Menu, Grid } from 'antd';
-import { useMediaQuery } from 'react-responsive';
 import AddCouponForm from '../components/AddCouponForm';
 import GiveCoupon from '../components/GiveCoupon';
 import ModifyCoupon from '../components/ModifyCoupon';

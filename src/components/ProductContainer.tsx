@@ -136,7 +136,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                             <Link to={`/store/${storeData.StoreID}`} className='text-decoration-none'>
                                 <Card className="mt-4">
                                     <Card.Body>
-                                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge username={storeData.OwnerUsername} size={20} /></Card.Title>
+                                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge username={storeData.OwnerUsername} size={35} /></Card.Title>
                                         <Card.Title style={{ fontSize: '2rem' }}>{storeData.Name}</Card.Title>
                                     </Card.Body>
                                 </Card>
