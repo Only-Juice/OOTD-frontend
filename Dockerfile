@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 4173
 
 # Command to run the Vite development server
-CMD ["npm", "run", "preview", "--", "--host"]
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
