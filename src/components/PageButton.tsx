@@ -93,11 +93,11 @@ const PageButton: React.FC<PageButtonProps> = ({ PageCount }) => {
                     </Button>
                 )}
             </div>
-            <div className="d-flex justify-content-center align-items-center">
+            {/* <div className="d-flex justify-content-center align-items-center">
                 <Link to='/' onClick={scrollToTop}>
                     <strong>Oh Online Tea Delivery</strong>
                 </Link>
-            </div>
+            </div> */}
         </>
     );
 };

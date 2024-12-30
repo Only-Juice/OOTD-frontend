@@ -7,9 +7,14 @@ import ModifyCoupon from '../components/ModifyCoupon';
 import GetRequest from '../components/GetRequest';
 import StoreManage from '../components/StoreManage';
 import UserManage from '../components/UserManage';
+import type { UserInfo } from '../types';
 const { Sider, Content } = Layout;
 
-const Admin: React.FC = () => {
+interface AdminProps {
+    dataUserInfo: UserInfo | null;
+}
+
+const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [selectedComponent, setSelectedComponent] = useState('add');
     const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -92,7 +97,19 @@ const Admin: React.FC = () => {
                         )}
                         <Card>
                             {token ? (
-                                renderComponent()
+                                <>
+                                    {dataUserInfo?.IsAdministrator ? (
+                                        renderComponent()
+                                    ) : (
+                                        <Alert
+                                            className='mb-2'
+                                            message="錯誤"
+                                            description="您沒有管理員權限"
+                                            type="error"
+                                            showIcon
+                                        />
+                                    )}
+                                </>
                             ) : (
                                 <Alert
                                     className='mb-2'
