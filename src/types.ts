@@ -66,7 +66,7 @@ export interface Store {
 }
 
 export interface SearchStoresResponse {
-  PageCoint: number;
+  PageCount: number;
   Stores: Store[];
 }
 
