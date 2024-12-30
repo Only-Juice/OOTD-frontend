@@ -16,6 +16,7 @@ const StorePage = React.lazy(() => import('./pages/Store.tsx'));
 const AdminPage = React.lazy(() => import('./pages/Admin.tsx'));
 const Message = React.lazy(() => import('./pages/Message.tsx'));
 const AboutUs = React.lazy(() => import('./pages/AboutUs.tsx'));
+const SearchStore = React.lazy(() => import('./pages/SearchStore.tsx'));
 import GoToTop from './components/GoToTOP';
 import './styles/App.css';
 import { useQuery } from '@tanstack/react-query';
@@ -52,6 +53,7 @@ const App: React.FC = () => {
             <Route index element={<React.Suspense fallback={<div>Loading...</div>}><Home /></React.Suspense>} />
             <Route path="/register" element={<Register />} />
             <Route path="/search" element={<SearchResults />} />
+            <Route path="/searchStore" element={<SearchStore />} />
             <Route path="/cart" element={<Cart setIsModalOpen={setIsModalOpen} />} />
             <Route path="/cartresult" element={<CartResult />} />
             <Route path="/user" element={<UserPage isLoading={isLoadinUserInfo} isPending={isPendingUserInfo} data={dataUserInfo} refetch={refetchUserInfo} />} />
@@ -66,7 +68,7 @@ const App: React.FC = () => {
             <Route path="/orders" element={<Navigate to="/user?tab=orders" />} />
             <Route path="/changePassword" element={<Navigate to="/user?tab=profile&changePassword=true" />} />
             <Route path="/store/:storeID" element={<StorePage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin" element={<AdminPage dataUserInfo={dataUserInfo} />} />
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/*" element={<img src="https://http.cat/images/404.jpg" alt="404 Not Found" style={{ width: '100%', height: '100%' }} />} />
           </Route>

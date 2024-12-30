@@ -14,8 +14,7 @@ const ProductCard: React.FC<{ product: Product | null }> = ({ product }) => {
                     <div className='image-container img-thumbnail'>
                         <div className='product-image'></div>
                     </div>
-                    <Card.Title>Loading</Card.Title>
-                    <Card.Text>Loading</Card.Text>
+                    <Card.Title>暫無商品</Card.Title>
                 </Card.Body>
             </Card>}
             {product &&
@@ -32,8 +31,11 @@ const ProductCard: React.FC<{ product: Product | null }> = ({ product }) => {
                                 />
                             </div>
                             {product.Quantity === 0 && <div className='sold-out'>售完</div>}
-                            <Card.Title style={{ color: isHovered ? '#0645AD' : 'inherit' }}>{product.Name}</Card.Title>
-                            <Card.Text>NT${product.Price}</Card.Text>
+                            <Card.Title className='mt-3' style={{ color: isHovered ? '#0645AD' : 'inherit' }}>{product.Name}</Card.Title>
+                            <div className='d-flex justify-content-between'>
+                                <Card.Text style={{ color: '#FF8C00', fontWeight: 'bold', fontSize: '1.2rem' }}>NT${product.Price}</Card.Text>
+                                <Card.Text style={{ color: '#A9A9A9' }}>已售出: {product.Sale}</Card.Text>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Link>

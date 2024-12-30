@@ -54,7 +54,7 @@ const StorePage: React.FC = () => {
                         {storeData ?
                             <Card.Header>
                                 <Card.Title style={{ fontSize: '1rem' }}>
-                                    <UserBadge username={storeData.OwnerUsername} size={20} />
+                                    <UserBadge username={storeData.OwnerUsername} size={35} />
                                 </Card.Title>
                                 <Card.Title style={{ fontSize: '2rem' }}>{storeData.Name}</Card.Title>
                                 <Card.Text>{storeData.Description}</Card.Text>

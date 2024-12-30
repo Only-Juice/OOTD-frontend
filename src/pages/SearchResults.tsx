@@ -19,7 +19,7 @@ const SearchResults: React.FC = () => {
     const navigate = useNavigate();
 
     const { isLoading: isLoadingSearchStores, data: dataSearchStoresResponse } = useQuery<SearchStoresResponse>({
-        queryKey: [`SearchStores_${searchWord}`],
+        queryKey: [`SearchStores_${searchWord}`, 1],
         queryFn: () => {
             if (!searchWord) return Promise.resolve(null);
             return fetch(`/api/Store/SearchStores?keyword=${searchWord}`, {
@@ -59,7 +59,7 @@ const SearchResults: React.FC = () => {
                 {!isLoadingSearchProduct && !searchResults && !error && <p>找不到相關結果</p>}
                 {searchResults && searchResults.Products.length > 0 && (
                     <>
-                        <Form.Group controlId="sortSelect" className='mb-4'>
+                        <Form.Group controlId="sortSelect" className='mt-4 mb-4'>
                             <Form.Label>排序方式</Form.Label>
                             <Form.Control
                                 as="select"
