@@ -18,7 +18,7 @@ const GetRequest: React.FC = () => {
             if (!token) {
                 return null;
             }
-            const res = await fetch('/api/Request/GetRequest', {
+            const res = await fetch('/api/Request/GetRequests', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
