@@ -61,12 +61,13 @@ export interface LoginProps {
 export interface Store {
   Description: string;
   Name: string;
+  OwnerID: number;
   OwnerUsername: string;
   StoreID: number;
 }
 
 export interface SearchStoresResponse {
-  PageCoint: number;
+  PageCount: number;
   Stores: Store[];
 }
 
@@ -94,4 +95,21 @@ export interface ProductInCart {
   Price: number;
   Quantity: number;
   Description: string;
+}
+
+export interface OrderDetail {
+  PVCID: number;
+  Name: string;
+  Price: number;
+  Quantity: number;
+  Images: string[];
+}
+
+export interface Order {
+  OrderID: number;
+  CreateAt: string;
+  Status: string;
+  Amount: number;
+  Discount: number;
+  Details: OrderDetail[];
 }

@@ -34,6 +34,7 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('token_expiration');
         queryClient.invalidateQueries();
     };
 
@@ -68,14 +69,18 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
                 />
             </header>
             <main>
-                <Container>
-                    <Outlet />
-                    <Login
-                        isModalOpen={isModalOpen}
-                        setIsModalOpen={setIsModalOpen}
-                        refetchUserInfo={refetchUserInfo}
-                        dataUserInfo={dataUserInfo}
-                    />
+                <Container fluid className="px-lg-5">
+                    <div className="px-lg-5">
+                        <div className="px-lg-4">
+                            <Outlet />
+                            <Login
+                                isModalOpen={isModalOpen}
+                                setIsModalOpen={setIsModalOpen}
+                                refetchUserInfo={refetchUserInfo}
+                                dataUserInfo={dataUserInfo}
+                            />
+                        </div>
+                    </div>
                 </Container>
             </main>
             <footer>

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Row, Col, Nav, Card } from 'react-bootstrap';
+import { Row, Col, Menu, Card, Spin, Layout, Grid } from 'antd';
 import UserProfile from '../components/UserProfile';
-import UserOrders from '../components/UserOrders';
+import UserOrders from '../components/UserOrders'; // Assuming you have this component
 import UserBadge from '../components/UserBadge';
-// import UserSettings from './UserSettings'; 
-import Loading from '../components/Loading';
+// import UserSettings from './UserSettings'; // Assuming you have this component
 import { FaPen } from "react-icons/fa";
 import ChangePassword from '../components/ChangePassword';
 import { UserInfo } from '../types';
+import Sider from 'antd/es/layout/Sider';
+import { Content } from 'antd/es/layout/layout';
+const { useBreakpoint } = Grid;
 
 interface UserPageProps {
     isLoading: boolean;
@@ -17,25 +19,27 @@ interface UserPageProps {
     refetch: () => void;
 }
 
-
 const UserPage: React.FC<UserPageProps> = ({ isLoading, isPending, data, refetch }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     const initialTab = queryParams.get('tab') || 'profile';
     const [activeKey, setActiveKey] = useState<string>(initialTab);
-    const changePassword = queryParams.get('changePassword')
+    const changePassword = queryParams.get('changePassword');
+    const screens = useBreakpoint();
 
     useEffect(() => {
         const newQueryParams = new URLSearchParams(queryParams.toString());
+        if (queryParams.get('changePassword') && activeKey !== 'profile') {
+            newQueryParams.delete('changePassword');
+        }
         newQueryParams.set('tab', activeKey);
         navigate(`?${newQueryParams.toString()}`, { replace: true });
-    }, []);
+    }, [activeKey]);
 
     useEffect(() => {
         refetch();
     }, [localStorage.getItem('token')]);
-
 
     const changeActiveKey = (key: string) => {
         const newQueryParams = new URLSearchParams(queryParams.toString());
@@ -45,51 +49,50 @@ const UserPage: React.FC<UserPageProps> = ({ isLoading, isPending, data, refetch
         setActiveKey(key);
     }
 
+    const menuItems = [
+        { key: 'profile', label: '編輯個人檔案' },
+        { key: 'orders', label: '我的訂單' },
+    ]
+
+
     return (
-        <>
-            {isPending ? (
-                <Loading />
-            ) :
-                <Row>
-                    <Col md={2}>
-                        <Nav
-                            className="flex-column"
-                            variant="pills"
-                            activeKey={activeKey}
-                            onSelect={(selectedKey) => changeActiveKey(selectedKey || '#profile')}
-                        >
-                            <Card>
-                                <Card className='m-1'>
-                                    <div className='ms-2 mt-2'>
-                                        {data && data.Username && <>
-                                            <UserBadge username={data.Username} />
-                                        </>}
-                                    </div>
-                                    <Nav.Link className='text-secondary mb-1' onClick={() => setActiveKey('profile')}>
-                                        <FaPen className='me-2' />
-                                        編輯個人檔案
-                                    </Nav.Link>
-                                </Card>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="profile">個人檔案</Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="orders">我的訂單</Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="settings">設定</Nav.Link>
-                                </Nav.Item>
-                            </Card>
-                        </Nav>
-                    </Col>
-                    <Col md={10}>
-                        {!changePassword && activeKey === 'profile' && <UserProfile isLoading={isLoading} data={data} refetch={refetch} />}
-                        {activeKey === 'orders' && <UserOrders />}
-                        {changePassword && <ChangePassword />}
-                        {/* {activeKey === '#settings' && <UserSettings userInfo={userInfo} />} */}
-                    </Col>
-                </Row>}
-        </>
+        <Spin spinning={isPending}>
+            <Card title="用戶頁面" className="mt-2">
+                <Layout>
+                    {screens.md && (
+                        <Sider style={{ background: '#fff' }}>
+                            <div className='mb-3'>
+                                {data && data.Username && <UserBadge username={data.Username} />}
+                            </div>
+                            <Menu
+                                mode="inline"
+                                selectedKeys={[activeKey]}
+                                onClick={({ key }) => changeActiveKey(key)}
+                                items={menuItems}
+                            >
+                            </Menu>
+                        </Sider>
+                    )}
+                    <Layout>
+                        {!screens.md && (
+                            <Menu
+                                selectedKeys={[activeKey]}
+                                onClick={({ key }) => changeActiveKey(key)}
+                                mode="horizontal"
+                                items={menuItems}
+                            />
+                        )}
+
+                        <Content>
+                            {!changePassword && activeKey === 'profile' && <UserProfile isLoading={isLoading} data={data} refetch={refetch} />}
+                            {activeKey === 'orders' && <UserOrders />}
+                            {changePassword && activeKey === 'profile' && <ChangePassword />}
+                            {/* {activeKey === 'settings' && <UserSettings userInfo={data} />} */}
+                        </Content>
+                    </Layout>
+                </Layout>
+            </Card >
+        </Spin >
     );
 };
 

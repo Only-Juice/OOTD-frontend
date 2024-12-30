@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Spinner, Alert, Card } from 'react-bootstrap';
+import { Form, Input, Button, Alert, Card, Divider, Typography } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
+const { Title } = Typography;
 
 const ChangePassword: React.FC = () => {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -63,11 +64,10 @@ const ChangePassword: React.FC = () => {
         }
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = (values: { currentPassword: string, newPassword: string, confirmPassword: string }) => {
         setError(null);
 
-        if (newPassword !== confirmPassword) {
+        if (values.newPassword !== values.confirmPassword) {
             setError('新密碼與確認密碼不一致');
             return;
         }
@@ -78,40 +78,49 @@ const ChangePassword: React.FC = () => {
 
     return (
         <Card>
-            <Form onSubmit={handleSubmit} className="m-3">
-                <h1>修改密碼</h1>
-                <hr />
-                <Form.Group className="mb-3" controlId="currentPassword">
-                    <Form.Label>當前密碼</Form.Label>
-                    <Form.Control
-                        type="password"
+            <Form onFinish={handleSubmit} className="m-3">
+                <Title level={2}>修改密碼</Title>
+                <Divider />
+                <Form.Item
+                    label="當前密碼"
+                    name="currentPassword"
+                    labelCol={{ span: 24 }}
+                    wrapperCol={{ span: 24 }}
+                    rules={[{ required: true, message: '請輸入當前密碼' }]}
+                >
+                    <Input.Password
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
-                        required
                     />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="newPassword">
-                    <Form.Label>新密碼</Form.Label>
-                    <Form.Control
-                        type="password"
+                </Form.Item>
+                <Form.Item
+                    label="新密碼"
+                    name="newPassword"
+                    labelCol={{ span: 24 }}
+                    wrapperCol={{ span: 24 }}
+                    rules={[{ required: true, message: '請輸入新密碼' }]}
+                >
+                    <Input.Password
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        required
                     />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="confirmPassword">
-                    <Form.Label>確認新密碼</Form.Label>
-                    <Form.Control
-                        type="password"
+                </Form.Item>
+                <Form.Item
+                    label="確認新密碼"
+                    name="confirmPassword"
+                    labelCol={{ span: 24 }}
+                    wrapperCol={{ span: 24 }}
+                    rules={[{ required: true, message: '請確認新密碼' }]}
+                >
+                    <Input.Password
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
                     />
-                </Form.Group>
-                {error && <Alert variant="danger">{error}</Alert>}
+                </Form.Item>
+                {error && <Alert message={error} type="error" />}
                 <div className='mt-3 text-end'>
-                    <Button variant="primary" type="submit" disabled={isLoading}>
-                        {isLoading ? <Spinner animation="border" size="sm" /> : '修改密碼'}
+                    <Button type="primary" htmlType="submit" loading={isLoading}>
+                        修改密碼
                     </Button>
                 </div>
             </Form>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Store } from '../types';
 import UserBadge from './UserBadge';
 import { useQuery } from '@tanstack/react-query';
@@ -8,6 +8,11 @@ import ProductSlider from './ProductSlider';
 import StoreCard from './StoreProductCard';
 
 const StoreBar: React.FC<{ store: Store | null }> = ({ store }) => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const searchWord = queryParams.get('q');
+
+
     const { data: StoreProductsData } = useQuery({
         queryKey: [`GetStoreProducts_${store?.StoreID}_1_Sale_false`], queryFn: async () => {
             if (!store?.StoreID) return null;
@@ -24,7 +29,7 @@ const StoreBar: React.FC<{ store: Store | null }> = ({ store }) => {
             {store &&
                 <Card className='h-100'>
                     <Card.Header>
-                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge username={store.OwnerUsername} size={20} /></Card.Title>
+                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge username={store.OwnerUsername} size={35} /></Card.Title>
                         <Link to={`/store/${store.StoreID}`} className='text-decoration-none'>
                             <Card.Title style={{ fontSize: '2rem' }}>{store.Name}</Card.Title>
                         </Link>
@@ -33,7 +38,7 @@ const StoreBar: React.FC<{ store: Store | null }> = ({ store }) => {
                         {StoreProductsData?.Products.length &&
                             <ProductSlider ProductsData={StoreProductsData?.Products || undefined} Card={StoreCard} />
                         }
-                        <Card.Text className='mt-4 text-end'>更多商店</Card.Text>
+                        <Link to={`/searchStore?q=${searchWord}`}><Card.Text className='mt-4 text-end'>更多商店</Card.Text></Link>
                     </Card.Body>
                 </Card>
             }
