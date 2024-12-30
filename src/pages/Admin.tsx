@@ -46,6 +46,22 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
         setSelectedComponent(e.key);
     };
 
+    const menuItems = [
+        {
+            key: 'coupon',
+            label: '優惠券管理',
+            children: [
+                { key: 'add', label: '新增優惠券' },
+                { key: 'give', label: '發放優惠券' },
+                { key: 'modify', label: '修改優惠券' },
+            ],
+        },
+        { key: 'request', label: '請求查看' },
+        { key: 'store', label: '店家管理' },
+        { key: 'user', label: '用戶管理' },
+    ]
+
+
     return (
         <Card title="管理員頁面" className="mt-2">
             <Layout>
@@ -55,20 +71,7 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
                             onClick={handleMenuClick}
                             selectedKeys={[selectedComponent]}
                             mode="inline"
-                            items={[
-                                {
-                                    key: 'coupon',
-                                    label: '優惠券管理',
-                                    children: [
-                                        { key: 'add', label: '新增優惠券' },
-                                        { key: 'give', label: '發放優惠券' },
-                                        { key: 'modify', label: '修改優惠券' },
-                                    ],
-                                },
-                                { key: 'request', label: '請求查看' },
-                                { key: 'store', label: '店家管理' },
-                                { key: 'user', label: '用戶管理' },
-                            ]}
+                            items={menuItems}
                         />
                     </Sider>
                 )}
@@ -79,20 +82,7 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
                                 onClick={handleMenuClick}
                                 selectedKeys={[selectedComponent]}
                                 mode="horizontal"
-                                items={[
-                                    {
-                                        key: 'coupon',
-                                        label: '優惠券管理',
-                                        children: [
-                                            { key: 'add', label: '新增優惠券' },
-                                            { key: 'give', label: '發放優惠券' },
-                                            { key: 'modify', label: '修改優惠券' },
-                                        ],
-                                    },
-                                    { key: 'request', label: '請求查看' },
-                                    { key: 'store', label: '店家管理' },
-                                    { key: 'user', label: '用戶管理' },
-                                ]}
+                                items={menuItems}
                             />
                         )}
                         <Card>
