@@ -23,6 +23,22 @@ npm run dev
 http://localhost:5173/
 ```
 
+# 啟動方法(Docker)
+
+先
+```
+docker build -t ootd-frontend . --no-cache
+```
+然後
+```
+docker run -p 4173:4173 ootd-frontend
+```
+網頁在
+```
+http://localhost:4173/
+```
+
+
 
 
 # 成員名單
