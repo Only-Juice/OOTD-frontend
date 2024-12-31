@@ -5,6 +5,7 @@ import GiveCoupon from '../components/GiveCoupon';
 import ModifyCoupon from '../components/ModifyCoupon';
 import GetRequest from '../components/GetRequest';
 import AdminStoreManage from '../components/AdminStoreManage';
+import AdminStoreCreate from '../components/AdminStoreCreate';
 import UserManage from '../components/UserManage';
 import type { UserInfo } from '../types';
 const { Sider, Content } = Layout;
@@ -29,10 +30,12 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
                 return <ModifyCoupon />;
             case 'request':
                 return <GetRequest />;
-            case 'store':
+            case 'manage':
                 return <AdminStoreManage />;
             case 'user':
                 return <UserManage />;
+            case `create`:
+                return <AdminStoreCreate/>;
             default:
                 return null;
         }
@@ -56,8 +59,15 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
                 { key: 'modify', label: '修改優惠券' },
             ],
         },
+        {
+            key: 'store',
+            label: '商店管理' ,
+            children: [
+                { key: 'manage', label: '店家管理' },
+                { key: 'create', label: '建立商店' },
+            ],
+        },
         { key: 'request', label: '請求查看' },
-        { key: 'store', label: '店家管理' },
         { key: 'user', label: '用戶管理' },
     ]
 
