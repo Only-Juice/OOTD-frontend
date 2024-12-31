@@ -7,7 +7,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { RatingResult } from '../types';
 
 interface RatingProps {
-    productId: number;
+    productId?: number;
     isPending: boolean;
     data?: RatingResult[];
     refetch: () => void;
@@ -119,6 +119,13 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) 
             });
             return;
         }
+        if (!productId) {
+            Toast.fire({
+                icon: "error",
+                title: "內部錯誤"
+            });
+            return;
+        }
         mutation.mutate({ ProductID: productId, Rating: newRating });
     };
 
@@ -203,7 +210,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) 
                             ))}
                         </ListGroup>
                     )}
-                    {remainingRatingTimesData && remainingRatingTimesData.RemainingRatingTimes != 0 && (
+                    {productId && remainingRatingTimesData && remainingRatingTimesData.RemainingRatingTimes != 0 && (
                         <Form onSubmit={handleSubmit} className="mt-4">
                             <Form.Group controlId="rating">
                                 <Form.Label>留下評價</Form.Label>

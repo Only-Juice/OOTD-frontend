@@ -7,6 +7,8 @@ const { Title } = Typography;
 const { Panel } = Collapse;
 const { useBreakpoint } = Grid;
 
+
+
 interface ShowOrderProps {
     data: Order[];
 }
@@ -62,6 +64,8 @@ const ShowOrder: React.FC<ShowOrderProps> = ({ data }) => {
                         <Panel header={
                             <div>
                                 <strong>訂單編號:</strong> <span>{order.OrderID}</span> <br />
+                                {order.Username && <><strong>訂購人: </strong><span>{order.Username}</span><br /></>}
+                                {order.Address && <><strong>送貨地址: </strong><span>{order.Address}</span><br /></>}
                                 <strong>訂單日期:</strong> <span>{new Date(order.CreateAt).toLocaleString('zh-TW')}</span> <br />
                                 <strong>折扣:</strong> <span>{order.Discount === 1 ? '無折扣' : `${(order.Discount * 10).toFixed(2).replace(/\.?0+$/, '')}折`}</span> <br />
                                 <strong>狀態:</strong> <span>{order.Status}</span> <br />
