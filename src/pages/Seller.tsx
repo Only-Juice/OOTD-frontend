@@ -8,6 +8,7 @@ const { Sider, Content } = Layout;
 import { useQuery } from '@tanstack/react-query';
 import type { Store } from '../types';
 import Rating from '../components/Rating';
+import StoreProductAndSale from '../components/StoreProductAndSale';
 
 interface SellerProps {
     dataUserInfo: UserInfo | null;
@@ -87,7 +88,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
             case 'orders':
                 return storeOrdersData ? <ShowOrder data={storeOrdersData} /> : null;
             case 'productAndSale':
-                return <div>商品銷量</div>;
+                return <StoreProductAndSale />;
             case 'ratings':
                 return <Rating isPending={isPendingRating} data={dataRating} refetch={refetchRating} />;
             default:
@@ -106,14 +107,8 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
     const menuItems = [
         { key: 'store', label: '商店資訊' },
         { key: 'orders', label: '商店訂單' },
-        {
-            key: 'coupon',
-            label: '商店報表',
-            children: [
-                { key: 'productAndSale', label: '商品銷量' },
-                { key: 'ratings', label: '商店評價' },
-            ],
-        },
+        { key: 'productAndSale', label: '商品管理' },
+        { key: 'ratings', label: '商店評價' },
     ];
 
 
