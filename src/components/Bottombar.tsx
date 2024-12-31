@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Container } from 'react-bootstrap';
 import { FaLocationDot, FaPhoneFlip, FaEnvelope, FaFacebook, FaInstagram, FaGithub } from "react-icons/fa6";
+import {FaExclamationTriangle} from "react-icons/fa";
 
 const Bottombar: React.FC = () => {
 
@@ -19,6 +20,7 @@ const Bottombar: React.FC = () => {
                     <p><FaPhoneFlip /> <a href="tel:+886212345678">02-1234-5678</a></p>
                     <p><FaEnvelope /> <a href="mailto:ootd@gmail.com">ootd@gmail.com</a></p>
                     <p><FaLocationDot /> No. 1, Sec. 3, Zhongxiao E. Rd., Da'an Dist., Taipei City 10608 , Taiwan (R.O.C.)</p>
+                    <p><FaExclamationTriangle /> <Link to="/report" style={{ color: 'inherit', textDecoration: 'none' }}>舉報</Link></p>
                 </Col>
                 <Col sm={12} md={4} className='text-center'>
                     <h3 className='mb-4'>社群平台</h3>
