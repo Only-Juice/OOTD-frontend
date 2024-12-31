@@ -68,22 +68,22 @@ const SellerModifyProduct: React.FC<SellerModifyProductProps> = ({ product }) =>
             </Button>
             <Modal title="修改產品" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                 <Form form={form} layout="vertical" onFinish={onFinish} initialValues={product}>
-                    <Form.Item name="ID" label="產品ID" rules={[{ required: true, message: 'Please input the Product ID!' }]}>
+                    <Form.Item name="ID" label="產品ID" rules={[{ required: true, message: '請輸入產品ID!' }]}>
                         <InputNumber min={0} />
                     </Form.Item>
                     <Form.Item name="Enabled" label="啟用" valuePropName="checked">
                         <Switch />
                     </Form.Item>
-                    <Form.Item name="Quantity" label="庫存" rules={[{ required: true, message: 'Please input the Quantity!' }]}>
+                    <Form.Item name="Quantity" label="庫存" rules={[{ required: true, message: '請輸入庫存!' }]}>
                         <InputNumber min={0} />
                     </Form.Item>
-                    <Form.Item name="Name" label="名稱" rules={[{ required: true, message: 'Please input the Name!' }]}>
+                    <Form.Item name="Name" label="名稱" rules={[{ required: true, message: '請輸入名稱!' }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item name="Description" label="敘述" rules={[{ required: true, message: 'Please input the Description!' }]}>
+                    <Form.Item name="Description" label="敘述" rules={[{ required: true, message: '請輸入敘述!' }]}>
                         <Input.TextArea rows={4} />
                     </Form.Item>
-                    <Form.Item name="Price" label="售價" rules={[{ required: true, message: 'Please input the Price!' }]}>
+                    <Form.Item name="Price" label="售價" rules={[{ required: true, message: '請輸入售價!' }]}>
                         <InputNumber min={0} />
                     </Form.Item>
                 </Form>
