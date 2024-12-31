@@ -74,20 +74,20 @@ const AddProduct: React.FC = () => {
             </Button>
             <Modal title="新增產品" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                 <Form form={form} layout="vertical" onFinish={onFinish}>
-                    <Form.Item name="Name" label="名稱" rules={[{ required: true, message: 'Please input the Name!' }]}>
+                    <Form.Item name="Name" label="名稱" rules={[{ required: true, message: '請輸入名稱!' }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item name="Description" label="敘述" rules={[{ required: true, message: 'Please input the Description!' }]}>
+                    <Form.Item name="Description" label="敘述" rules={[{ required: true, message: '請輸入敘述!' }]}>
                         <Input.TextArea rows={4} />
                     </Form.Item>
-                    <Form.Item name="Price" label="售價" rules={[{ required: true, message: 'Please input the Price!' }]}>
+                    <Form.Item name="Price" label="售價" rules={[{ required: true, message: '請輸入售價!' }]}>
                         <InputNumber min={0} />
                     </Form.Item>
-                    <Form.Item name="Quantity" label="庫存" rules={[{ required: true, message: 'Please input the Quantity!' }]}>
+                    <Form.Item name="Quantity" label="庫存" rules={[{ required: true, message: '請輸入庫存!' }]}>
                         <InputNumber min={0} />
                     </Form.Item>
-                    <Form.Item name="Keywords" label="關鍵字" rules={[{ required: true, message: 'Please input at least one Keyword!' }]}>
-                        <Select mode="tags" style={{ width: '100%' }} placeholder="Please input keywords">
+                    <Form.Item name="Keywords" label="關鍵字" rules={[{ required: true, message: '請輸入至少一個關鍵字!' }]}>
+                        <Select mode="tags" style={{ width: '100%' }} placeholder="請輸入關鍵字">
                             {keywords?.map((keyword) => (
                                 <Option key={keyword} value={keyword}>
                                     {keyword}
