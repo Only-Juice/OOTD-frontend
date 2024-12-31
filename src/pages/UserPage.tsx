@@ -4,6 +4,7 @@ import { Menu, Card, Spin, Layout, Grid } from 'antd';
 import UserProfile from '../components/UserProfile';
 import UserOrders from '../components/UserOrders'; // Assuming you have this component
 import UserBadge from '../components/UserBadge';
+import UserReport from '../components/UserReport';
 // import UserSettings from './UserSettings'; // Assuming you have this component
 import ChangePassword from '../components/ChangePassword';
 import { UserInfo } from '../types';
@@ -51,6 +52,7 @@ const UserPage: React.FC<UserPageProps> = ({ isLoading, isPending, data, refetch
     const menuItems = [
         { key: 'profile', label: '編輯個人檔案' },
         { key: 'orders', label: '我的訂單' },
+        { key: 'request', label: '我的回報' },
     ]
 
 
@@ -86,6 +88,7 @@ const UserPage: React.FC<UserPageProps> = ({ isLoading, isPending, data, refetch
                             {!changePassword && activeKey === 'profile' && <UserProfile isLoading={isLoading} data={data} refetch={refetch} />}
                             {activeKey === 'orders' && <UserOrders />}
                             {changePassword && activeKey === 'profile' && <ChangePassword />}
+                            {activeKey === 'request' && <UserReport/>}
                             {/* {activeKey === 'settings' && <UserSettings userInfo={data} />} */}
                         </Content>
                     </Layout>
