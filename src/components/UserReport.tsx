@@ -1,53 +1,103 @@
-import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Table } from 'antd';
 
 interface ReportMessage {
-    CreateAt: string;
+    ID: number;
+    CreatedAt: string;
     Message: string;
     Status: string;
 }
 
-const UserReport: React.FC = () => {
-    const [Reports, setReportMessage] = useState<ReportMessage[]>([]);
+const columns = [
+    {
+        title: 'ID',
+        dataIndex: 'ID',
+        key: 'ID',
+    },
+    {
+        title: 'Created At',
+        dataIndex: 'CreatedAt',
+        key: 'CreatedAt',
+        render: (text: string) => new Date(text).toLocaleString(), 
+    },
+    {
+        title: 'Message',
+        dataIndex: 'Message',
+        key: 'Message',
+    },
+    {
+        title: 'Status',
+        dataIndex: 'Status',
+        key: 'Status',
+        render: (status: string) => {
+            let color = '';
+            let text = '';
 
-    useEffect(() => {
-        fetch('/api/Request/GetOwnRequests', {
-            method: 'GET',  // 请求方法为 GET
-            headers: {
-                'Content-Type': 'application/json', // 根据需要添加请求头
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            switch (status) {
+                case '未審查':
+                    color = 'orange';
+                    text = '未審查';
+                    break;
+                case '未通過':
+                    color = 'red';
+                    text = '未通過';
+                    break;
+                case '已通過':
+                    color = 'green';
+                    text = '已通過';
+                    break;
+                default:
+                    color = 'default';
+                    text = '未知';
             }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setReportMessage(data); // 假设返回的数据是数组形式
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }, []);
+
+            return <span style={{ color }}>{text}</span>;
+        },
+    },
+];
+
+const UserReport: React.FC = () => {
+    const { data, isLoading, isError, error } = useQuery<ReportMessage[]>({
+        queryKey: ['GetOwnRequests'],
+        queryFn: () => fetch(`/api/Request/GetOwnRequests`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        }).then((res) => {
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return res.json();
+        }),
+    });
+
+    if (isLoading) {
+        return <p>Loading...</p>; // 加載狀態顯示
+    }
+
+    if (isError) {
+        return <p>Error: {error instanceof Error ? error.message : 'An unknown error occurred'}</p>; // 錯誤處理
+    }
+
+    const dataWithID = data?.map((item, index) => ({
+        ...item,
+        ID: index + 1,  // 這裡使用索引作為 ID
+    }));
 
     return (
-        <div>
-            <h1>User Reports</h1>
-            {Reports.length > 0 ? (
-                <ul>
-                    {Reports.map((report, index) => (
-                        <li key={index}>
-                            <p><strong>Created At:</strong> {report.CreateAt}</p>
-                            <p><strong>Message:</strong> {report.Message}</p>
-                            <p><strong>Status:</strong> {report.Status}</p>
-                        </li>
-                    ))}
-                </ul>
+        <>
+            {data && data.length > 0 ? (
+                <Table
+                    columns={columns}
+                    dataSource={dataWithID}
+                    rowKey="ID" // 設置唯一的 ID 為 rowKey
+                    scroll={{ x: 'max-content' }}
+                />
             ) : (
                 <p>No reports available.</p>
             )}
-        </div>
+        </>
     );
 }
 
