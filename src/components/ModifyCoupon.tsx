@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, InputNumber, Select, Button, message, Input, DatePicker, Switch } from 'antd';
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Coupon } from "../types";
+import dayjs from "dayjs";
 
 const ModifyCoupon: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -80,8 +81,8 @@ const ModifyCoupon: React.FC = () => {
                 Name: selectedCoupon.Name,
                 Description: selectedCoupon.Description,
                 Discount: selectedCoupon.Discount,
-                StartDate: new Date(selectedCoupon.StartDate).toLocaleString('zh-TW'),
-                ExpireDate: new Date(selectedCoupon.ExpireDate).toLocaleString('zh-TW'),
+                StartDate: dayjs(selectedCoupon.StartDate),
+                ExpireDate: dayjs(selectedCoupon.ExpireDate),
                 Enabled: selectedCoupon.Enabled,
             });
         }
