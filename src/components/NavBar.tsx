@@ -53,7 +53,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                 <Navbar.Collapse id="navbarNav">
                     <Nav className="d-flex align-items-center">
                         <Nav.Link as={Link} to="/message" style={linkStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''} className="d-flex align-items-center">
-                            <FaComments  /> 訊息
+                            <FaComments /> 訊息
                         </Nav.Link>
                         {!isPendingUserInfo ? (
                             <>
@@ -62,6 +62,7 @@ const NavBar: React.FC<NavBarProps> = ({ theme, setIsModalOpen, toggleTheme, han
                                         <NavDropdown title={<UserBadge username={dataUserInfo.Username} />} style={{ whiteSpace: 'nowrap' }}>
                                             <NavDropdown.Item as={Link} to="/user?tab=profile">用戶頁面</NavDropdown.Item>
                                             {dataUserInfo.IsAdministrator && <NavDropdown.Item as={Link} to="/admin">管理頁面</NavDropdown.Item>}
+                                            {dataUserInfo.HaveStore && <NavDropdown.Item as={Link} to="/seller">賣家中心</NavDropdown.Item>}
                                             <NavDropdown.Item onClick={() => {
                                                 Toast.fire({
                                                     icon: "success",

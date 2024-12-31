@@ -112,4 +112,7 @@ export interface Order {
   Amount: number;
   Discount: number;
   Details: OrderDetail[];
+  Username?: string;
+  Address?: string;
+
 }

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Card, Layout, Menu } from 'antd';
 import { useMediaQuery } from 'react-responsive';
-import type { UserInfo } from '../types';
+import type { RatingResult, UserInfo } from '../types';
 import SellerStoreManage from '../components/SellerStoreManage';
 import ShowOrder from '../components/ShowOrder';
 const { Sider, Content } = Layout;
 import { useQuery } from '@tanstack/react-query';
 import type { Store } from '../types';
+import Rating from '../components/Rating';
+import StoreProductAndSale from '../components/StoreProductAndSale';
 
 interface SellerProps {
     dataUserInfo: UserInfo | null;
@@ -20,7 +22,6 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
     const { isLoading: isLoadingStore, error: errorStore, data: store } = useQuery<Store>({
         queryKey: ['GetSellerStore'],
         queryFn: async () => {
-            const token = localStorage.getItem('token');
             if (!token) {
                 return null;
             }
@@ -39,7 +40,6 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
     const { data: storeOrdersData } = useQuery({
         queryKey: [`GetStoreOrders`],
         queryFn: () => {
-            const token = localStorage.getItem('token');
             if (!token) return null;
             return fetch('/api/Store/GetStoreOrders', {
                 headers: {
@@ -61,7 +61,25 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
         retry: false,
     });
 
-
+    const { isPending: isPendingRating, data: dataRating, refetch: refetchRating } = useQuery<RatingResult[]>({
+        queryKey: ['GetStoreRatings'],
+        queryFn: async () => {
+            if (!token) return null;
+            return fetch('/api/Store/GetStoreRatings', {
+                headers: {
+                    'Authorization': `${token ? ('Bearer ' + token) : ''}`,
+                },
+            }).then((res) => {
+                if (res.status === 404) {
+                    return [];
+                }
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+        },
+    });
 
     const renderComponent = () => {
         switch (selectedComponent) {
@@ -69,6 +87,10 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
                 return <SellerStoreManage store={store} error={errorStore} isLoading={isLoadingStore} />;
             case 'orders':
                 return storeOrdersData ? <ShowOrder data={storeOrdersData} /> : null;
+            case 'productAndSale':
+                return <StoreProductAndSale />;
+            case 'ratings':
+                return <Rating isPending={isPendingRating} data={dataRating} refetch={refetchRating} />;
             default:
                 return null;
         }
@@ -85,14 +107,8 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
     const menuItems = [
         { key: 'store', label: '商店資訊' },
         { key: 'orders', label: '商店訂單' },
-        {
-            key: 'coupon',
-            label: '商店報表',
-            children: [
-                { key: 'productAndSale', label: '商品銷量' },
-                { key: 'ratings', label: '商店評價' },
-            ],
-        },
+        { key: 'productAndSale', label: '商品管理' },
+        { key: 'ratings', label: '商店評價' },
     ];
 
 
