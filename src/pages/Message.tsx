@@ -215,7 +215,11 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                     </div>
                 ) : (
                     <div style={{ padding: '20px' }}>
-                        <h3>請選擇一個聯絡人查看訊息</h3>
+                        {Object.keys(Messages).length === 0 ? (
+                            <h3>尚無聯絡人</h3>
+                        ) : (
+                            <h3>請選擇一個聯絡人查看訊息</h3>
+                        )}
                     </div>
                 )}
             </div>

@@ -33,18 +33,17 @@ const Report: React.FC = () => {
 
     return (
         <div className="container">
-            <h1>挖肏牛逼</h1>
+            <h1>問題回報</h1>
+            <p>OOTD十分注重用戶的體驗，如果你遇到了與店家的不愉快，歡迎在此回報</p>
+            <p>客服人員會盡速與店家聯絡，並做出相對應的處理</p>
             <Form layout="vertical" onFinish={handleSubmit}>
-                <Form.Item label="輸入請求訊息" required>
-                    <Input.TextArea
-                        value={newRequest}
-                        onChange={(e) => setNewRequest(e.target.value)}
-                        rows={4}
-                        placeholder="請輸入您想發送的訊息..."
-                    />
-                </Form.Item>
-
-                <Form.Item>
+                <Input.TextArea
+                    value={newRequest}
+                    onChange={(e) => setNewRequest(e.target.value)}
+                    rows={4}
+                    placeholder="請輸入您想回報的訊息..."
+                />
+                <Form.Item style={{marginTop: '16px'}}> {/* 增加 marginTop 來拉開距離 */}
                     <Button type="primary" htmlType="submit">
                         發送請求
                     </Button>
