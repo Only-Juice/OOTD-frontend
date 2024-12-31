@@ -18,7 +18,7 @@ const columns = [
         title: 'Created At',
         dataIndex: 'CreatedAt',
         key: 'CreatedAt',
-        render: (text: string) => new Date(text).toLocaleString(), 
+        render: (text: string) => new Date(text).toLocaleString(),
     },
     {
         title: 'Message',
