@@ -9,36 +9,30 @@
 > 無論您身處何地，我們都能將最好的茶葉送到您的身邊。探索 OOTD，品味世界茶文化。
 
 # 啟動方法
+這是設計給Docker compose的Branch
 
-先
-```
-npm i
-```
-然後
-```
-npm run dev
-```
-網頁在
-```
-http://localhost:5173/
-```
+請先下載這個repo [HeavenManySugar/OOTD-FullStack](https://github.com/HeavenManySugar/OOTD-FullStack)
 
-# 啟動方法(Docker)
+可以透過這串命令來完成，以確保所有依賴都有正確下載
+```bash
+git clone --recursive https://github.com/HeavenManySugar/OOTD-FullStack.git
+```
+接著進入OOTD-FullStack資料夾，執行以下指令建立容器
+```bash
+docker compose build --no-cache
+```
+建構完成之後，以後只需使用
+```bash
+docker compose up
+```
+即可執行資料庫+後端+前端系統
 
-先
-```
-docker build -t ootd-frontend . --no-cache
-```
-然後
-```
-docker run -p 4173:4173 ootd-frontend
-```
-網頁在
-```
-http://localhost:4173/
+如果有進行前、後端的修改，請重新建構容器
+```bash
+docker compose build --no-cache
 ```
 
-
+NOTE: 資料庫檔案會存放在同個資料夾下的db-data之中，執行更新時應該不會破壞資料庫中的資料
 
 
 # 成員名單
