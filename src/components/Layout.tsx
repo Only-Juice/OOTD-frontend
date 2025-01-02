@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import NavBar from "./NavBar";
 import Login from "./Login";
 import { useQueryClient } from '@tanstack/react-query';
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import Bottombar from "./Bottombar.tsx";
 
@@ -18,6 +18,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, setTheme, isPendingUserInfo, dataUserInfo, refetchUserInfo }) => {
     const queryClient = useQueryClient();
+    const location = useLocation();
 
     useEffect(() => {
         // Automatically detect browser theme
@@ -54,6 +55,12 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
             }
         }
     }, [localStorage, localStorage.getItem('token')]);
+
+    // 滾動到頂部的邏輯
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [location.pathname]);
+
 
     return (
         <>
