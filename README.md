@@ -27,6 +27,8 @@ docker compose up
 ```
 即可執行資料庫+後端+前端系統
 
+**請注意第一次啟動需要等待至少30秒**
+
 如果有進行前、後端的修改，請重新建構容器
 ```bash
 docker compose build --no-cache
