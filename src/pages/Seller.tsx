@@ -122,7 +122,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
         <Card title="賣家中心" className="mt-2">
             <Layout>
                 {!isMobile && (
-                    <Sider style={{ background: '#fff' }}>
+                    <Sider style={{ backgroundColor: 'var(--product-background-color)' }}>
                         <Menu
                             onClick={handleMenuClick}
                             selectedKeys={[selectedComponent]}
