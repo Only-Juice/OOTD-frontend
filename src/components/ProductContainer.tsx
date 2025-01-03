@@ -113,6 +113,12 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                     if (!response.ok) {
                         throw new Error('Failed to send message');
                     }
+                    setShowMessageModal(false);
+                    MySwal.fire({
+                        title: '訊息已發送',
+                        text: '您的訊息已成功發送給賣家',
+                        icon: 'success',
+                    });
                     return response.json();
                 })
                 .then(() => {

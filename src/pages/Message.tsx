@@ -80,7 +80,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
         }
 
         const messageData = {
-            ContactUID: currentContactUID,
+            ReceiverID: currentContactUID,
             Message: newMessage,
         };
 
