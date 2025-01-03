@@ -145,7 +145,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                             }}
                             onClick={() => setCurrentContactUID(contact.UID)}
                         >
-                            <strong>Username:</strong> {contact.Username}
+                            <span style={{ color: '#333' }}><strong>Username:</strong> {contact.Username}</span>
                         </li>
                     ))}
                 </ul>
@@ -190,7 +190,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                                                 border: '1px solid #ddd',
                                             }}
                                         >
-                                            {message.Message}
+                                            <span style={{ color: '#333' }}>{message.Message}</span>
                                         </div>
                                         <div>
                                             <em>{new Date(message.CreatedAt).toLocaleString()}</em>

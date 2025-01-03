@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Outlet, useLocation } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import Bottombar from "./Bottombar.tsx";
+import { ConfigProvider, theme as antdTheme } from "antd";
 
 interface LayoutProps {
     isModalOpen: boolean | undefined;
@@ -63,7 +64,7 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
 
 
     return (
-        <>
+        <ConfigProvider theme={{ algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm }}>
             <header>
                 <NavBar
                     theme={theme}
@@ -93,7 +94,7 @@ const Layout: React.FC<LayoutProps> = ({ isModalOpen, setIsModalOpen, theme, set
             <footer>
                 <Bottombar />
             </footer>
-        </>
+        </ConfigProvider>
     );
 };
 

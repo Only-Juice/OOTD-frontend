@@ -35,7 +35,7 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
             case 'user':
                 return <UserManage />;
             case `create`:
-                return <AdminStoreCreate/>;
+                return <AdminStoreCreate />;
             default:
                 return null;
         }
@@ -61,7 +61,7 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
         },
         {
             key: 'store',
-            label: '商店管理' ,
+            label: '商店管理',
             children: [
                 { key: 'manage', label: '店家管理' },
                 { key: 'create', label: '建立商店' },
@@ -76,7 +76,7 @@ const Admin: React.FC<AdminProps> = ({ dataUserInfo }) => {
         <Card title="管理員頁面" className="mt-2">
             <Layout>
                 {screens.md && (
-                    <Sider style={{ background: '#fff' }}>
+                    <Sider style={{ background: 'var(--product-background-color)' }}>
                         <Menu
                             onClick={handleMenuClick}
                             selectedKeys={[selectedComponent]}

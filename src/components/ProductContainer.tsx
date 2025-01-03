@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, Modal, Row, Col, Spinner, Card } from "react-bootstrap";
 import { Product } from "../types";
 import { useMutation } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
@@ -9,7 +8,8 @@ import Rating from "./Rating";
 import UserBadge from "./UserBadge";
 import { Store, RatingResult } from "../types";
 import { AiOutlineSmile } from "react-icons/ai";
-import { Carousel, Input, Form, Image } from 'antd';
+import { Carousel, Input, Form, Image, Row, Col, Card, Button, Modal } from 'antd';
+import { Spinner } from 'react-bootstrap';
 
 interface ProductContainerProps {
     product: Product | null;
@@ -130,7 +130,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
         <>
             {product &&
                 <Row>
-                    <Col md={6}>
+                    <Col md={12}>
                         <Carousel draggable autoplay autoplaySpeed={5000} dots>
                             {product.Images.length > 0 ? (
                                 product.Images.map((image) => (
@@ -141,7 +141,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                                                 width='100%'
                                                 fallback="data:image/png;base64,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"
                                                 alt={product.Name}
-                                                style={{ objectFit: 'contain', height: 'auto', maxHeight: '500px' }}
+                                                style={{ objectFit: 'contain', height: 'auto', maxHeight: '700px' }}
                                             />
                                         </Image.PreviewGroup>
                                         {product.Quantity === 0 && <div className='sold-out'>售完</div>}
@@ -149,93 +149,92 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                                 ))
                             ) : (
                                 <div className="bg-light">
-                                    <p className="text-center" style={{ lineHeight: '500px' }}><AiOutlineSmile fontSize={20} />暫無商品圖</p>
+                                    <p className="text-center" style={{ lineHeight: '400px' }}><AiOutlineSmile fontSize={20} />暫無商品圖</p>
                                 </div>
                             )}
                         </Carousel>
                         {isStoreLoading ? <Spinner animation="border" /> : storeData &&
                             <Link to={`/store/${storeData.StoreID}`} className='text-decoration-none'>
                                 <Card className="mt-4">
-                                    <Card.Body>
-                                        <Card.Title style={{ fontSize: '1rem' }}><UserBadge
-                                            username={storeData.OwnerUsername} size={35} /></Card.Title>
-                                        <Card.Title style={{ fontSize: '2rem' }}>{storeData.Name}</Card.Title>
-                                        <div className="d-flex justify-content-end mt-3">
-                                            <Button
-                                                variant="primary"
-                                                onClick={(e) => {
-                                                    e.preventDefault();  // 阻止 Link 的跳轉
-                                                    handleMessageShow();  // 觸發聊天邏輯
-                                                }}
-                                            >
-                                                來聊聊吧！
-                                            </Button>
-                                        </div>
-                                    </Card.Body>
+                                    <Card.Meta
+                                        avatar={<UserBadge username={storeData.OwnerUsername} size={35} />}
+                                        title={storeData.Name}
+                                        description={
+                                            <>
+                                                {
+                                                    storeData.Description.split('\n').map((line: string, index: number) => (
+                                                        <React.Fragment key={index}>
+                                                            {line}
+                                                            <br />
+                                                        </React.Fragment>
+                                                    ))
+                                                }
+                                                < div className="d-flex justify-content-end mt-3">
+                                                    <Button
+                                                        type="primary"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();  // 阻止 Link 的跳轉
+                                                            handleMessageShow();  // 觸發聊天邏輯
+                                                        }}
+                                                    >
+                                                        來聊聊吧！
+                                                    </Button>
+                                                </div>
+                                            </>
+                                        }
+                                    />
                                 </Card>
                             </Link>
                         }
-                        <Modal show={ShowMessageModal} onHide={handleMessageClose}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>開始聊天</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form.Item label="New Message">
-                                    <Input
-                                        value={newMessage}
-                                        onChange={(e) => setNewMessage(e.target.value)}
-                                        onPressEnter={handleSendMessage}  // 按下 Enter 鍵發送訊息
-                                        placeholder="輸入訊息..."
-                                    />
-                                </Form.Item>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={handleMessageClose}>
-                                    關閉
-                                </Button>
-                                <Button variant="primary" onClick={handleSendMessage}>
-                                    發送訊息
-                                </Button>
-                            </Modal.Footer>
+                        <Modal title='開始聊天' open={ShowMessageModal} onOk={handleSendMessage} onCancel={handleMessageClose}>
+                            <Form.Item label='新訊息'>
+                                <Input
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    onPressEnter={handleSendMessage}  // 按下 Enter 鍵發送訊息
+                                    placeholder="輸入訊息..."
+                                />
+                            </Form.Item>
                         </Modal>
-                    </Col>
-                    <Col md={6}>
-                        <h1><b>{product.Name}</b></h1>
-                        <p style={{ color: '#6c757d' }}>商品編號: {product.ID} {!isPVC && <>｜ 售出數量: {product.Sale} 件</>}</p>
-                        <p>{product.Description.split('\n').map((line, index) => (
-                            <React.Fragment key={index}>
-                                {line}
-                                <br />
-                            </React.Fragment>
-                        ))}</p>
-                        <h4 style={{ color: 'red' }}><b>NT${product.Price}</b></h4>
-                        {!isPVC &&
-                            (<>
-                                <p style={{ color: '#6c757d' }}>庫存: {leftQuantity}</p>
-                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                                    <label htmlFor="quantity" className="mr-2">數量:</label>
-                                    <input
-                                        type="number"
-                                        id="quantity"
-                                        name="quantity"
-                                        min="1"
-                                        max={leftQuantity}
-                                        value={quantity}
-                                        className="form-control d-inline-block"
-                                        style={{ width: '60px', marginRight: '10px' }}
-                                        onChange={(e) => {
-                                            const value = parseInt(e.target.value);
-                                            if (value >= 1 && value <= leftQuantity) {
-                                                setQuantity(value);
-                                            }
-                                        }}
-                                    />
-                                    <Button className="w-25" variant="primary" onClick={() => mutation.mutate()} disabled={isLoading}>
-                                        {isLoading ? <Spinner animation="border" size="sm" /> : '加入購物車'}
-                                    </Button>
-
-                                </div>
-                            </>)}
+                    </Col >
+                    <Col md={12}>
+                        <div className="ms-3">
+                            <h1><b>{product.Name}</b></h1>
+                            <p style={{ color: '#6c757d' }}>商品編號: {product.ID} {!isPVC && <>｜ 售出數量: {product.Sale} 件</>}</p>
+                            <p>{product.Description.split('\n').map((line, index) => (
+                                <React.Fragment key={index}>
+                                    {line}
+                                    <br />
+                                </React.Fragment>
+                            ))}</p>
+                            <h4 style={{ color: 'red' }}><b>NT${product.Price}</b></h4>
+                            {!isPVC &&
+                                (<>
+                                    <p style={{ color: '#6c757d' }}>庫存: {leftQuantity}</p>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                                        <label htmlFor="quantity" className="mr-2">數量:</label>
+                                        <input
+                                            type="number"
+                                            id="quantity"
+                                            name="quantity"
+                                            min="1"
+                                            max={leftQuantity}
+                                            value={quantity}
+                                            className="form-control d-inline-block"
+                                            style={{ width: '60px', marginRight: '10px' }}
+                                            onChange={(e) => {
+                                                const value = parseInt(e.target.value);
+                                                if (value >= 1 && value <= leftQuantity) {
+                                                    setQuantity(value);
+                                                }
+                                            }}
+                                        />
+                                        <Button className="w-25" type="primary" onClick={() => mutation.mutate()} loading={isLoading} >
+                                            加入購物車
+                                        </Button>
+                                    </div>
+                                </>)}
+                        </div>
                     </Col>
                 </Row >
             }
