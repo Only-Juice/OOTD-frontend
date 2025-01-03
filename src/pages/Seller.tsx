@@ -19,7 +19,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
     const [selectedComponent, setSelectedComponent] = useState('store');
     const isMobile = useMediaQuery({ maxWidth: 767 });
 
-    const { isLoading: isLoadingStore, error: errorStore, data: store } = useQuery<Store>({
+    const { isLoading: isLoadingStore, error: errorStore, data: store, refetch: storeRefetch } = useQuery<Store>({
         queryKey: ['GetSellerStore'],
         queryFn: async () => {
             if (!token) {
@@ -37,7 +37,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
         },
     });
 
-    const { data: storeOrdersData } = useQuery({
+    const { data: storeOrdersData, refetch: storeOrdersRefetch } = useQuery({
         queryKey: [`GetStoreOrders`],
         queryFn: () => {
             if (!token) return null;
@@ -98,7 +98,13 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
 
     useEffect(() => {
         setToken(localStorage.getItem('token'));
-    }, [localStorage.getItem('token')]);
+    }, [localStorage, localStorage.getItem('token')]);
+
+    useEffect(() => {
+        storeRefetch();
+        storeOrdersRefetch();
+        refetchRating();
+    }, [token]);
 
     const handleMenuClick = (e: any) => {
         setSelectedComponent(e.key);
@@ -116,7 +122,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
         <Card title="賣家中心" className="mt-2">
             <Layout>
                 {!isMobile && (
-                    <Sider style={{ background: '#fff' }}>
+                    <Sider style={{ backgroundColor: 'var(--product-background-color)' }}>
                         <Menu
                             onClick={handleMenuClick}
                             selectedKeys={[selectedComponent]}

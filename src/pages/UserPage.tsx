@@ -61,7 +61,7 @@ const UserPage: React.FC<UserPageProps> = ({ isLoading, isPending, data, refetch
             <Card title="用戶頁面" className="mt-2">
                 <Layout>
                     {screens.md && (
-                        <Sider style={{ background: '#fff' }}>
+                        <Sider style={{ background: 'var(--product-background-color)' }}>
                             <div className='mb-3'>
                                 {data && data.Username && <UserBadge username={data.Username} />}
                             </div>
@@ -88,7 +88,7 @@ const UserPage: React.FC<UserPageProps> = ({ isLoading, isPending, data, refetch
                             {!changePassword && activeKey === 'profile' && <UserProfile isLoading={isLoading} data={data} refetch={refetch} />}
                             {activeKey === 'orders' && <UserOrders />}
                             {changePassword && activeKey === 'profile' && <ChangePassword />}
-                            {activeKey === 'request' && <UserReport/>}
+                            {activeKey === 'request' && <UserReport />}
                             {/* {activeKey === 'settings' && <UserSettings userInfo={data} />} */}
                         </Content>
                     </Layout>
