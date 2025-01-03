@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Form, Spin } from 'antd';
 import { useQuery } from "@tanstack/react-query";
+import UserBadge from '../components/UserBadge';
 
 interface Contact {
     UID: number;
@@ -80,7 +81,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
         }
 
         const messageData = {
-            ContactUID: currentContactUID,
+            ReceiverID: currentContactUID,
             Message: newMessage,
         };
 
@@ -145,7 +146,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                             }}
                             onClick={() => setCurrentContactUID(contact.UID)}
                         >
-                            <span style={{ color: '#333' }}><strong>Username:</strong> {contact.Username}</span>
+                            <span style={{ color: '#333' }}><UserBadge username={contact.Username} /></span>
                         </li>
                     ))}
                 </ul>
@@ -156,7 +157,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                 {currentContactUID !== null && Messages[currentContactUID] ? (
                     <div>
                         <h2>
-                            與外送茶販賣員
+                            與用戶
                             {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
                             的對話
                         </h2>
@@ -173,9 +174,9 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                                         {/* 顯示發送者名稱，且排除自己發送的訊息 */}
                                         {!message.IsSender && (
                                             <div>
-                                                <strong>
+                                                <UserBadge username=
                                                     {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
-                                                </strong>
+                                                />
                                             </div>
                                         )}
                                         {/* 訊息顯示框 */}
@@ -201,7 +202,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                         </div>
 
                         {/* 輸入框 */}
-                        <Form.Item label="New Message">
+                        <Form.Item label="新訊息">
                             <Input
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
@@ -210,7 +211,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                             />
                         </Form.Item>
                         <Button type="primary" onClick={handleSendMessage}>
-                            Send Message
+                            發送訊息
                         </Button>
                     </div>
                 ) : (
