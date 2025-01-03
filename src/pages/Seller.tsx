@@ -19,7 +19,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
     const [selectedComponent, setSelectedComponent] = useState('store');
     const isMobile = useMediaQuery({ maxWidth: 767 });
 
-    const { isLoading: isLoadingStore, error: errorStore, data: store } = useQuery<Store>({
+    const { isLoading: isLoadingStore, error: errorStore, data: store, refetch: storeRefetch } = useQuery<Store>({
         queryKey: ['GetSellerStore'],
         queryFn: async () => {
             if (!token) {
@@ -37,7 +37,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
         },
     });
 
-    const { data: storeOrdersData } = useQuery({
+    const { data: storeOrdersData, refetch: storeOrdersRefetch } = useQuery({
         queryKey: [`GetStoreOrders`],
         queryFn: () => {
             if (!token) return null;
@@ -98,6 +98,9 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
 
     useEffect(() => {
         setToken(localStorage.getItem('token'));
+        storeRefetch();
+        storeOrdersRefetch();
+        refetchRating();
     }, [localStorage.getItem('token')]);
 
     const handleMenuClick = (e: any) => {
