@@ -6,9 +6,11 @@ import type { Product } from '../types';
 import SellerModifyProduct from './SellerModifyProduct';
 import AddProduct from './AddProduct';
 
-
 const StoreProductAndSale: React.FC = () => {
     const queryClient = useQueryClient();
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
+    const [selectedProductID, setSelectedProductID] = useState<number | null>(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const { data, isLoading, error, refetch } = useQuery<Product[]>({
         queryKey: ['GetStoreProductAndSale'],
@@ -29,13 +31,30 @@ const StoreProductAndSale: React.FC = () => {
         },
     });
 
-    useEffect(() => {
-        setSelectedImages(data?.find(product => product.ID === selectedProductID)?.Images || []);
-    }, [data]);
-
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedImages, setSelectedImages] = useState<string[]>([]);
-    const [selectedProductID, setSelectedProductID] = useState<number | null>(null);
+    const deleteMutation = useMutation({
+        mutationFn: async ({ productID, urls }: { productID: number; urls: string[] }) => {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/Product/RemoveProductImages', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ ProductID: productID, Urls: urls }),
+            });
+            if (!res.ok) {
+                throw new Error('Failed to delete images');
+            }
+            return res.json();
+        },
+        onSuccess: () => {
+            message.success('Images deleted successfully');
+            queryClient.invalidateQueries({ queryKey: ['GetStoreProductAndSale'] });
+        },
+        onError: (error: Error) => {
+            message.error(`Delete failed: ${error.message}`);
+        },
+    });
 
     const showImages = (images: string[], productID: number) => {
         setSelectedImages(images);
@@ -43,9 +62,20 @@ const StoreProductAndSale: React.FC = () => {
         setIsModalVisible(true);
     };
 
+    const handleDeleteImage = (event: React.MouseEvent, url: string) => {
+        event.preventDefault();
+        if (selectedProductID !== null) {
+            deleteMutation.mutate({ productID: selectedProductID, urls: [url] });
+        }
+    };
+
     const handleCancel = () => {
         setIsModalVisible(false);
     };
+
+    useEffect(() => {
+        setSelectedImages(data?.find(product => product.ID === selectedProductID)?.Images || []);
+    }, [data]);
 
     const uploadMutation = useMutation({
         mutationFn: async (formData: FormData) => {
@@ -71,10 +101,9 @@ const StoreProductAndSale: React.FC = () => {
         },
     });
 
-
     const handleUpload = ({ file }: any) => {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('files', file);
         uploadMutation.mutate(formData);
     };
 
@@ -193,13 +222,23 @@ const StoreProductAndSale: React.FC = () => {
                     <Skeleton active loading={uploadMutation.isPending}>
                         <Carousel arrows draggable>
                             {selectedImages.map((image, index) => (
-                                <div key={index}>
-                                    <img src={image} alt={`Product Image ${index}`} style={{ width: '100%', marginBottom: '10px' }} />
-                                </div>
+                                <>
+                                    <div key={index}>
+                                        <img src={image} alt={`Product Image ${index}`} style={{ width: '100%', marginBottom: '10px' }} />
+                                    </div>
+                                    <Button type="primary" danger onClick={(event) => handleDeleteImage(event, image)}>
+                                        刪除圖片
+                                    </Button>
+                                </>
                             ))}
                         </Carousel>
                     </Skeleton>
-                    <Upload.Dragger customRequest={handleUpload} showUploadList={false}>
+                    <Upload.Dragger
+                        customRequest={handleUpload}
+                        showUploadList={false}
+                        accept="image/*"
+                        multiple
+                    >
                         <p className="ant-upload-drag-icon">
                             <UploadOutlined />
                         </p>
