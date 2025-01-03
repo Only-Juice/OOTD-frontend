@@ -1,16 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Skeleton, Table, Button, Modal, Upload, message, Carousel } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Alert, Skeleton, Table, Button, Modal, Upload, message, Image } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import type { Product } from '../types';
 import SellerModifyProduct from './SellerModifyProduct';
 import AddProduct from './AddProduct';
+import type { GetProp, UploadFile, UploadProps } from 'antd';
+
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+const getBase64 = (file: FileType): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+    });
+
 
 const StoreProductAndSale: React.FC = () => {
     const queryClient = useQueryClient();
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
     const [selectedProductID, setSelectedProductID] = useState<number | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+
 
     const { data, isLoading, error, refetch } = useQuery<Product[]>({
         queryKey: ['GetStoreProductAndSale'],
@@ -62,8 +78,7 @@ const StoreProductAndSale: React.FC = () => {
         setIsModalVisible(true);
     };
 
-    const handleDeleteImage = (event: React.MouseEvent, url: string) => {
-        event.preventDefault();
+    const handleDeleteImage = (url: string) => {
         if (selectedProductID !== null) {
             deleteMutation.mutate({ productID: selectedProductID, urls: [url] });
         }
@@ -106,6 +121,16 @@ const StoreProductAndSale: React.FC = () => {
         formData.append('files', file);
         uploadMutation.mutate(formData);
     };
+
+    const handlePreview = async (file: UploadFile) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj as FileType);
+        }
+
+        setPreviewImage(file.url || (file.preview as string));
+        setPreviewOpen(true);
+    };
+
 
     const columns = [
         {
@@ -218,34 +243,41 @@ const StoreProductAndSale: React.FC = () => {
                     pagination={{ pageSize: 5 }}
                     scroll={{ x: 'max-content' }}
                 />
-                <Modal title="產品圖片 (左右滑動切換圖片)" open={isModalVisible} onCancel={handleCancel} footer={null}>
+                <Modal title="產品圖片" open={isModalVisible} onCancel={handleCancel} footer={null}>
                     <Skeleton active loading={uploadMutation.isPending}>
-                        <Carousel arrows draggable>
-                            {selectedImages.map((image, index) => (
-                                <>
-                                    <div key={index}>
-                                        <img src={image} alt={`Product Image ${index}`} style={{ width: '100%', marginBottom: '10px' }} />
-                                    </div>
-                                    <Button type="primary" danger onClick={(event) => handleDeleteImage(event, image)}>
-                                        刪除圖片
-                                    </Button>
-                                </>
-                            ))}
-                        </Carousel>
+                        <Upload
+                            listType="picture-card"
+                            fileList={selectedImages.map((url, index) => ({
+                                uid: index.toString(),
+                                name: `image${index}`,
+                                status: 'done',
+                                url,
+                            }))}
+                            onPreview={handlePreview}
+                            onRemove={(file) => handleDeleteImage(file.url!)}
+                            customRequest={handleUpload}
+                            showUploadList={{ showRemoveIcon: true }}
+                            accept="image/*"
+                        >
+                            <button style={{ border: 0, background: 'none' }} type="button">
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>上傳圖片</div>
+                            </button>
+                        </Upload>
                     </Skeleton>
-                    <Upload.Dragger
-                        customRequest={handleUpload}
-                        showUploadList={false}
-                        accept="image/*"
-                        multiple
-                    >
-                        <p className="ant-upload-drag-icon">
-                            <UploadOutlined />
-                        </p>
-                        <p className="ant-upload-text">點擊或拖動圖片到此區域以上傳</p>
-                        <p className="ant-upload-hint">支持單個或批量上傳。</p>
-                    </Upload.Dragger>
                 </Modal>
+                {previewImage && (
+                    <Image
+                        wrapperStyle={{ display: 'none' }}
+                        preview={{
+                            visible: previewOpen,
+                            onVisibleChange: (visible) => setPreviewOpen(visible),
+                            afterOpenChange: (visible) => !visible && setPreviewImage(''),
+                        }}
+                        src={previewImage}
+                    />
+                )}
+
             </>
         )}
     </>;
