@@ -98,10 +98,13 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
 
     useEffect(() => {
         setToken(localStorage.getItem('token'));
+    }, [localStorage, localStorage.getItem('token')]);
+
+    useEffect(() => {
         storeRefetch();
         storeOrdersRefetch();
         refetchRating();
-    }, [localStorage.getItem('token')]);
+    }, [token]);
 
     const handleMenuClick = (e: any) => {
         setSelectedComponent(e.key);
