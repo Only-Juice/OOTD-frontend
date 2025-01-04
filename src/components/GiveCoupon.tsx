@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Form, InputNumber, Select, Button, message, Input, Radio, RadioChangeEvent } from 'antd';
+import { Form, InputNumber, Select, Button, message, Radio, RadioChangeEvent, Spin } from 'antd';
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Coupon } from "../types";
+
+interface User {
+    UID: number;
+    Username: string;
+    Email: string;
+    Address: string;
+    CreatedAt: string;
+    Enabled: boolean;
+}
 
 const GiveCoupon: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -28,6 +37,26 @@ const GiveCoupon: React.FC = () => {
         }
     },
     );
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['GetUsersAll'],
+        queryFn: () =>
+            fetch('/api/User/GetUsers?page=1&pageLimitNumber=333333&isASC=true', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
+                .then((res) => {
+                    if (!res.ok) {
+                        return null;
+                    }
+                    return res.json();
+                })
+                .catch((err) => {
+                    message.error(`Error: ${err.message}`);
+                }),
+    });
 
     useEffect(() => {
         refetch();
@@ -103,7 +132,18 @@ const GiveCoupon: React.FC = () => {
                     name="UID"
                     rules={[{ required: true, message: '請輸入UID!' }]}
                 >
-                    <Input placeholder="輸入用戶的UID" />
+                    {isLoading ? (
+                        <Spin size="large" />
+                    ) : (
+                        <Select placeholder="請選擇用戶">
+                            {data?.Users.map((user: User) => (
+                                <Select.Option key={user.UID} value={user.UID}>
+                                    {user.UID} - {user.Username}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    )}
+
                 </Form.Item>
             )}
 

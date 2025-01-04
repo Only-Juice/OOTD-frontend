@@ -67,6 +67,7 @@ const ModifyCoupon: React.FC = () => {
         mutation.mutate(formattedValues);
         setTimeout(() => {
             setLoading(false);
+            refetch();
         }, 2000);
     };
 
