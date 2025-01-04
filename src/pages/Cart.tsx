@@ -358,13 +358,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
                                     textAlign: 'center',
                                     marginTop: '90px',
                                     whiteSpace: 'normal'
-                                }}> &#x2615;你他媽的應該要先買東西 </h1>
-                                <h1 style={{
-                                    fontSize: '45px',
-                                    textAlign: 'center',
-                                    marginTop: '90px',
-                                    whiteSpace: 'normal'
-                                }}> &#x1F602;再來點那該死的購物車 </h1>
+                                }}> &#x2615;購物車空空如也</h1>
                             </div>
                         ),
                     }}
