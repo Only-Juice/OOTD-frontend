@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Form, Spin, List, Typography, Card, Layout, Skeleton } from 'antd';
+import { Button, Input, Form, List, Typography, Card, Layout, Skeleton } from 'antd';
 import { useQuery } from "@tanstack/react-query";
 import UserBadge from '../components/UserBadge';
 import { useMediaQuery } from 'react-responsive';
