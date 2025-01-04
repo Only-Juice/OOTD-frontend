@@ -164,7 +164,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
 
     /* Get Cart Info */
     const [Product, setcatchProduct] = useState<ProductInCart[]>([]);
-    const token = localStorage.getItem('token');
+    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
     useEffect(() => {
         if (token == null) {
@@ -260,15 +260,18 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
         onChange: SelectChange,
     };
 
-    if (token !== null) {
-        useEffect(() => {
+    useEffect(() => {
+        if (token !== null) {
             fetchUserInfo();
-        }, []);
-
-        useEffect(() => {
             fetchUserCoupon();
-        }, []);
-    }
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (localStorage.getItem('token') !== null) {
+            setToken(localStorage.getItem('token'));
+        }
+    }, [localStorage, localStorage.getItem('token')]);
 
     const checkboxclick = selectkey.length > 0;
 
