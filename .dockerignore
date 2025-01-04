@@ -1,0 +1,6 @@
+.gitignore
+.git/
+eslint.config.js
+README.md
+.github/
+.DS_Store
