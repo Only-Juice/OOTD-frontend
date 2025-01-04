@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Form, Select, Spin, message, Input, Button } from 'antd';
 
 // 定义用户类型
@@ -15,7 +15,7 @@ interface User {
 const AdminStoreCreate: React.FC = () => {
     // 使用 useQuery 获取用户数据
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['GetUsers'],
+        queryKey: ['GetUsersAll'],
         queryFn: () =>
             fetch('/api/User/GetUsers?page=1&pageLimitNumber=333333&isASC=true', {
                 method: 'GET',
