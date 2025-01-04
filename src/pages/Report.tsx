@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Button, Input, Form} from "antd";  // 使用 Ant Design 元素
+import { Button, Input, Form, notification } from "antd";  // 使用 Ant Design 元素
 
 const Report: React.FC = () => {
     const [newRequest, setNewRequest] = useState<string>('');  // 儲存用戶輸入的訊息
 
     // 提交表單
     const handleSubmit = () => {
-
         const encodedMessage = encodeURIComponent(newRequest);
 
         fetch(`/api/Request/SendRequest?message=${encodedMessage}`, {
@@ -24,9 +23,17 @@ const Report: React.FC = () => {
                 return response.json();
             })
             .then(data => {
+                notification.success({
+                    message: 'Success',
+                    description: 'Request sent successfully',
+                });
                 console.log('Request sent successfully', data);
             })
             .catch(error => {
+                notification.error({
+                    message: 'Error',
+                    description: 'Failed to send request',
+                });
                 console.error('Error:', error);
             });
     };
@@ -43,7 +50,7 @@ const Report: React.FC = () => {
                     rows={4}
                     placeholder="請輸入您想回報的訊息..."
                 />
-                <Form.Item style={{marginTop: '16px'}}> {/* 增加 marginTop 來拉開距離 */}
+                <Form.Item style={{ marginTop: '16px' }}> {/* 增加 marginTop 來拉開距離 */}
                     <Button type="primary" htmlType="submit">
                         發送請求
                     </Button>
