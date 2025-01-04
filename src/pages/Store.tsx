@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Card, Form } from 'react-bootstrap';
@@ -8,6 +8,7 @@ import ProductCard from '../components/ProductCard';
 import PageButton from '../components/PageButton';
 import Loading from '../components/Loading';
 import { Product, Store } from '../types';
+import { Button, Input, Modal } from 'antd';
 
 interface StoreProductsResponse {
     PageCount: number;
@@ -21,6 +22,8 @@ const StorePage: React.FC = () => {
     const page = parseInt(queryParams.get('page') || '1', 10);
     const sortOrder = queryParams.get('sortOrder') || false;
     const sortField = queryParams.get('sortField') || 'Sale';
+    const [message, setMessage] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const navigate = useNavigate();
 
     const { data: storeData, isLoading: isStoreLoading } = useQuery<Store>({
@@ -45,6 +48,52 @@ const StorePage: React.FC = () => {
         },
     });
 
+    const sendMessage = async () => {
+        const messageData = {
+            ReceiverID: storeData?.OwnerID,
+            Message: message,
+        };
+        const res = await fetch('/api/Message/SendMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(messageData),
+        });
+
+        if (res.ok) {
+            setMessage('');
+            setIsModalVisible(false);
+            Modal.success({
+                content: '訊息已成功傳送',
+            });
+        } else {
+            if (res.status === 401) {
+                Modal.error({ content: '請登入以發送訊息' });
+            }
+            else if (res.status === 403) {
+                Modal.error({ content: '不允許的傳送方式' });
+            } else {
+                Modal.error({
+                    content: '傳送訊息失敗',
+                });
+            }
+        }
+    };
+
+    const handleSubmit = () => {
+        sendMessage();
+    };
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
     return (
         <>
             {(isStoreLoading || isProductsLoading) ? <Loading /> :
@@ -58,6 +107,17 @@ const StorePage: React.FC = () => {
                                 </Card.Title>
                                 <Card.Title style={{ fontSize: '2rem' }}>{storeData.Name}</Card.Title>
                                 <Card.Text>{storeData.Description}</Card.Text>
+                                <Card.Text>
+                                    <Button
+                                        type="primary"
+                                        onClick={(e) => {
+                                            e.preventDefault();  // 阻止 Link 的跳轉
+                                            showModal();  // 觸發聊天邏輯
+                                        }}
+                                    >
+                                        來聊聊吧！
+                                    </Button>
+                                </Card.Text>
                             </Card.Header> : <Card.Header>商店不存在</Card.Header>
                         }
                         {storeProductsData ?
@@ -96,6 +156,16 @@ const StorePage: React.FC = () => {
                     {storeProductsData && <PageButton PageCount={storeProductsData.PageCount} />}
                 </>
             }
+            <Modal title='開始聊天' open={isModalVisible} onOk={handleSubmit} onCancel={handleCancel}>
+                <Form.Group controlId="newMessage">
+                    <Input
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        onPressEnter={handleSubmit}  // 按下 Enter 鍵發送訊息
+                        placeholder="輸入訊息..."
+                    />
+                </Form.Group>
+            </Modal>
         </>
     );
 };
