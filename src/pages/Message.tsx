@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Form, Spin, List, Typography, Card, Layout } from 'antd';
+import { Button, Input, Form, Spin, List, Typography, Card, Layout, Skeleton } from 'antd';
 import { useQuery } from "@tanstack/react-query";
 import UserBadge from '../components/UserBadge';
 import { useMediaQuery } from 'react-responsive';
@@ -37,7 +37,10 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
 
     const { data: Contact, isLoading } = useQuery({
         queryKey: [`GetContacts`],
-        queryFn: () =>
+        queryFn: () => {
+            if (localStorage.getItem('token') === null) {
+                return [];
+            }
             fetch(`/api/Message/GetContacts`, {
                 method: 'GET',
                 headers: {
@@ -45,10 +48,11 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                 },
             }).then((res) => {
                 if (!res.ok) {
-                    return null;
+                    return [];
                 }
                 return res.json();
-            }),
+            })
+        },
     });
 
     useEffect(() => {
@@ -126,7 +130,15 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
     };
 
     if (isLoading) {
-        return <Spin size="large" />;
+        return <Skeleton active />;
+    }
+
+    if (localStorage.getItem('token') === null) {
+        return <Title level={3}>請登入以查看訊息</Title>;
+    }
+
+    if (Contact && Contact.length === 0) {
+        return <Title level={3}>暫時沒有聯絡人</Title>;
     }
 
     return (
