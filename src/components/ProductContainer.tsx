@@ -110,10 +110,16 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                 body: JSON.stringify(messageData),
             })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to send message');
-                    }
                     setShowMessageModal(false);
+                    if (response.status === 401) {
+                        throw new Error('請登入以發送訊息');
+                    }
+                    else if (response.status === 403) {
+                        throw new Error('不允許的傳送方式');
+                    }
+                    else if (!response.ok) {
+                        throw new Error('傳送訊息失敗');
+                    }
                     MySwal.fire({
                         title: '訊息已發送',
                         text: '您的訊息已成功發送給賣家',
@@ -122,11 +128,14 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                     return response.json();
                 })
                 .then(() => {
-
                     setNewMessage('');
                 })
                 .catch(error => {
-                    console.error('Error sending message:', error);
+                    MySwal.fire({
+                        title: '錯誤',
+                        text: error.message,
+                        icon: 'error',
+                    });
                 });
         }
     };
