@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Flex, Layout, Button, InputNumber } from 'antd';
+import { Table, Flex, Layout, Button, InputNumber, Tooltip } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
@@ -81,6 +81,7 @@ const getColumns = (
         {
             title: '圖片',
             dataIndex: 'Images',
+            ellipsis: true,
             render: (_, record) => <img src={`${record.Images}`} style={{ width: '50px', height: '50px' }} />,
         },
         {
@@ -88,18 +89,23 @@ const getColumns = (
             align: 'center',
             dataIndex: 'Name',
             key: 'name',
+            ellipsis: true,
+            render: (value) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '單價',
             align: 'center',
             dataIndex: 'Price',
             key: 'price',
+            ellipsis: true,
+            render: (value) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '數量',
             align: 'center',
             dataIndex: 'Quantity',
             key: 'amount',
+            ellipsis: true,
             render: (value, record) => (
                 <InputNumber
                     min={1}
@@ -113,9 +119,11 @@ const getColumns = (
             align: 'center',
             dataIndex: 'totalPrice',
             key: 'totalPrice',
-            render: (_, record) => {
-                return record.Quantity * record.Price;
-            },
+            ellipsis: true,
+            render: (_, record) => (
+                <Tooltip title={record.Quantity * record.Price}>{record.Quantity * record.Price}</Tooltip>
+            )
+            ,
             sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
         },
     ];
@@ -124,14 +132,20 @@ const CouponTable: TableColumnsType<Coupon> = [
     {
         title: "名稱",
         dataIndex: "Name",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
     },
     {
         title: "敘述",
         dataIndex: "Description",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
     },
     {
         title: "折扣(折)",
         dataIndex: "Discount",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
         sorter: (a, b) => a.Discount - b.Discount,
     }
 ];
@@ -164,7 +178,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
 
     /* Get Cart Info */
     const [Product, setcatchProduct] = useState<ProductInCart[]>([]);
-    const token = localStorage.getItem('token');
+    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
     useEffect(() => {
         if (token == null) {
@@ -260,15 +274,18 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
         onChange: SelectChange,
     };
 
-    if (token !== null) {
-        useEffect(() => {
+    useEffect(() => {
+        if (token !== null) {
             fetchUserInfo();
-        }, []);
-
-        useEffect(() => {
             fetchUserCoupon();
-        }, []);
-    }
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (localStorage.getItem('token') !== null) {
+            setToken(localStorage.getItem('token'));
+        }
+    }, [localStorage, localStorage.getItem('token')]);
 
     const checkboxclick = selectkey.length > 0;
 

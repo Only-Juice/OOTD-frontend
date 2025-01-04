@@ -65,11 +65,16 @@ const UserReport: React.FC = () => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
         }).then((res) => {
-            if (!res.ok) {
+            if (res.status === 401) {
+                throw new Error('請先登入');
+            } else if (res.status === 404) {
+                return [];
+            } else if (!res.ok) {
                 throw new Error('Network response was not ok');
             }
             return res.json();
         }),
+        retry: false,
     });
 
     if (isLoading) {
@@ -95,7 +100,11 @@ const UserReport: React.FC = () => {
                     scroll={{ x: 'max-content' }}
                 />
             ) : (
-                <p>No reports available.</p>
+                <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+                    <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
+                        <p>找不到回報</p>
+                    </div>
+                </div>
             )}
         </>
     );
