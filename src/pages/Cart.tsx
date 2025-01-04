@@ -344,7 +344,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
             </div>
         ) : (
             <div className="container">
-                <h1>Cart Information</h1>
+                <h1>購物車資訊</h1>
                 <hr />
                 <Table<ProductInCart>
                     rowSelection={rowSelection}
@@ -376,7 +376,7 @@ const Cart: React.FC<CartProps> = ({ setIsModalOpen }) => {
                         </div>
                     )}
                 />
-                <h1>Coupon Information</h1>
+                <h1>優惠券資訊</h1>
                 <hr />
                 <Table<Coupon>
                     rowSelection={{

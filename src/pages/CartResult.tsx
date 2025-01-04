@@ -219,7 +219,7 @@ const CartResult: React.FC = () => {
                 rowKey="key"
                 title={() => (
                     <div>
-                        <h3>Product Information</h3>
+                        <h3>產品資訊</h3>
                     </div>
                 )}
             />
@@ -229,7 +229,7 @@ const CartResult: React.FC = () => {
                 rowKey="key"
                 title={() => (
                     <div>
-                        <h3>Coupon Information</h3>
+                        <h3>優惠券資訊</h3>
                     </div>
                 )}
             />
