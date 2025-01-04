@@ -35,23 +35,22 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
         }
     }, [token]);
 
-    const { data: Contact, isLoading } = useQuery({
+    const { data: Contact, isLoading } = useQuery<Contact[]>({
         queryKey: [`GetContacts`],
-        queryFn: () => {
+        queryFn: async () => {
             if (localStorage.getItem('token') === null) {
                 return [];
             }
-            fetch(`/api/Message/GetContacts`, {
+            const res = await fetch(`/api/Message/GetContacts`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-            }).then((res) => {
-                if (!res.ok) {
-                    return [];
-                }
-                return res.json();
-            })
+            });
+            if (!res.ok) {
+                return [];
+            }
+            return res.json();
         },
     });
 
@@ -207,7 +206,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                     {/* 右側訊息區域 */}
                     <Content>
                         {currentContactUID !== null && Messages[currentContactUID] ? (
-                            <div>
+                            <div className='p-2'>
                                 <Title level={3}>
                                     與用戶
                                     {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
