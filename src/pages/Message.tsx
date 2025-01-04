@@ -25,7 +25,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
     const [Messages, setMessages] = useState<Record<number, Message[]>>({});
     const [currentContactUID, setCurrentContactUID] = useState<number | null>(null);
     const [newMessage, setNewMessage] = useState<string>('');
-    const token = localStorage.getItem('token');
+    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const isMobile = useMediaQuery({ maxWidth: 767 });
 
     // 如果沒有 token，開啟 Modal
@@ -35,7 +35,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
         }
     }, [token]);
 
-    const { data: Contact, isLoading } = useQuery<Contact[]>({
+    const { data: Contact, isLoading, refetch } = useQuery<Contact[]>({
         queryKey: [`GetContacts`],
         queryFn: async () => {
             if (localStorage.getItem('token') === null) {
@@ -53,6 +53,14 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
             return res.json();
         },
     });
+
+    useEffect(() => {
+        refetch();
+    }, [token]);
+
+    useEffect(() => {
+        setToken(localStorage.getItem('token'));
+    }, [localStorage, localStorage.getItem('token')]);
 
     useEffect(() => {
         if (!Contact || Contact.length === 0) return;

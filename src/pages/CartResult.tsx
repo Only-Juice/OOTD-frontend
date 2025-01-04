@@ -208,8 +208,7 @@ const CartResult: React.FC = () => {
                 <h1>&#x1F4B8; 野格炸彈超爽口感</h1>
                 <h1>&#x1F4B8; 野格炸彈我的最愛</h1>
                 <h1>&#x1F4B8; 付款大成功</h1>
-                {(total > 1000) ? <h1>&#x1F4B8; 可於個人頁面查看訂單</h1>
-                    : <h1>&#x1F4B8; 可於個人頁面查看你那小乞丐訂單</h1>}
+                <h1>&#x1F4B8; 可於個人頁面查看訂單</h1>
             </Content>
         </Layout>
     ) : (
@@ -220,7 +219,7 @@ const CartResult: React.FC = () => {
                 rowKey="key"
                 title={() => (
                     <div>
-                        <h3>Product Information</h3>
+                        <h3>產品資訊</h3>
                     </div>
                 )}
             />
@@ -230,7 +229,7 @@ const CartResult: React.FC = () => {
                 rowKey="key"
                 title={() => (
                     <div>
-                        <h3>Coupon Information</h3>
+                        <h3>優惠券資訊</h3>
                     </div>
                 )}
             />
