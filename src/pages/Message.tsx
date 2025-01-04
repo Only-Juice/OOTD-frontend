@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Form, Spin } from 'antd';
+import { Button, Input, Form, Spin, List, Typography, Card, Layout } from 'antd';
 import { useQuery } from "@tanstack/react-query";
 import UserBadge from '../components/UserBadge';
+import { useMediaQuery } from 'react-responsive';
+const { Title } = Typography;
+const { Sider, Content } = Layout;
 
 interface Contact {
     UID: number;
@@ -23,6 +26,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
     const [currentContactUID, setCurrentContactUID] = useState<number | null>(null);
     const [newMessage, setNewMessage] = useState<string>('');
     const token = localStorage.getItem('token');
+    const isMobile = useMediaQuery({ maxWidth: 767 });
 
     // 如果沒有 token，開啟 Modal
     useEffect(() => {
@@ -126,105 +130,143 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
     }
 
     return (
-        <div style={{ display: 'flex', height: '100vh' }}>
-            {/* 左側聯絡人列表 */}
-            <div style={{ width: '300px', padding: '20px', borderRight: '1px solid #ddd', overflowY: 'auto' }}>
-                <h1>聯絡人列表</h1>
-                <ul style={{ listStyleType: 'none', padding: 0 }}>
-                    {Contact?.map((contact: Contact) => (
-                        <li
-                            key={contact.UID}
-                            style={{
-                                cursor: 'pointer',
-                                backgroundColor: currentContactUID === contact.UID ? '#e6f7ff' : '#fff', // 選擇的聯絡人背景顏色
-                                padding: '10px',
-                                borderRadius: '8px', // 圓角效果
-                                borderBottom: '1px solid #ddd', // 使每個框框之間有邊界，像連接起來
-                                boxShadow: '0 2px 5px rgba(0,0,0,0.1)', // 增加陰影
-                                transition: 'background-color 0.3s ease', // 背景顏色的過渡效果
-                                marginBottom: '0', // 去掉每個框框之間的間隔
-                            }}
-                            onClick={() => setCurrentContactUID(contact.UID)}
-                        >
-                            <span style={{ color: '#333' }}><UserBadge username={contact.Username} /></span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+        <Card title="訊息頁面" className="mt-2">
+            <Layout>
+                {/* 左側聯絡人列表 */}
+                {!isMobile && (
+                    <Sider style={{ backgroundColor: 'var(--product-background-color)' }}>
+                        <Title level={3}>聯絡人列表</Title>
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={Contact}
+                            renderItem={(contact: Contact) => (
+                                <List.Item
+                                    key={contact.UID}
+                                    style={{
+                                        cursor: 'pointer',
+                                        backgroundColor: currentContactUID === contact.UID ? '#e6f7ff' : '#fff',
+                                        padding: '10px',
+                                        borderRadius: '8px',
+                                        borderBottom: '1px solid #ddd',
+                                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                                        transition: 'background-color 0.3s ease',
+                                        marginBottom: '0',
+                                    }}
+                                    onClick={() => setCurrentContactUID(contact.UID)}
+                                >
+                                    <List.Item.Meta
+                                        title={<span style={{ color: '#333' }}><UserBadge username={contact.Username} /></span>}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    </Sider>)}
 
-            {/* 右側訊息區域 */}
-            <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
-                {currentContactUID !== null && Messages[currentContactUID] ? (
-                    <div>
-                        <h2>
-                            與用戶
-                            {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
-                            的對話
-                        </h2>
-                        <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '20px' }}>
-                            <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                {Messages[currentContactUID!]?.map((message, index) => (
-                                    <li
-                                        key={index}
-                                        style={{
-                                            textAlign: message.IsSender ? 'right' : 'left',
-                                            marginBottom: '10px',
-                                        }}
-                                    >
-                                        {/* 顯示發送者名稱，且排除自己發送的訊息 */}
-                                        {!message.IsSender && (
-                                            <div>
-                                                <UserBadge username=
-                                                    {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
-                                                />
-                                            </div>
-                                        )}
-                                        {/* 訊息顯示框 */}
-                                        <div
-                                            style={{
-                                                display: 'inline-block',
-                                                backgroundColor: '#f1f1f1',
-                                                padding: '10px',
-                                                borderRadius: '5px',
-                                                maxWidth: '60%',
-                                                margin: '5px',
-                                                border: '1px solid #ddd',
-                                            }}
-                                        >
-                                            <span style={{ color: '#333' }}>{message.Message}</span>
-                                        </div>
-                                        <div>
-                                            <em>{new Date(message.CreatedAt).toLocaleString()}</em>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
+                <Layout>
+                    {isMobile && (
+                        <div style={{ display: 'flex', overflowX: 'auto', padding: '10px 0' }}>
+                            {Contact?.map((contact: Contact) => (
+                                <div
+                                    key={contact.UID}
+                                    style={{
+                                        cursor: 'pointer',
+                                        backgroundColor: currentContactUID === contact.UID ? '#e6f7ff' : '#fff',
+                                        padding: '10px',
+                                        borderRadius: '8px',
+                                        border: '1px solid #ddd',
+                                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                                        transition: 'background-color 0.3s ease',
+                                        marginRight: '10px',
+                                        minWidth: '150px',
+                                        textAlign: 'center',
+                                        userSelect: 'none',
+                                    }}
+                                    draggable
+                                    onDragStart={(e) => {
+                                        e.dataTransfer.setData('text/plain', contact.UID.toString());
+                                    }}
+                                    onClick={() => setCurrentContactUID(contact.UID)}
+                                >
+                                    <span style={{ color: '#333' }}><UserBadge username={contact.Username} /></span>
+                                </div>
+                            ))}
                         </div>
+                    )}
+                    {/* 右側訊息區域 */}
+                    <Content>
+                        {currentContactUID !== null && Messages[currentContactUID] ? (
+                            <div>
+                                <Title level={3}>
+                                    與用戶
+                                    {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
+                                    的對話
+                                </Title>
+                                <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '20px' }}>
+                                    <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                        {Messages[currentContactUID!]?.map((message, index) => (
+                                            <li
+                                                key={index}
+                                                style={{
+                                                    textAlign: message.IsSender ? 'right' : 'left',
+                                                    marginBottom: '10px',
+                                                }}
+                                            >
+                                                {/* 顯示發送者名稱，且排除自己發送的訊息 */}
+                                                {!message.IsSender && (
+                                                    <div>
+                                                        <UserBadge username=
+                                                            {Contact?.find((contact: Contact) => contact.UID === currentContactUID)?.Username || 'Unknown User'}
+                                                        />
+                                                    </div>
+                                                )}
+                                                {/* 訊息顯示框 */}
+                                                <div
+                                                    style={{
+                                                        display: 'inline-block',
+                                                        backgroundColor: '#f1f1f1',
+                                                        padding: '10px',
+                                                        borderRadius: '5px',
+                                                        maxWidth: '60%',
+                                                        margin: '5px',
+                                                        border: '1px solid #ddd',
+                                                    }}
+                                                >
+                                                    <span style={{ color: '#333' }}>{message.Message}</span>
+                                                </div>
+                                                <div>
+                                                    <em>{new Date(message.CreatedAt).toLocaleString()}</em>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
 
-                        {/* 輸入框 */}
-                        <Form.Item label="新訊息">
-                            <Input
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                onPressEnter={handleSendMessage}
-                                placeholder="輸入訊息..."
-                            />
-                        </Form.Item>
-                        <Button type="primary" onClick={handleSendMessage}>
-                            發送訊息
-                        </Button>
-                    </div>
-                ) : (
-                    <div style={{ padding: '20px' }}>
-                        {Object.keys(Messages).length === 0 ? (
-                            <h3>尚無聯絡人</h3>
+                                {/* 輸入框 */}
+                                <Form.Item label="新訊息">
+                                    <Input
+                                        value={newMessage}
+                                        onChange={(e) => setNewMessage(e.target.value)}
+                                        onPressEnter={handleSendMessage}
+                                        placeholder="輸入訊息..."
+                                    />
+                                </Form.Item>
+                                <Button type="primary" onClick={handleSendMessage}>
+                                    發送訊息
+                                </Button>
+                            </div>
                         ) : (
-                            <h3>請選擇一個聯絡人查看訊息</h3>
+                            <div style={{ padding: '20px' }}>
+                                {Object.keys(Messages).length === 0 ? (
+                                    <Title level={3}>尚無聯絡人</Title>
+                                ) : (
+                                    <Title level={3}>請選擇一個聯絡人查看訊息</Title>
+                                )}
+                            </div>
                         )}
-                    </div>
-                )}
-            </div>
-        </div>
+                    </Content>
+                </Layout>
+            </Layout>
+        </Card>
 
     );
 };

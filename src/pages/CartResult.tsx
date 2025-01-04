@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import type { TableColumnsType } from 'antd';
-import { Table, Input, Radio, Button, RadioChangeEvent } from 'antd';
-import { Layout } from 'antd';
+import { Table, Input, Radio, Button, RadioChangeEvent, Tooltip, Layout } from 'antd';
 import type { ProductInCart } from '../types';
 const { Content } = Layout;
 
@@ -34,6 +33,7 @@ const CartTable: TableColumnsType<ProductInCart> = [
     {
         title: "圖片",
         dataIndex: "Images",
+        ellipsis: true,
         render: (_, r) => <img src={`${r.Images}`} style={{ width: '50px', height: '50px' }} />,
     },
     {
@@ -41,27 +41,36 @@ const CartTable: TableColumnsType<ProductInCart> = [
         align: "center",
         dataIndex: "Name",
         key: "name",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
     },
     {
         title: "單價",
         align: "center",
         dataIndex: "Price",
         key: "price",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
+
     },
     {
         title: "數量",
         align: "center",
         dataIndex: "Quantity",
         key: "amount",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
+
     },
     {
         title: "總計",
         align: "center",
         dataIndex: 'totalPrice',
         key: "totalPrice",
-        render: (_, record) => {
-            return record["Quantity"] * record["Price"];
-        },
+        ellipsis: true,
+        render: (_, record) => (
+            <Tooltip title={record["Quantity"] * record["Price"]}>{record["Quantity"] * record["Price"]}</Tooltip>
+        ),
         defaultSortOrder: null,
         sorter: (a, b) => a.Quantity * a.Price - b.Quantity * b.Price,
     },
@@ -70,14 +79,20 @@ const CouponTable: TableColumnsType<Coupon> = [
     {
         title: "名稱",
         dataIndex: "Name",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
     },
     {
         title: "敘述",
         dataIndex: "Description",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
     },
     {
         title: "折扣(折)",
         dataIndex: "Discount",
+        ellipsis: true,
+        render: (value) => <Tooltip title={value}>{value}</Tooltip>,
     },
 ];
 const CartResult: React.FC = () => {
