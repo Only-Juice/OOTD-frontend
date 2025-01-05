@@ -18,9 +18,6 @@ RUN npm run build
 
 FROM nginx:mainline-alpine AS runtime
 
-# Set the working directory
-WORKDIR /app
-
 # Copy the build output from the build environment
 COPY --from=build-env /app/dist /usr/share/nginx/html
 
