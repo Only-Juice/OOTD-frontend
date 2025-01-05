@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:22-alpine AS build-env
+FROM node:22.12.0-alpine3.21 AS build-env
 
 # Set the working directory in the container
 WORKDIR /app
@@ -16,7 +16,7 @@ COPY . .
 # Build the application
 RUN npm run build
 
-FROM nginx:mainline-alpine AS runtime
+FROM nginx:1.27.3-alpine3.20-slim AS runtime
 
 # Copy the build output from the build environment
 COPY --from=build-env /app/dist /usr/share/nginx/html
