@@ -14,6 +14,7 @@ export interface Product {
   Sale?: number;
   StoreID: number;
   Images: string[];
+  Enabled?: boolean;
 }
 
 export interface User {
