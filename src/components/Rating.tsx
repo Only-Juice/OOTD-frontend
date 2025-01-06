@@ -4,16 +4,20 @@ import { ListGroup, Card, Container, Row, Col, Form, Button } from 'react-bootst
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { FaRegUserCircle } from "react-icons/fa";
 import { RatingResult } from '../types';
+import { Link } from 'react-router-dom';
+
 
 interface RatingProps {
     productId?: number;
     isPending: boolean;
     data?: RatingResult[];
     refetch: () => void;
+    seller?: boolean;
 }
 
-const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) => {
+const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch, seller }) => {
     const queryClient = useQueryClient();
     const [newRating, setNewRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -195,17 +199,20 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) 
                             </ListGroup.Item>
                             {data?.map((rating, index) => (
                                 <ListGroup.Item key={index}>
-                                    <Row>
-                                        <Col xs={12} md={6}>
-                                            <div>{rating.Username.length > 2 ? `${rating.Username[0]}*****${rating.Username[rating.Username.length - 1]}` : `${rating.Username[0]}*`}</div>
-                                        </Col>
-                                        <Col xs={12} md={6}>
-                                            <div>{renderStars(rating.Rating, 30)}</div>
-                                        </Col>
-                                        <Col xs={12} md={12} className="text-end">
-                                            <div><strong>日期:</strong> {new Date(rating.CreatedAt).toLocaleString('zh-TW')}</div>
-                                        </Col>
-                                    </Row>
+                                    <div className='mt-2'>
+                                        <div><FaRegUserCircle size={30} /> {rating.Username.length > 2 ? `${rating.Username[0]}*****${rating.Username[rating.Username.length - 1]}` : `${rating.Username[0]}*`}</div>
+                                        <div>{renderStars(rating.Rating, 15)}</div>
+                                        <span>{new Date(rating.CreatedAt).toLocaleString('zh-TW', { hour12: false })}</span>
+                                    </div>
+                                    <div className='mt-2 mb-1'>
+                                        <span>{rating.Description}</span>
+                                        {seller && <div className='mt-2'>
+                                            <Link to={`/product/${rating.ProductID}`}>
+                                                <img src={rating.ProductImageUrl} alt="" style={{ width: '50px', height: '50px' }} />
+                                                <span className='ms-2'>{rating.ProductName}</span>
+                                            </Link>
+                                        </div>}
+                                    </div>
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>
@@ -250,7 +257,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch }) 
                     )}
                 </Card.Body>
             </Card>
-        </Container>
+        </Container >
     );
 };
 
