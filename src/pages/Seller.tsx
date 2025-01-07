@@ -90,7 +90,7 @@ const Seller: React.FC<SellerProps> = ({ dataUserInfo }) => {
             case 'productAndSale':
                 return <StoreProductAndSale />;
             case 'ratings':
-                return <Rating isPending={isPendingRating} data={dataRating} refetch={refetchRating} />;
+                return <Rating isPending={isPendingRating} data={dataRating} refetch={refetchRating} seller={true} />;
             default:
                 return null;
         }

@@ -14,6 +14,7 @@ export interface Product {
   Sale?: number;
   StoreID: number;
   Images: string[];
+  Enabled?: boolean;
 }
 
 export interface User {
@@ -75,6 +76,10 @@ export interface RatingResult {
   Username: string;
   Rating: number;
   CreatedAt: string;
+  Description: string;
+  ProductName: string;
+  ProductImageUrl: string;
+  ProductID: number;
 }
 
 export interface Coupon {
@@ -114,5 +119,4 @@ export interface Order {
   Details: OrderDetail[];
   Username?: string;
   Address?: string;
-
 }
