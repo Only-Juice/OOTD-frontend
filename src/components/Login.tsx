@@ -56,6 +56,12 @@ const Login: React.FC<LoginProps> = ({ isModalOpen, setIsModalOpen, refetchUserI
         setError(null);
         setIsLoading(true);
         mutation.mutate();
+        setTimeout(() => {
+            if (mutation.isIdle) {
+                setIsLoading(false);
+                setError('登入失敗');
+            }
+        }, 5000);
     };
 
     useEffect(() => {
