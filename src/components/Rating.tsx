@@ -24,6 +24,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch, se
     const [totalRating, setTotalRating] = useState(0);
     const [filter, setFilter] = useState<number | null>(null);
     const [preprocessedData, setPreprocessedData] = useState<RatingResult[] | null>(null);
+    const [comment, setComment] = useState('');
 
     const Toast = Swal.mixin({
         toast: true,
@@ -71,7 +72,7 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch, se
                     'Content-Type': 'application/json',
                     'Authorization': `${token ? ('Bearer ' + token) : ''}`,
                 },
-                body: JSON.stringify(newRating),
+                body: JSON.stringify({ ...newRating, Description: comment }),
             })
         },
         onSuccess: (data) => {
@@ -264,6 +265,13 @@ const Rating: React.FC<RatingProps> = ({ productId, isPending, data, refetch, se
                                     {renderOneStar(hoverRating || newRating, star)}
                                 </span>
                             ))}
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                placeholder="請輸入您的評價..."
+                            />
                         </div>
                     </Form.Group>
                     <Button variant="primary" type="submit" className="mt-2">
