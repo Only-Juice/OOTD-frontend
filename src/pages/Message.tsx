@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Form, List, Typography, Card, Layout, Skeleton } from 'antd';
-import { useQuery } from "@tanstack/react-query";
+import { Button, Input, Form, List, Typography, Card, Layout, Skeleton, message } from 'antd';
+import { useQuery, useMutation } from "@tanstack/react-query";
 import UserBadge from '../components/UserBadge';
 import { useMediaQuery } from 'react-responsive';
 const { Title } = Typography;
@@ -90,31 +90,22 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
         });
     }, [Contact]);
 
-    const handleSendMessage = () => {
-        if (!newMessage.trim()) {
-            return;
-        }
-
-        const messageData = {
-            ReceiverID: currentContactUID,
-            Message: newMessage,
-        };
-
-        fetch('/api/Message/SendMessage', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    const { mutate: sendMessage, isPending: sending } = useMutation(
+        {
+            mutationFn: (messageData: { ReceiverID: number | null; Message: string }) => {
+                return fetch('/api/Message/SendMessage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                    body: JSON.stringify(messageData),
+                });
             },
-            body: JSON.stringify(messageData),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to send message');
+            onSuccess: (res) => {
+                if (!res.ok) {
+                    message.error('發送訊息失敗');
                 }
-                return response.json();
-            })
-            .then(() => {
                 const newMessageData: Message = {
                     IsSender: true,
                     Message: newMessage,
@@ -130,10 +121,24 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                 }));
 
                 setNewMessage('');
-            })
-            .catch(error => {
+            },
+            onError: (error) => {
                 console.error('Error sending message:', error);
-            });
+            },
+        }
+    );
+
+    const handleSendMessage = () => {
+        if (!newMessage.trim()) {
+            return;
+        }
+
+        const messageData = {
+            ReceiverID: currentContactUID,
+            Message: newMessage,
+        };
+
+        sendMessage(messageData);
     };
 
     if (isLoading) {
@@ -267,6 +272,7 @@ const Message: React.FC<MessageProps> = ({ setIsModalOpen }) => {
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         onPressEnter={handleSendMessage}
                                         placeholder="輸入訊息..."
+                                        disabled={sending}
                                     />
                                 </Form.Item>
                                 <Button type="primary" onClick={handleSendMessage}>

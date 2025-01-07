@@ -6,6 +6,7 @@ import type { Product } from '../types';
 import SellerModifyProduct from './SellerModifyProduct';
 import AddProduct from './AddProduct';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
+import { Link } from 'react-router-dom';
 
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -148,6 +149,9 @@ const StoreProductAndSale: React.FC = () => {
             },
 
             sorter: (a: Product, b: Product) => a.Name.localeCompare(b.Name),
+            render: (text: string, record: Product) => (
+                record.Enabled ? <Link to={`/product/${record.ID}`}>{text}</Link> : text
+            ),
         },
         {
             title: '售價',

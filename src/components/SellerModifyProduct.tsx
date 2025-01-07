@@ -69,7 +69,7 @@ const SellerModifyProduct: React.FC<SellerModifyProductProps> = ({ product }) =>
             <Modal title="修改產品" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                 <Form form={form} layout="vertical" onFinish={onFinish} initialValues={product}>
                     <Form.Item name="ID" label="產品ID" rules={[{ required: true, message: '請輸入產品ID!' }]}>
-                        <InputNumber min={0} />
+                        <InputNumber min={0} disabled />
                     </Form.Item>
                     <Form.Item name="Enabled" label="啟用" valuePropName="checked">
                         <Switch />
