@@ -74,8 +74,8 @@ const UserManage: React.FC = () => {
             onSuccess: () => {
                 message.success('用戶狀態修改成功');
             },
-            onError: () => {
-                message.error('用戶狀態修改失敗');
+            onError: (error: Error) => {
+                message.error(error.message);
             },
             onSettled: async (_, __, { UID }) => {
                 await queryClient.invalidateQueries({ queryKey: ['GetUsers'] });
