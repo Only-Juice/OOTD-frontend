@@ -58,10 +58,16 @@ const UserManage: React.FC = () => {
                     },
                     body: JSON.stringify({ UID, Enabled }),
                 }).then((res) => {
-                    if (!res.ok) {
-                        return null;
+                    if (res.ok) {
+                        return res.json();
                     }
-                    return res.json();
+                    if (res.status === 401) {
+                        throw new Error('請先登入');
+                    } else if (res.status === 403) {
+                        throw new Error('權限不足');
+                    } else {
+                        throw new Error('修改用戶狀態失敗');
+                    }
                 });
             },
 
@@ -75,6 +81,7 @@ const UserManage: React.FC = () => {
                 await queryClient.invalidateQueries({ queryKey: ['GetUsers'] });
                 setSwitchLoading((prev) => ({ ...prev, [UID]: false }));
             },
+            retry: false,
         }
     );
 
