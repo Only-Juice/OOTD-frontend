@@ -100,6 +100,7 @@ export interface ProductInCart {
   Price: number;
   Quantity: number;
   Description: string;
+  Storage: number;
 }
 
 export interface OrderDetail {
