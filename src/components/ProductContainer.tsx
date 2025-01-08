@@ -52,9 +52,11 @@ const ProductContainer: React.FC<ProductContainerProps> = ({ product, isPVC, sto
                 body: JSON.stringify({ ProductID: product?.ID, Quantity: quantity }),
             }).then((res) => {
                 setIsLoading(false);
-                if (!res.ok) {
+                if (res.status === 401) {
                     localStorage.removeItem('token');
                     throw new Error('Please log in to add items to your cart');
+                } else if (!res.ok) {
+                    throw new Error('Failed to add item to cart');
                 }
                 return '';
             })
