@@ -109,6 +109,7 @@ const getColumns = (
             render: (value, record) => (
                 <InputNumber
                     min={1}
+                    max={record.Storage}
                     value={value}
                     onChange={(val) => handleQuantityChange(val, record, dataSource, setDataSource)} // 更新數據
                 />
